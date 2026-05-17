@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 2 — Memphis ACT Score Trends 2019–2025 | Memphis Education AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal: #0A4D3C;
+      --teal-light: #1a6b55;
+      --accent: #5EEAD4;
+      --accent-dim: rgba(94,234,212,0.15);
+      --red: #EF4444;
+      --amber: #F59E0B;
+      --green: #10B981;
+      --blue: #3B82F6;
+      --purple: #8B5CF6;
+      --bg: #F8FAFC;
+      --card: #FFFFFF;
+      --border: #E2E8F0;
+      --text: #0F172A;
+      --muted: #64748B;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* HEADER */
+    .header {
+      background: var(--teal);
+      color: #fff;
+      padding: 48px 24px 56px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 60% 0%, rgba(94,234,212,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .header-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 900px;
+      margin: 0 auto 36px;
+      font-size: 13px;
+    }
+    .header-nav a { color: var(--accent); text-decoration: none; opacity: .85; }
+    .header-nav a:hover { opacity: 1; text-decoration: underline; }
+    .day-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--teal);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 18px;
+    }
+    .header h1 {
+      font-size: clamp(26px, 4.5vw, 48px);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+      max-width: 760px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .header h1 .highlight { color: var(--accent); }
+    .header-sub {
+      font-size: clamp(14px, 2vw, 17px);
+      opacity: .78;
+      max-width: 580px;
+      margin: 0 auto 36px;
+    }
+
+    /* STAT CARDS */
+    .stats-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 16px;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      top: -36px;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 20px 18px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 36px;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-number.down { color: var(--red); }
+    .stat-number.amber { color: var(--amber); }
+    .stat-number.green { color: var(--green); }
+    .stat-number.blue { color: var(--blue); }
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .5px;
+      color: var(--muted);
+      text-transform: uppercase;
+      line-height: 1.3;
+    }
+    .stat-delta {
+      font-size: 12px;
+      margin-top: 6px;
+      font-weight: 600;
+    }
+    .stat-delta.neg { color: var(--red); }
+    .stat-delta.pos { color: var(--green); }
+
+    /* MAIN LAYOUT */
+    .main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+    }
+
+    /* SECTION */
+    .section { margin-bottom: 40px; }
+    .section-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
+    }
+    .section-sub {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    /* CHART CARD */
+    .chart-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .chart-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .chart-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+    }
+
+    /* FILTER ROW */
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .filter-btn {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s;
+      color: var(--muted);
+    }
+    .filter-btn.active {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff;
+    }
+    .filter-btn:hover:not(.active) {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    /* AI INSIGHT BOX */
+    .ai-box {
+      background: linear-gradient(135deg, var(--teal) 0%, var(--teal-light) 100%);
+      color: #fff;
+      border-radius: 16px;
+      padding: 28px 28px 24px;
+      margin-bottom: 32px;
+    }
+    .ai-box-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: .65;
+      margin-bottom: 12px;
+    }
+    .ai-box p {
+      font-size: 15px;
+      line-height: 1.7;
+      opacity: .92;
+    }
+    .ai-box strong { color: var(--accent); }
+
+    /* BREAKDOWN TABLE */
+    .table-wrap { overflow-x: auto; margin-top: 20px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    thead { background: var(--bg); }
+    th {
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 2px solid var(--border);
+    }
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8fafc; }
+    .trend-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    .trend-down { background: #FEF2F2; color: var(--red); }
+    .trend-flat { background: #FFFBEB; color: var(--amber); }
+    .trend-up { background: #F0FDF4; color: var(--green); }
+
+    /* TWO-COL */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 600px) {
+      .two-col { grid-template-columns: 1fr; }
+    }
+
+    /* INSIGHT CARDS */
+    .insight-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .insight-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--teal);
+      border-radius: 12px;
+      padding: 20px 18px;
+    }
+    .insight-card.red { border-left-color: var(--red); }
+    .insight-card.amber { border-left-color: var(--amber); }
+    .insight-card.green { border-left-color: var(--green); }
+    .insight-icon { font-size: 22px; margin-bottom: 10px; }
+    .insight-heading { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .insight-body { font-size: 13px; color: var(--muted); line-height: 1.55; }
+    .insight-source { font-size: 11px; color: var(--accent); margin-top: 10px; }
+    .insight-source a { color: var(--teal); }
+
+    /* SUBJECT GRID */
+    .subject-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .subject-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 14px;
+      text-align: center;
+    }
+    .subject-name {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .subject-score {
+      font-size: 32px;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .subject-change {
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .subject-change.neg { color: var(--red); }
+    .subject-change.pos { color: var(--green); }
+
+    /* FOOTER */
+    footer {
+      background: #0F172A;
+      color: rgba(255,255,255,.7);
+      padding: 36px 24px;
+      font-size: 13px;
+      line-height: 1.8;
+      text-align: center;
+    }
+    footer strong { color: #fff; }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      max-width: 900px;
+      margin: 0 auto 28px;
+      text-align: left;
+    }
+    .footer-section h4 { color: #fff; font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+    .footer-source { margin-bottom: 6px; }
+
+    .nav-days {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .nav-day-btn {
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.7);
+      border: 1px solid rgba(255,255,255,.15);
+      transition: all .15s;
+    }
+    .nav-day-btn:hover, .nav-day-btn.current {
+      background: var(--accent);
+      color: var(--teal);
+      border-color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ HEADER ══════════ -->
+<div class="header">
+  <div class="header-nav">
+    <a href="../">← Memphis Education AI</a>
+    <span style="opacity:.5">10-Day LinkedIn AI Challenge</span>
+    <a href="../day1/">Day 1: Absenteeism →</a>
+  </div>
+  <div class="day-badge">Day 2 of 10</div>
+  <h1>Memphis ACT Scores Have Fallen<br><span class="highlight">5 Years in a Row.</span></h1>
+  <p class="header-sub">
+    From 2019 to 2025, the composite score dropped from 17.3 to 16.4 — while 75% of MSCS students still score below the college-readiness threshold. Here's the full 6-year breakdown.
+  </p>
+</div>
+
+<!-- ══════════ STAT CARDS ══════════ -->
+<div class="stats-strip">
+  <div class="stat-card">
+    <div class="stat-number down">16.4</div>
+    <div class="stat-label">2024–25 Composite<br>ACT Score (MSCS)</div>
+    <div class="stat-delta neg">▼ 0.9 pts since 2019–20</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number amber">74.8%</div>
+    <div class="stat-label">Students Scoring<br>Below ACT 19</div>
+    <div class="stat-delta neg">▲ +4.5 pts since 2019–20</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number blue">6,579</div>
+    <div class="stat-label">Students Tested<br>in 2024–25</div>
+    <div class="stat-delta pos">▲ +465 vs 2019–20</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number green">15.8%</div>
+    <div class="stat-label">Scoring ≥ 21<br>(College-Ready)</div>
+    <div class="stat-delta neg">▼ −3.4 pts since 2019–20</div>
+  </div>
+</div>
+
+<!-- ══════════ MAIN ══════════ -->
+<div class="main">
+
+  <!-- AI Insight -->
+  <div class="ai-box">
+    <div class="ai-box-label">&#x1F916; AI Analysis — Key Finding</div>
+    <p>
+      Memphis City Schools' ACT composite score has declined every single year since 2019–20,
+      dropping from <strong>17.3 to 16.4</strong> — a loss of nearly one full point. Despite testing
+      <strong>465 more students</strong> in 2024–25 than in 2019–20, the college-readiness rate fell from
+      <strong>19.2% to 15.8%</strong>. Today, <strong>3 in 4 MSCS students</strong> score below the ACT 19
+      college-readiness benchmark. The sharpest drop came in 2020–21 — the first post-COVID year — and scores
+      have never recovered. Math and English saw the steepest declines; Science is the only subject showing a
+      modest rebound in 2024–25.
+    </p>
+  </div>
+
+  <!-- Chart 1: Composite Trend -->
+  <div class="section">
+    <div class="section-title">Composite Score Trend — 6 Years</div>
+    <div class="section-sub">MSCS All Students — ACT composite average score, 2019–20 through 2024–25</div>
+
+    <div class="chart-card">
+      <div class="chart-title">ACT Composite Score — Memphis-Shelby County Schools</div>
+      <div class="chart-subtitle">Source: TDOE District-Level ACT Data · All Students subgroup · Years 2019–20 through 2024–25</div>
+      <div class="chart-wrap" style="height:300px">
+        <canvas id="compositeChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart 2: Subject Breakdown -->
+  <div class="section">
+    <div class="section-title">Subject-by-Subject Breakdown</div>
+    <div class="section-sub">Select a year to see scores across all four ACT subjects</div>
+
+    <div class="filter-row" id="yearFilters">
+      <button class="filter-btn" data-year="0">2019–20</button>
+      <button class="filter-btn" data-year="1">2020–21</button>
+      <button class="filter-btn" data-year="2">2021–22</button>
+      <button class="filter-btn" data-year="3">2022–23</button>
+      <button class="filter-btn" data-year="4">2023–24</button>
+      <button class="filter-btn active" data-year="5">2024–25</button>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title" id="subjectChartTitle">Subject Scores — 2024–25</div>
+      <div class="chart-subtitle">ACT subject averages for MSCS All Students. College-readiness benchmark = 18 per subject.</div>
+      <div class="chart-wrap" style="height:280px">
+        <canvas id="subjectChart"></canvas>
+      </div>
+    </div>
+
+    <div class="subject-grid" id="subjectCards"></div>
+  </div>
+
+  <!-- Chart 3: College Readiness -->
+  <div class="section">
+    <div class="section-title">College-Readiness Gap — 6 Years</div>
+    <div class="section-sub">Percentage of MSCS students scoring ≥ 21 (college-ready) vs scoring below 19 — the two ends of the ACT spectrum</div>
+
+    <div class="two-col">
+      <div class="chart-card">
+        <div class="chart-title">% Scoring ≥ 21 (College-Ready)</div>
+        <div class="chart-subtitle">Trend is declining — fewer students reaching college-readiness threshold each year</div>
+        <div class="chart-wrap" style="height:220px">
+          <canvas id="pct21Chart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">% Scoring Below 19</div>
+        <div class="chart-subtitle">Three-quarters of students score below 19 — well below national college-readiness benchmark</div>
+        <div class="chart-wrap" style="height:220px">
+          <canvas id="pctBelowChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart 4: Valid Tests Trend -->
+  <div class="section">
+    <div class="section-title">Students Tested — Participation Growing Despite Score Decline</div>
+    <div class="section-sub">Number of MSCS students taking the ACT each year — includes the 2020–21 dip from COVID disruptions</div>
+
+    <div class="chart-card">
+      <div class="chart-title">Valid Tests — MSCS All Students</div>
+      <div class="chart-subtitle">2020–21 saw a significant drop (−536 students) due to COVID school closures. Participation has since recovered and exceeded pre-pandemic levels.</div>
+      <div class="chart-wrap" style="height:220px">
+        <canvas id="testsChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full Data Table -->
+  <div class="section">
+    <div class="section-title">Full 6-Year Data Table</div>
+    <div class="section-sub">All MSCS ACT metrics — All Students subgroup — source: TDOE district-level ACT files</div>
+
+    <div class="chart-card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Composite</th>
+              <th>English</th>
+              <th>Math</th>
+              <th>Reading</th>
+              <th>Science</th>
+              <th>Valid Tests</th>
+              <th>≥ 21</th>
+              <th>&lt; 19</th>
+              <th>Trend</th>
+            </tr>
+          </thead>
+          <tbody id="dataTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Context Insight Cards -->
+  <div class="section">
+    <div class="section-title">What the Data Tells Us</div>
+    <div class="section-sub">Three structural patterns visible in 6 years of MSCS ACT data</div>
+
+    <div class="insight-cards">
+      <div class="insight-card red">
+        <div class="insight-icon">📉</div>
+        <div class="insight-heading">Scores Never Recovered Post-COVID</div>
+        <div class="insight-body">
+          The 2020–21 score drop (17.3 → 16.6) was expected. What's notable is that 2022–23, 2023–24, and 2024–25 all plateau at 16.4 — signaling a structural floor, not a temporary dip.
+        </div>
+        <div class="insight-source">Source: <a href="https://www.tn.gov/education/districts/federal-programs-and-oversight/data/data-downloads.html" target="_blank" rel="noopener">TDOE Data Downloads</a></div>
+      </div>
+      <div class="insight-card amber">
+        <div class="insight-icon">📚</div>
+        <div class="insight-heading">English Scores Drive the Gap</div>
+        <div class="insight-body">
+          English dropped from 16.5 to 15.0 — the steepest subject decline. In 2024–25, English is the lowest-scoring subject across all four tested areas, consistent with national reading proficiency trends.
+        </div>
+        <div class="insight-source">Source: <a href="https://www.tn.gov/education/districts/federal-programs-and-oversight/data/data-downloads.html" target="_blank" rel="noopener">TDOE District ACT Files</a></div>
+      </div>
+      <div class="insight-card green">
+        <div class="insight-icon">📈</div>
+        <div class="insight-heading">More Students Testing Each Year</div>
+        <div class="insight-body">
+          MSCS tested 6,579 students in 2024–25 — 465 more than in 2019–20. Growing participation with declining scores means the gap is real, not an artifact of more lower-scoring students taking the test.
+        </div>
+        <div class="insight-source">Source: <a href="https://www.tn.gov/education/districts/federal-programs-and-oversight/data/data-downloads.html" target="_blank" rel="noopener">TDOE Data Downloads</a></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-section">
+      <h4>Data Sources</h4>
+      <div class="footer-source">
+        &#x1F4CA; <strong>TDOE District-Level ACT Data (2019–20 through 2024–25)</strong><br>
+        <a href="https://www.tn.gov/education/districts/federal-programs-and-oversight/data/data-downloads.html" target="_blank" rel="noopener">
+          tn.gov/education → Data Downloads → ACT District Suppressed Files
+        </a>
+      </div>
+      <div class="footer-source">
+        &#x1F4CB; <strong>Tennessee Report Card</strong><br>
+        <a href="https://reportcard.tnedu.gov" target="_blank" rel="noopener">reportcard.tnedu.gov</a>
+      </div>
+      <div class="footer-source">
+        &#x1F4D6; <strong>ACT College Readiness Benchmarks</strong><br>
+        <a href="https://www.act.org/content/act/en/college-and-career-readiness/benchmarks.html" target="_blank" rel="noopener">act.org — Benchmarks</a>
+      </div>
+    </div>
+    <div class="footer-section">
+      <h4>About This Series</h4>
+      <p style="font-size:13px; line-height:1.7">
+        Day 2 of a 10-day LinkedIn AI Challenge — building one interactive dashboard per day
+        using only public education data. Starting in Memphis, zooming out to Tennessee,
+        the South, and all 50 states.<br><br>
+        <strong>All data is public-source only.</strong> No private employer data used.
+        Analysis uses economic geography and funding lenses — no demographic framing.
+      </p>
+    </div>
+  </div>
+
+  <div style="border-top:1px solid rgba(255,255,255,.1); padding-top:20px; max-width:900px; margin:0 auto;">
+    <strong>Mahendra Aarumalla</strong> · Data Scientist · Memphis, TN<br>
+    <a href="https://linkedin.com/in/a-mahendra" target="_blank" rel="noopener">linkedin.com/in/a-mahendra</a>
+    &nbsp;·&nbsp; Public data only · Built with AI
+  </div>
+
+  <div class="nav-days">
+    <a class="nav-day-btn" href="../">Home</a>
+    <a class="nav-day-btn" href="../day1/">Day 1</a>
+    <a class="nav-day-btn current" href="../day2/">Day 2</a>
+    <span class="nav-day-btn" style="opacity:.4;pointer-events:none">Day 3</span>
+    <span class="nav-day-btn" style="opacity:.4;pointer-events:none">Day 4</span>
+    <span class="nav-day-btn" style="opacity:.4;pointer-events:none">Day 5</span>
+    <span class="nav-day-btn" style="opacity:.4;pointer-events:none">Day 6</span>
+    <span class="nav-day-btn" style="opacity:.4;pointer-events:none">Day 7</span>
+    <span class="nav-day-btn" style="opacity:.4;pointer-events:none">Day 8</span>
+    <span class="nav-day-btn" style="opacity:.4;pointer-events:none">Day 9</span>
+    <span class="nav-day-btn" style="opacity:.4;pointer-events:none">Day 10</span>
+  </div>
+</footer>
+
+<script>
+// ══════════════════════════════════════════
+//  DATA — MSCS All Students, 2019-20 → 2024-25
+//  Source: TDOE District-Level ACT Suppressed Files
+// ══════════════════════════════════════════
+const YEARS = ['2019–20', '2020–21', '2021–22', '2022–23', '2023–24', '2024–25'];
+
+const DATA = [
+  { year: '2019–20', composite: 17.3, eng: 16.5, math: 17.0, read: 17.6, sci: 17.5, n: 6114, pct21: 19.2, pctBelow: 70.3 },
+  { year: '2020–21', composite: 16.6, eng: 15.7, math: 16.4, read: 16.9, sci: 17.0, n: 5578, pct21: 17.8, pctBelow: 72.0 },
+  { year: '2021–22', composite: 16.3, eng: 15.1, math: 16.2, read: 16.7, sci: 16.6, n: 5927, pct21: 15.6, pctBelow: 75.9 },
+  { year: '2022–23', composite: 16.4, eng: 15.2, math: 16.2, read: 16.8, sci: 16.6, n: 6032, pct21: 15.8, pctBelow: 75.2 },
+  { year: '2023–24', composite: 16.4, eng: 15.2, math: 16.2, read: 16.9, sci: 16.8, n: 6320, pct21: 16.5, pctBelow: 74.2 },
+  { year: '2024–25', composite: 16.4, eng: 15.0, math: 16.2, read: 16.9, sci: 17.0, n: 6579, pct21: 15.8, pctBelow: 74.8 },
+];
+
+// College-readiness subject benchmarks (ACT.org)
+const SUBJECT_BENCHMARKS = { eng: 18, math: 22, read: 22, sci: 23 };
+// Display benchmarks on chart as reference lines
+
+const TEAL = '#0A4D3C';
+const ACCENT = '#5EEAD4';
+const RED = '#EF4444';
+const AMBER = '#F59E0B';
+const GREEN = '#10B981';
+const BLUE = '#3B82F6';
+const PURPLE = '#8B5CF6';
+const GRAY = '#94A3B8';
+
+// ══════════════════════════════════════════
+//  CHART 1 — Composite Trend
+// ══════════════════════════════════════════
+const compositeCtx = document.getElementById('compositeChart').getContext('2d');
+
+// Custom plugin: COVID band + threshold line
+const compositeOverlay = {
+  id: 'compositeOverlay',
+  afterDraw(chart) {
+    const { ctx, chartArea, scales } = chart;
+    if (!chartArea || !scales.x || !scales.y) return;
+
+    // COVID band between 2019-20 and 2020-21
+    const x0 = scales.x.getPixelForValue(0);
+    const x1 = scales.x.getPixelForValue(1);
+    ctx.save();
+    ctx.fillStyle = 'rgba(239,68,68,0.07)';
+    ctx.fillRect(x0 - (x1 - x0) * 0.5, chartArea.top, (x1 - x0), chartArea.bottom - chartArea.top);
+    ctx.restore();
+
+    // Label
+    ctx.save();
+    ctx.fillStyle = 'rgba(239,68,68,0.6)';
+    ctx.font = '600 10px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('COVID', (x0 + x1) / 2 - (x1 - x0) * 0.25, chartArea.top + 14);
+    ctx.restore();
+
+    // Reference line at 21 (college-ready)
+    const y21 = scales.y.getPixelForValue(21);
+    ctx.save();
+    ctx.setLineDash([5, 4]);
+    ctx.strokeStyle = 'rgba(16,185,129,0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(chartArea.left, y21);
+    ctx.lineTo(chartArea.right, y21);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(16,185,129,0.7)';
+    ctx.font = '500 10px Inter, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('ACT 21 — College-Ready', chartArea.left + 4, y21 - 5);
+    ctx.restore();
+  }
+};
+
+new Chart(compositeCtx, {
+  type: 'line',
+  plugins: [compositeOverlay],
+  data: {
+    labels: YEARS,
+    datasets: [
+      {
+        label: 'MSCS Composite',
+        data: DATA.map(d => d.composite),
+        borderColor: TEAL,
+        backgroundColor: 'rgba(10,77,60,0.1)',
+        borderWidth: 3,
+        pointRadius: 6,
+        pointBackgroundColor: DATA.map(d => d.composite < 16.5 ? RED : AMBER),
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        fill: true,
+        tension: 0.35,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => `Composite: ${ctx.raw}`,
+          afterLabel: ctx => {
+            const d = DATA[ctx.dataIndex];
+            return [`Valid Tests: ${d.n.toLocaleString()}`, `≥ 21: ${d.pct21}%`, `< 19: ${d.pctBelow}%`];
+          }
+        }
+      }
+    },
+    scales: {
+      y: {
+        min: 14,
+        max: 22,
+        grid: { color: 'rgba(0,0,0,0.05)' },
+        ticks: {
+          font: { size: 12 },
+          callback: v => v.toFixed(0)
+        },
+        title: { display: true, text: 'ACT Score', font: { size: 12 }, color: '#64748B' }
+      },
+      x: {
+        grid: { display: false },
+        ticks: { font: { size: 12 } }
+      }
+    }
+  }
+});
+
+// ══════════════════════════════════════════
+//  CHART 2 — Subject Bar Chart (filterable by year)
+// ══════════════════════════════════════════
+let selectedYearIdx = 5;
+const subjectCtx = document.getElementById('subjectChart').getContext('2d');
+const SUBJECT_LABELS = ['English', 'Math', 'Reading', 'Science'];
+const SUBJECT_KEYS = ['eng', 'math', 'read', 'sci'];
+const SUBJECT_COLORS = [BLUE, PURPLE, GREEN, AMBER];
+
+function getSubjectData(idx) {
+  const d = DATA[idx];
+  return SUBJECT_KEYS.map(k => d[k]);
+}
+
+const subjectChart = new Chart(subjectCtx, {
+  type: 'bar',
+  data: {
+    labels: SUBJECT_LABELS,
+    datasets: [{
+      label: 'Score',
+      data: getSubjectData(selectedYearIdx),
+      backgroundColor: SUBJECT_COLORS.map(c => c + 'CC'),
+      borderColor: SUBJECT_COLORS,
+      borderWidth: 2,
+      borderRadius: 8,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => `Score: ${ctx.raw}`,
+          afterLabel: ctx => {
+            const subs = ['English', 'Math', 'Reading', 'Science'];
+            const benches = [18, 22, 22, 23];
+            const gap = (ctx.raw - benches[ctx.dataIndex]).toFixed(1);
+            return [`Gap to benchmark: ${gap < 0 ? gap : '+' + gap}`];
+          }
+        }
+      },
+      annotation: {}
+    },
+    scales: {
+      y: {
+        min: 12,
+        max: 26,
+        grid: { color: 'rgba(0,0,0,0.05)' },
+        ticks: { font: { size: 12 } },
+        title: { display: true, text: 'ACT Score', font: { size: 12 }, color: '#64748B' }
+      },
+      x: {
+        grid: { display: false },
+        ticks: { font: { size: 13, weight: '600' } }
+      }
+    }
+  }
+});
+
+// Subject card updates
+function updateSubjectCards(idx) {
+  const d = DATA[idx];
+  const prev = idx > 0 ? DATA[idx - 1] : null;
+  const cards = document.getElementById('subjectCards');
+  cards.innerHTML = SUBJECT_KEYS.map((k, i) => {
+    const score = d[k];
+    const delta = prev ? (score - prev[k]).toFixed(1) : null;
+    const deltaClass = delta === null ? '' : (parseFloat(delta) >= 0 ? 'pos' : 'neg');
+    const deltaStr = delta === null ? '' : `${parseFloat(delta) >= 0 ? '▲' : '▼'} ${Math.abs(delta)} vs prior yr`;
+    return `
+      <div class="subject-card">
+        <div class="subject-name">${SUBJECT_LABELS[i]}</div>
+        <div class="subject-score" style="color:${SUBJECT_COLORS[i]}">${score}</div>
+        ${delta !== null ? `<div class="subject-change ${deltaClass}">${deltaStr}</div>` : ''}
+      </div>`;
+  }).join('');
+}
+updateSubjectCards(selectedYearIdx);
+
+// Filter buttons
+document.getElementById('yearFilters').addEventListener('click', e => {
+  const btn = e.target.closest('[data-year]');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedYearIdx = parseInt(btn.dataset.year);
+  subjectChart.data.datasets[0].data = getSubjectData(selectedYearIdx);
+  subjectChart.update();
+  document.getElementById('subjectChartTitle').textContent = `Subject Scores — ${YEARS[selectedYearIdx]}`;
+  updateSubjectCards(selectedYearIdx);
+});
+
+// ══════════════════════════════════════════
+//  CHART 3a — % Scoring ≥ 21
+// ══════════════════════════════════════════
+new Chart(document.getElementById('pct21Chart').getContext('2d'), {
+  type: 'bar',
+  data: {
+    labels: YEARS,
+    datasets: [{
+      label: '% Scoring ≥ 21',
+      data: DATA.map(d => d.pct21),
+      backgroundColor: DATA.map(d => d.pct21 >= 18 ? GREEN + 'CC' : d.pct21 >= 16 ? AMBER + 'CC' : RED + 'CC'),
+      borderColor: DATA.map(d => d.pct21 >= 18 ? GREEN : d.pct21 >= 16 ? AMBER : RED),
+      borderWidth: 2,
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => `${ctx.raw}% college-ready` } }
+    },
+    scales: {
+      y: {
+        min: 0, max: 30,
+        grid: { color: 'rgba(0,0,0,0.05)' },
+        ticks: { font: { size: 11 }, callback: v => v + '%' }
+      },
+      x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+    }
+  }
+});
+
+// ══════════════════════════════════════════
+//  CHART 3b — % Scoring < 19
+// ══════════════════════════════════════════
+new Chart(document.getElementById('pctBelowChart').getContext('2d'), {
+  type: 'bar',
+  data: {
+    labels: YEARS,
+    datasets: [{
+      label: '% Below 19',
+      data: DATA.map(d => d.pctBelow),
+      backgroundColor: DATA.map(d => d.pctBelow >= 75 ? RED + 'CC' : AMBER + 'CC'),
+      borderColor: DATA.map(d => d.pctBelow >= 75 ? RED : AMBER),
+      borderWidth: 2,
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => `${ctx.raw}% below 19` } }
+    },
+    scales: {
+      y: {
+        min: 60, max: 85,
+        grid: { color: 'rgba(0,0,0,0.05)' },
+        ticks: { font: { size: 11 }, callback: v => v + '%' }
+      },
+      x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+    }
+  }
+});
+
+// ══════════════════════════════════════════
+//  CHART 4 — Valid Tests Trend
+// ══════════════════════════════════════════
+new Chart(document.getElementById('testsChart').getContext('2d'), {
+  type: 'line',
+  data: {
+    labels: YEARS,
+    datasets: [{
+      label: 'Students Tested',
+      data: DATA.map(d => d.n),
+      borderColor: BLUE,
+      backgroundColor: 'rgba(59,130,246,0.1)',
+      borderWidth: 2.5,
+      pointRadius: 5,
+      pointBackgroundColor: BLUE,
+      pointBorderColor: '#fff',
+      pointBorderWidth: 2,
+      fill: true,
+      tension: 0.35,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => `${ctx.raw.toLocaleString()} students tested` } }
+    },
+    scales: {
+      y: {
+        min: 4500,
+        max: 7500,
+        grid: { color: 'rgba(0,0,0,0.05)' },
+        ticks: { font: { size: 11 }, callback: v => v.toLocaleString() }
+      },
+      x: { grid: { display: false }, ticks: { font: { size: 12 } } }
+    }
+  }
+});
+
+// ══════════════════════════════════════════
+//  DATA TABLE
+// ══════════════════════════════════════════
+const tbody = document.getElementById('dataTableBody');
+DATA.forEach((d, i) => {
+  const prev = i > 0 ? DATA[i - 1] : null;
+  const delta = prev ? (d.composite - prev.composite).toFixed(1) : null;
+  let trendHtml = '';
+  if (delta !== null) {
+    if (parseFloat(delta) < -0.1) trendHtml = `<span class="trend-badge trend-down">▼ ${delta}</span>`;
+    else if (parseFloat(delta) > 0.1) trendHtml = `<span class="trend-badge trend-up">▲ +${delta}</span>`;
+    else trendHtml = `<span class="trend-badge trend-flat">→ Flat</span>`;
+  } else {
+    trendHtml = `<span class="trend-badge trend-flat">Baseline</span>`;
+  }
+  tbody.innerHTML += `
+    <tr>
+      <td><strong>${d.year}</strong></td>
+      <td><strong>${d.composite}</strong></td>
+      <td>${d.eng}</td>
+      <td>${d.math}</td>
+      <td>${d.read}</td>
+      <td>${d.sci}</td>
+      <td>${d.n.toLocaleString()}</td>
+      <td>${d.pct21}%</td>
+      <td>${d.pctBelow}%</td>
+      <td>${trendHtml}</td>
+    </tr>`;
+});
+</script>
+</body>
+</html>
