@@ -504,6 +504,158 @@
       color: #78350F;
     }
 
+    /* ── DOWNLOAD RAW DATA ────────────────────────────── */
+    .downloads-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      margin-top: 20px;
+    }
+    .downloads-header {
+      padding: 22px 28px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .downloads-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .downloads-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      max-width: 560px;
+      line-height: 1.5;
+    }
+    .btn-github {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      background: var(--white);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: border-color .15s, color .15s;
+      flex-shrink: 0;
+    }
+    .btn-github:hover { border-color: var(--teal); color: var(--teal); }
+
+    .dl-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    @media (max-width: 900px) { .dl-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .dl-grid { grid-template-columns: 1fr; } }
+
+    .dl-card {
+      padding: 18px 22px;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .dl-card:nth-child(3n) { border-right: none; }
+    @media (max-width: 900px) {
+      .dl-card:nth-child(3n)  { border-right: 1px solid var(--border); }
+      .dl-card:nth-child(2n)  { border-right: none; }
+    }
+    @media (max-width: 560px) {
+      .dl-card { border-right: none; }
+    }
+    .dl-card.covid-year { background: #FEFCE8; }
+    .dl-card-master {
+      grid-column: span 1;
+      background: var(--teal-light);
+      border-color: rgba(15,110,86,.2);
+    }
+
+    .dl-year {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dl-covid-tag {
+      font-size: 9px;
+      font-weight: 700;
+      background: #FEF9C3;
+      color: #92400E;
+      padding: 1px 6px;
+      border-radius: 10px;
+      letter-spacing: .4px;
+    }
+    .dl-filename {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+      word-break: break-all;
+      line-height: 1.4;
+      font-family: 'Courier New', monospace;
+    }
+    .dl-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dl-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+    .dl-badge.csv  { background: #DBEAFE; color: #1D4ED8; }
+    .dl-badge.xlsx { background: #DCFCE7; color: #15803D; }
+    .dl-size {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .dl-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 7px 14px;
+      background: var(--teal);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background .15s;
+      align-self: flex-start;
+      margin-top: 2px;
+    }
+    .dl-btn:hover { background: var(--teal-dark); }
+    .dl-source {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-top: auto;
+      padding-top: 4px;
+    }
+
     /* ── SIGNATURE FOOTER ─────────────────────────────── */
     footer {
       margin-top: 60px;
@@ -734,6 +886,107 @@
     </div>
 
   </div><!-- /section -->
+
+  <!-- ── DOWNLOAD RAW DATA ───────────────────────────── -->
+  <div class="section" style="padding-top:0">
+    <div class="downloads-card">
+      <div class="downloads-header">
+        <div>
+          <div class="downloads-title">Download Raw Data</div>
+          <div class="downloads-sub">All source files pulled directly from Tennessee Department of Education. No modifications — raw as downloaded.</div>
+        </div>
+        <a class="btn-github" href="https://github.com/mahendragudipadu/memphis-education/tree/main/data" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          View all on GitHub
+        </a>
+      </div>
+
+      <div class="dl-grid">
+
+        <div class="dl-card">
+          <div class="dl-year">2016-17</div>
+          <div class="dl-filename">chr_abs_state-Level_Suppression_2016-17.csv</div>
+          <div class="dl-meta"><span class="dl-badge csv">CSV</span><span class="dl-size">3.7 KB</span></div>
+          <a class="dl-btn" href="https://raw.githubusercontent.com/mahendragudipadu/memphis-education/main/data/chr_abs_state-Level_Suppression_2016-17.csv" download>⬇ Download</a>
+          <div class="dl-source">Source: TN Dept. of Education · tn.gov/education/data</div>
+        </div>
+
+        <div class="dl-card">
+          <div class="dl-year">2017-18</div>
+          <div class="dl-filename">chr_abs_state-Level_Suppression_2017-18.xlsx</div>
+          <div class="dl-meta"><span class="dl-badge xlsx">XLSX</span><span class="dl-size">11 KB</span></div>
+          <a class="dl-btn" href="https://raw.githubusercontent.com/mahendragudipadu/memphis-education/main/data/chr_abs_state-Level_Suppression_2017-18.xlsx" download>⬇ Download</a>
+          <div class="dl-source">Source: TN Dept. of Education · tn.gov/education/data</div>
+        </div>
+
+        <div class="dl-card">
+          <div class="dl-year">2018-19</div>
+          <div class="dl-filename">state_chronic_absenteeism_suppressed_18-19.csv</div>
+          <div class="dl-meta"><span class="dl-badge csv">CSV</span><span class="dl-size">2.5 KB</span></div>
+          <a class="dl-btn" href="https://raw.githubusercontent.com/mahendragudipadu/memphis-education/main/data/state_chronic_absenteeism_suppressed_18-19.csv" download>⬇ Download</a>
+          <div class="dl-source">Source: TN Dept. of Education · tn.gov/education/data</div>
+        </div>
+
+        <div class="dl-card">
+          <div class="dl-year">2019-20</div>
+          <div class="dl-filename">state_chronic_absenteeism_suppressed_19-20.csv</div>
+          <div class="dl-meta"><span class="dl-badge csv">CSV</span><span class="dl-size">2.5 KB</span></div>
+          <a class="dl-btn" href="https://raw.githubusercontent.com/mahendragudipadu/memphis-education/main/data/state_chronic_absenteeism_suppressed_19-20.csv" download>⬇ Download</a>
+          <div class="dl-source">Source: TN Dept. of Education · tn.gov/education/data</div>
+        </div>
+
+        <div class="dl-card covid-year">
+          <div class="dl-year">2020-21 <span class="dl-covid-tag">COVID</span></div>
+          <div class="dl-filename">state_chronic_absenteeism_suppressed_20-21.csv</div>
+          <div class="dl-meta"><span class="dl-badge csv">CSV</span><span class="dl-size">2.5 KB</span></div>
+          <a class="dl-btn" href="https://raw.githubusercontent.com/mahendragudipadu/memphis-education/main/data/state_chronic_absenteeism_suppressed_20-21.csv" download>⬇ Download</a>
+          <div class="dl-source">Source: TN Dept. of Education · tn.gov/education/data</div>
+        </div>
+
+        <div class="dl-card covid-year">
+          <div class="dl-year">2021-22 <span class="dl-covid-tag">COVID</span></div>
+          <div class="dl-filename">state_chronic_absenteeism_suppressed_upd21-22.xlsx</div>
+          <div class="dl-meta"><span class="dl-badge xlsx">XLSX</span><span class="dl-size">10 KB</span></div>
+          <a class="dl-btn" href="https://raw.githubusercontent.com/mahendragudipadu/memphis-education/main/data/state_chronic_absenteeism_suppressed_upd21-22.xlsx" download>⬇ Download</a>
+          <div class="dl-source">Source: TN Dept. of Education · tn.gov/education/data</div>
+        </div>
+
+        <div class="dl-card">
+          <div class="dl-year">2022-23</div>
+          <div class="dl-filename">state_chronic_absenteeism_suppressed_2023.xlsx</div>
+          <div class="dl-meta"><span class="dl-badge xlsx">XLSX</span><span class="dl-size">18 KB</span></div>
+          <a class="dl-btn" href="https://raw.githubusercontent.com/mahendragudipadu/memphis-education/main/data/state_chronic_absenteeism_suppressed_2023.xlsx" download>⬇ Download</a>
+          <div class="dl-source">Source: TN Dept. of Education · tn.gov/education/data</div>
+        </div>
+
+        <div class="dl-card">
+          <div class="dl-year">2023-24</div>
+          <div class="dl-filename">xstate_chronic_absenteeism_suppressed_2024.xlsx</div>
+          <div class="dl-meta"><span class="dl-badge xlsx">XLSX</span><span class="dl-size">18 KB</span></div>
+          <a class="dl-btn" href="https://raw.githubusercontent.com/mahendragudipadu/memphis-education/main/data/xstate_chronic_absenteeism_suppressed_2024.xlsx" download>⬇ Download</a>
+          <div class="dl-source">Source: TN Dept. of Education · tn.gov/education/data</div>
+        </div>
+
+        <div class="dl-card">
+          <div class="dl-year">2024-25</div>
+          <div class="dl-filename">state_chronic_absenteeism_suppressed_2025.xlsx</div>
+          <div class="dl-meta"><span class="dl-badge xlsx">XLSX</span><span class="dl-size">18 KB</span></div>
+          <a class="dl-btn" href="https://raw.githubusercontent.com/mahendragudipadu/memphis-education/main/data/state_chronic_absenteeism_suppressed_2025.xlsx" download>⬇ Download</a>
+          <div class="dl-source">Source: TN Dept. of Education · tn.gov/education/data</div>
+        </div>
+
+        <div class="dl-card dl-card-master">
+          <div class="dl-year">All Years — Master Dataset</div>
+          <div class="dl-filename">absenteeism_master.xlsx</div>
+          <div class="dl-meta"><span class="dl-badge xlsx">XLSX</span><span class="dl-size">1.4 MB · 4 sheets</span></div>
+          <a class="dl-btn" href="https://raw.githubusercontent.com/mahendragudipadu/memphis-education/main/data/absenteeism_master.xlsx" download>⬇ Download</a>
+          <div class="dl-source">Built from all 9 TDOE files · Sheets: TREND · CHARTER_VS_DISTRICT · RAW_ALL · METADATA</div>
+        </div>
+
+      </div><!-- /dl-grid -->
+    </div><!-- /downloads-card -->
+  </div><!-- /section -->
+
 </div><!-- /container -->
 </main>
 

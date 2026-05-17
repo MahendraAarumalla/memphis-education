@@ -1,0 +1,34 @@
+system,system_name,subgroup,grade_band,n_students,n_chronically_absent,pct_chronically_absent
+0,State of Tennessee,All Students,9th through 12th,293394,51439,17.5
+0,State of Tennessee,All Students,All Grades,988162,128544,13
+0,State of Tennessee,All Students,K through 8th,694768,77105,11.1
+0,State of Tennessee,American Indian or Alaska Native,9th through 12th,1133,205,18.1
+0,State of Tennessee,American Indian or Alaska Native,All Grades,3796,564,14.9
+0,State of Tennessee,American Indian or Alaska Native,K through 8th,2663,359,13.5
+0,State of Tennessee,Asian,9th through 12th,6955,335,4.8
+0,State of Tennessee,Asian,All Grades,23994,958,4
+0,State of Tennessee,Asian,K through 8th,17039,623,3.7
+0,State of Tennessee,Black or African American,9th through 12th,65386,14811,22.7
+0,State of Tennessee,Black or African American,All Grades,231217,39088,16.9
+0,State of Tennessee,Black or African American,K through 8th,165831,24277,14.6
+0,State of Tennessee,Black/Hispanic/Native American,9th through 12th,96620,20065,20.8
+0,State of Tennessee,Black/Hispanic/Native American,All Grades,348960,51503,14.8
+0,State of Tennessee,Black/Hispanic/Native American,K through 8th,252340,31438,12.5
+0,State of Tennessee,Economically Disadvantaged,9th through 12th,75301,21614,28.7
+0,State of Tennessee,Economically Disadvantaged,All Grades,315424,64805,20.5
+0,State of Tennessee,Economically Disadvantaged,K through 8th,240123,43191,18
+0,State of Tennessee,English Learners with Transitional 1-4,9th through 12th,14324,2667,18.6
+0,State of Tennessee,English Learners with Transitional 1-4,All Grades,75192,6698,8.9
+0,State of Tennessee,English Learners with Transitional 1-4,K through 8th,60868,4031,6.6
+0,State of Tennessee,Hispanic,9th through 12th,30101,5049,16.8
+0,State of Tennessee,Hispanic,All Grades,113947,11851,10.4
+0,State of Tennessee,Hispanic,K through 8th,83846,6802,8.1
+0,State of Tennessee,Native Hawaiian or Other Pacific Islander,9th through 12th,594,81,13.6
+0,State of Tennessee,Native Hawaiian or Other Pacific Islander,All Grades,2118,213,10.1
+0,State of Tennessee,Native Hawaiian or Other Pacific Islander,K through 8th,1524,132,8.7
+0,State of Tennessee,Students with Disabilities,9th through 12th,31394,7099,22.6
+0,State of Tennessee,Students with Disabilities,All Grades,114345,20091,17.6
+0,State of Tennessee,Students with Disabilities,K through 8th,82951,12992,15.7
+0,State of Tennessee,White,9th through 12th,177685,24941,14
+0,State of Tennessee,White,All Grades,589356,65563,11.1
+0,State of Tennessee,White,K through 8th,411671,40622,9.9

@@ -1,0 +1,34 @@
+year,system,system_name,subgroup,grade_band,n_students,days_excused,days_unexcused,n_chronically_absent,n_10_to_20_pct,n_greater_than_20_pct,pct_chronically_absent,pct_10_to_20_pct,pct_greater_than_20_pct
+2017,0,State of Tennessee,All Students,Grades 9-12,298001,1551556,1671362,59799,41253,18546,20.1,13.8,6.2
+2017,0,State of Tennessee,All Students,All Grades,990735,4639915,4046370,134675,104836,29839,13.6,10.6,3
+2017,0,State of Tennessee,All Students,Grades K-8,692734,3088359,2375008,74876,63583,11293,10.8,9.2,1.6
+2017,0,State of Tennessee,American Indian or Alaska Native,Grades 9-12,1007,5886,5952,243,174,69,24.1,17.3,6.9
+2017,0,State of Tennessee,American Indian or Alaska Native,All Grades,3315,17499,14395,577,458,119,17.4,13.8,3.6
+2017,0,State of Tennessee,American Indian or Alaska Native,Grades K-8,2308,11613,8443,334,284,50,14.5,12.3,2.2
+2017,0,State of Tennessee,Asian,Grades 9-12,6325,20388,20163,542,381,161,8.6,6,2.5
+2017,0,State of Tennessee,Asian,All Grades,22550,67455,50079,1085,880,205,4.8,3.9,0.9
+2017,0,State of Tennessee,Asian,Grades K-8,16225,47067,29916,543,499,44,3.3,3.1,0.3
+2017,0,State of Tennessee,Black or African American,Grades 9-12,71104,392751,537128,17701,11390,6311,24.9,16,8.9
+2017,0,State of Tennessee,Black or African American,All Grades,237946,1037490,1363835,41093,30543,10550,17.3,12.8,4.4
+2017,0,State of Tennessee,Black or African American,Grades K-8,166842,644739,826707,23392,19153,4239,14,11.5,2.5
+2017,0,State of Tennessee,Black/Hispanic/Native American,Grades 9-12,96333,499901,710712,23047,14974,8073,23.9,15.5,8.4
+2017,0,State of Tennessee,Black/Hispanic/Native American,All Grades,338559,1423107,1795022,52880,39724,13156,15.6,11.7,3.9
+2017,0,State of Tennessee,Black/Hispanic/Native American,Grades K-8,242226,923206,1084310,29833,24750,5083,12.3,10.2,2.1
+2017,0,State of Tennessee,Economically Disadvantaged,Grades 9-12,90719,597969,817571,30535,19459,11076,33.7,21.4,12.2
+2017,0,State of Tennessee,Economically Disadvantaged,All Grades,370478,2031461,2185688,79437,60101,19336,21.4,16.2,5.2
+2017,0,State of Tennessee,Economically Disadvantaged,Grades K-8,279759,1433492,1368117,48902,40642,8260,17.5,14.5,3
+2017,0,State of Tennessee,English Learners,Grades 9-12,9796,37498,80521,2379,1515,864,24.3,15.5,8.8
+2017,0,State of Tennessee,English Learners,All Grades,62182,210167,250373,5940,4668,1272,9.6,7.5,2
+2017,0,State of Tennessee,English Learners,Grades K-8,52386,172669,169852,3561,3153,408,6.8,6,0.8
+2017,0,State of Tennessee,Hispanic,Grades 9-12,24222,101264,167632,5103,3410,1693,21.1,14.1,7
+2017,0,State of Tennessee,Hispanic,All Grades,97298,368118,416792,11210,8723,2487,11.5,9,2.6
+2017,0,State of Tennessee,Hispanic,Grades K-8,73076,266854,249160,6107,5313,794,8.4,7.3,1.1
+2017,0,State of Tennessee,Native Hawaiian or Other Pacific Islander,Grades 9-12,483,1971,2014,58,43,15,12,8.9,3.1
+2017,0,State of Tennessee,Native Hawaiian or Other Pacific Islander,All Grades,1727,6798,6135,178,150,28,10.3,8.7,1.6
+2017,0,State of Tennessee,Native Hawaiian or Other Pacific Islander,Grades K-8,1244,4827,4121,120,107,13,9.6,8.6,1
+2017,0,State of Tennessee,Students with Disabilities,Grades 9-12,37813,231465,260744,9897,6432,3465,26.2,17,9.2
+2017,0,State of Tennessee,Students with Disabilities,All Grades,129725,723390,616061,23717,17711,6006,18.3,13.7,4.6
+2017,0,State of Tennessee,Students with Disabilities,Grades K-8,91912,491925,355317,13820,11279,2541,15,12.3,2.8
+2017,0,State of Tennessee,White,Grades 9-12,194770,1029248,938416,36151,25854,10297,18.6,13.3,5.3
+2017,0,State of Tennessee,White,All Grades,627192,3142288,2194807,80521,64072,16449,12.8,10.2,2.6
+2017,0,State of Tennessee,White,Grades K-8,432422,2113040,1256391,44370,38218,6152,10.3,8.8,1.4
