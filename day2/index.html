@@ -6,6 +6,7 @@
   <title>Day 2 — Memphis ACT Score Trends 2019–2025 | Memphis Education AI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -328,6 +329,190 @@
     .subject-change.neg { color: var(--red); }
     .subject-change.pos { color: var(--green); }
 
+    /* QUOTE CARDS */
+    .quote-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .quote-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 4px solid #0F6E56;
+      border-radius: 12px;
+      padding: 20px 18px;
+      display: flex;
+      flex-direction: column;
+    }
+    .quote-card .quote-type {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #0F6E56;
+      margin-bottom: 10px;
+    }
+    .quote-card blockquote {
+      font-size: 14px;
+      font-style: italic;
+      line-height: 1.65;
+      color: var(--text);
+      margin: 0 0 12px 0;
+      flex: 1;
+    }
+    .quote-card blockquote::before { content: '\201C'; }
+    .quote-card blockquote::after  { content: '\201D'; }
+    .quote-card .stat-text {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text);
+      margin: 0 0 12px 0;
+      flex: 1;
+    }
+    .quote-card .attribution {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+    .quote-card .attribution strong { color: var(--text); }
+    .quote-card .source-link {
+      font-size: 11px;
+      font-weight: 600;
+      color: #0F6E56;
+      text-decoration: none;
+    }
+    .quote-card .source-link:hover { text-decoration: underline; }
+
+    /* DOWNLOAD SECTION */
+    .downloads-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.06);
+      overflow: hidden;
+      margin-top: 20px;
+    }
+    .downloads-header {
+      padding: 22px 28px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .downloads-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .downloads-sub { font-size: 13px; color: var(--muted); max-width: 560px; line-height: 1.5; }
+    .btn-github {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      background: #fff;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: border-color .15s, color .15s;
+    }
+    .btn-github:hover { border-color: var(--teal); color: var(--teal); }
+    .dl-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    @media (max-width: 900px) { .dl-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .dl-grid { grid-template-columns: 1fr; } }
+    .dl-card {
+      padding: 18px 22px;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .dl-card:nth-child(3n) { border-right: none; }
+    @media (max-width: 900px) {
+      .dl-card:nth-child(3n) { border-right: 1px solid var(--border); }
+      .dl-card:nth-child(2n) { border-right: none; }
+    }
+    @media (max-width: 560px) { .dl-card { border-right: none; } }
+    .dl-card.covid-year { background: #FEFCE8; }
+    .dl-card-master { background: #E8F4F1; border-color: rgba(15,110,86,.2); }
+    .dl-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--teal);
+    }
+    .dl-title { font-size: 13px; font-weight: 700; line-height: 1.4; }
+    .dl-year {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dl-covid-tag {
+      font-size: 9px;
+      font-weight: 700;
+      background: #FEF9C3;
+      color: #92400E;
+      padding: 1px 6px;
+      border-radius: 10px;
+    }
+    .dl-filename {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+      word-break: break-all;
+      line-height: 1.4;
+      font-family: 'Courier New', monospace;
+    }
+    .dl-meta { display: flex; align-items: center; gap: 8px; }
+    .dl-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+    .dl-badge.csv  { background: #DBEAFE; color: #1D4ED8; }
+    .dl-badge.xlsx { background: #DCFCE7; color: #15803D; }
+    .dl-size { font-size: 12px; color: var(--muted); }
+    .dl-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 7px 14px;
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background .15s;
+      align-self: flex-start;
+      margin-top: 2px;
+    }
+    .dl-btn:hover { background: var(--teal-light); color: var(--teal); }
+    .dl-source { font-size: 11px; color: var(--muted); line-height: 1.4; margin-top: auto; padding-top: 4px; }
+
     /* FOOTER */
     footer {
       background: #0F172A;
@@ -509,6 +694,82 @@
     </div>
   </div>
 
+  <!-- Voices on the Crisis -->
+  <div class="section">
+    <div class="section-title">What Officials &amp; Data Say</div>
+    <div class="section-sub">The debate over Memphis school performance — in their own words.</div>
+
+    <div class="quote-grid">
+
+      <!-- Card 1 -->
+      <div class="quote-card">
+        <div class="quote-type">State Accountability Pressure</div>
+        <blockquote>Year after year, Memphis-Shelby County Schools does not perform.</blockquote>
+        <div class="attribution">
+          <strong>Rep. Mark White</strong><br>
+          Tennessee State Legislature · Chalkbeat TN, July 2025
+        </div>
+        <a class="source-link" href="https://www.chalkbeat.org/tennessee/2025/07/22/memphis-leaders-decry-state-takeover-insults-misleading-claims/" target="_blank" rel="noopener">Source ↗</a>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="quote-card">
+        <div class="quote-type">District's Own Defense</div>
+        <blockquote>This attempt to dissect poverty from the ability to take advantage and have full access to all your educational opportunities is something that we need to stop lying to ourselves about.</blockquote>
+        <div class="attribution">
+          <strong>Natalie McKinney</strong>, MSCS Board Chair<br>
+          Chalkbeat TN, July 2025
+        </div>
+        <a class="source-link" href="https://www.chalkbeat.org/tennessee/2025/07/22/memphis-leaders-decry-state-takeover-insults-misleading-claims/" target="_blank" rel="noopener">Source ↗</a>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="quote-card">
+        <div class="quote-type">Teacher Crisis at Failing Schools</div>
+        <div class="stat-text">More than half of teachers at 14 Memphis schools receiving D or F grades are working on emergency or temporary permits — not fully licensed.</div>
+        <div class="attribution">
+          <strong>MSCS Officials Testimony</strong><br>
+          TN State Board Accountability Hearing · Chalkbeat TN, March 2026
+        </div>
+        <a class="source-link" href="https://www.chalkbeat.org/tennessee/2026/03/24/memphis-accountability-hearing-failing-schools/" target="_blank" rel="noopener">Source ↗</a>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="quote-card">
+        <div class="quote-type">District Progress Acknowledged</div>
+        <blockquote>Growing forward requires focus, resolve, and the courage to do the hard work together.</blockquote>
+        <div class="attribution">
+          <strong>MSCS District Statement</strong><br>
+          Federal Accountability Results 2025
+        </div>
+        <a class="source-link" href="https://www.scsk12.org/nr/?PN=article&aid=3162" target="_blank" rel="noopener">Source ↗</a>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="quote-card">
+        <div class="quote-type">Enrollment Flight</div>
+        <div class="stat-text">MSCS lost more than 10,000 students in traditional and charter schools between 2014 and 2024 — a 9% decline, far outpacing the statewide drop of 2.5%.</div>
+        <div class="attribution">
+          <strong>Chalkbeat TN Analysis</strong><br>
+          September 2025
+        </div>
+        <a class="source-link" href="https://www.chalkbeat.org/tennessee/2025/09/16/memphis-public-school-enrollment-drops-nine-percent-in-decade/" target="_blank" rel="noopener">Source ↗</a>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="quote-card">
+        <div class="quote-type">Ready Graduate Progress</div>
+        <div class="stat-text">MSCS 'Ready Graduate' rate — students scoring ACT 21+ or earning industry credentials — jumped from 26.2% in 2021–22 to 36.6% in 2022–23. Progress is real but the baseline is still low.</div>
+        <div class="attribution">
+          <strong>MSCS District Report · TN Firefly</strong><br>
+          December 2024
+        </div>
+        <a class="source-link" href="https://www.tnfirefly.com/news/memphis-shelby-county-schools-and-tennessees-public-charter-schools-celebrate-improved-school-letter-grades" target="_blank" rel="noopener">Source ↗</a>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Full Data Table -->
   <div class="section">
     <div class="section-title">Full 6-Year Data Table</div>
@@ -535,6 +796,89 @@
         </table>
       </div>
     </div>
+  </div>
+
+  <!-- Download Raw Data -->
+  <div class="section">
+    <div class="section-title">Download Raw Data</div>
+    <div class="section-sub">All 6 source files pulled directly from Tennessee Department of Education — raw as downloaded, no modifications.</div>
+
+    <div class="downloads-card">
+      <div class="downloads-header">
+        <div>
+          <div class="downloads-title">TDOE District-Level ACT Files — 2019–20 through 2024–25</div>
+          <div class="downloads-sub">6 files · MSCS district 792 · All Students subgroup · Composite, English, Math, Reading, Science scores</div>
+        </div>
+        <a class="btn-github" href="https://github.com/MahendraAarumalla/memphis-education/tree/main/day2/data" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          View all on GitHub
+        </a>
+      </div>
+
+      <div class="dl-grid">
+
+        <div class="dl-card">
+          <div class="dl-tag">Day 2 · ACT Scores</div>
+          <div class="dl-title">TN District ACT Scores — 2019–20</div>
+          <div class="dl-year">School Year 2019–20 · All Districts · All Subgroups</div>
+          <div class="dl-filename">ACT_district_suppressed_2020.csv</div>
+          <div class="dl-meta"><span class="dl-badge csv">CSV</span><span class="dl-size">49 KB</span></div>
+          <a class="dl-btn" href="https://raw.githubusercontent.com/MahendraAarumalla/memphis-education/main/day2/data/ACT_district_suppressed_2020.csv" download>⬇ Download</a>
+          <div class="dl-source">Source: TN Dept. of Education · tn.gov/education/data</div>
+        </div>
+
+        <div class="dl-card covid-year">
+          <div class="dl-tag">Day 2 · ACT Scores</div>
+          <div class="dl-title">TN District ACT Scores — 2020–21</div>
+          <div class="dl-year">School Year 2020–21 · <span class="dl-covid-tag">COVID year</span></div>
+          <div class="dl-filename">ACT_district_suppressed_20-21.xlsx</div>
+          <div class="dl-meta"><span class="dl-badge xlsx">XLSX</span><span class="dl-size">52 KB</span></div>
+          <a class="dl-btn" href="https://raw.githubusercontent.com/MahendraAarumalla/memphis-education/main/day2/data/ACT_district_suppressed_20-21.xlsx" download>⬇ Download</a>
+          <div class="dl-source">Source: TN Dept. of Education · tn.gov/education/data</div>
+        </div>
+
+        <div class="dl-card covid-year">
+          <div class="dl-tag">Day 2 · ACT Scores</div>
+          <div class="dl-title">TN District ACT Scores — 2021–22</div>
+          <div class="dl-year">School Year 2021–22 · <span class="dl-covid-tag">COVID year</span></div>
+          <div class="dl-filename">2021-22_ACT_district_suppressed.xlsx</div>
+          <div class="dl-meta"><span class="dl-badge xlsx">XLSX</span><span class="dl-size">57 KB</span></div>
+          <a class="dl-btn" href="https://raw.githubusercontent.com/MahendraAarumalla/memphis-education/main/day2/data/2021-22_ACT_district_suppressed.xlsx" download>⬇ Download</a>
+          <div class="dl-source">Source: TN Dept. of Education · tn.gov/education/data</div>
+        </div>
+
+        <div class="dl-card">
+          <div class="dl-tag">Day 2 · ACT Scores</div>
+          <div class="dl-title">TN District ACT Scores — 2022–23</div>
+          <div class="dl-year">School Year 2022–23 · All Districts · All Subgroups</div>
+          <div class="dl-filename">2022-23_ACT_district_suppressed.xlsx</div>
+          <div class="dl-meta"><span class="dl-badge xlsx">XLSX</span><span class="dl-size">49 KB</span></div>
+          <a class="dl-btn" href="https://raw.githubusercontent.com/MahendraAarumalla/memphis-education/main/day2/data/2022-23_ACT_district_suppressed.xlsx" download>⬇ Download</a>
+          <div class="dl-source">Source: TN Dept. of Education · tn.gov/education/data</div>
+        </div>
+
+        <div class="dl-card">
+          <div class="dl-tag">Day 2 · ACT Scores</div>
+          <div class="dl-title">TN District ACT Scores — 2023–24</div>
+          <div class="dl-year">School Year 2023–24 · All Districts · All Subgroups</div>
+          <div class="dl-filename">2023-24_ACT_district_suppressed.xlsx</div>
+          <div class="dl-meta"><span class="dl-badge xlsx">XLSX</span><span class="dl-size">53 KB</span></div>
+          <a class="dl-btn" href="https://raw.githubusercontent.com/MahendraAarumalla/memphis-education/main/day2/data/2023-24_ACT_district_suppressed.xlsx" download>⬇ Download</a>
+          <div class="dl-source">Source: TN Dept. of Education · tn.gov/education/data</div>
+        </div>
+
+        <div class="dl-card dl-card-master">
+          <div class="dl-tag">Day 2 · ACT Scores</div>
+          <div class="dl-title">TN District ACT Scores — 2024–25</div>
+          <div class="dl-year">School Year 2024–25 · All Districts · All Subgroups</div>
+          <div class="dl-filename">2024-25_ACT_district_suppressed (2).xlsx</div>
+          <div class="dl-meta"><span class="dl-badge xlsx">XLSX</span><span class="dl-size">54 KB</span></div>
+          <a class="dl-btn" href="https://raw.githubusercontent.com/MahendraAarumalla/memphis-education/main/day2/data/2024-25_ACT_district_suppressed%20(2).xlsx" download>⬇ Download</a>
+          <div class="dl-source">Source: TN Dept. of Education · tn.gov/education/data</div>
+        </div>
+
+      </div><!-- /dl-grid -->
+    </div><!-- /downloads-card -->
   </div>
 
   <!-- Context Insight Cards -->
@@ -625,8 +969,8 @@
   </div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <script>
+document.addEventListener('DOMContentLoaded', function() {
 // ══════════════════════════════════════════
 //  DATA — MSCS All Students, 2019-20 → 2024-25
 //  Source: TDOE District-Level ACT Suppressed Files
@@ -988,6 +1332,8 @@ DATA.forEach((d, i) => {
       <td>${trendHtml}</td>
     </tr>`;
 });
+
+}); // end DOMContentLoaded
 </script>
 </body>
 </html>
