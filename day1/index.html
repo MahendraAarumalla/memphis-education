@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memphis Chronic Absenteeism · Day 1 of 10</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal:       #0F6E56;
+      --teal-dark:  #0A4D3C;
+      --teal-light: #E8F4F1;
+      --teal-mid:   #1A8C6A;
+      --red:        #DC2626;
+      --orange:     #EA580C;
+      --amber:      #D97706;
+      --green:      #16A34A;
+      --slate:      #64748B;
+      --slate-light:#F1F5F9;
+      --border:     #E2E8F0;
+      --text:       #0F172A;
+      --text-muted: #64748B;
+      --white:      #FFFFFF;
+      --card-shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.06);
+      --radius:     12px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #F8FAFB;
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    /* ── NAV ─────────────────────────────────────────── */
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--teal);
+      text-decoration: none;
+    }
+    .nav-dot { width: 8px; height: 8px; background: var(--teal); border-radius: 50%; }
+    .nav-badge {
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--teal-light);
+      color: var(--teal);
+      padding: 3px 9px;
+      border-radius: 20px;
+      letter-spacing: .3px;
+    }
+
+    /* ── HERO ─────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 60%, var(--teal-mid) 100%);
+      color: var(--white);
+      padding: 60px 24px 56px;
+      text-align: center;
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      opacity: .7;
+      margin-bottom: 20px;
+    }
+    .hero-headline {
+      font-size: clamp(15px, 2.5vw, 20px);
+      font-weight: 600;
+      opacity: .9;
+      max-width: 640px;
+      margin: 0 auto 28px;
+      line-height: 1.5;
+    }
+    .hero-stat-block {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+    .hero-number {
+      font-size: clamp(72px, 12vw, 108px);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -3px;
+    }
+    .hero-number-label {
+      font-size: 18px;
+      font-weight: 500;
+      opacity: .85;
+      margin-top: 6px;
+      letter-spacing: .5px;
+    }
+    .hero-subtext {
+      font-size: 16px;
+      opacity: .8;
+      margin-bottom: 36px;
+    }
+    .hero-subtext strong { opacity: 1; font-weight: 700; }
+
+    .hero-cards {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .hero-card {
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 10px;
+      padding: 18px 24px;
+      min-width: 160px;
+      backdrop-filter: blur(4px);
+    }
+    .hero-card-value {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .hero-card-label {
+      font-size: 12px;
+      font-weight: 500;
+      opacity: .75;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+    }
+    .hero-card.gap { background: rgba(220,38,38,.25); border-color: rgba(220,38,38,.4); }
+    .gap-badge {
+      display: inline-block;
+      background: var(--red);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-top: 10px;
+    }
+
+    /* ── MAIN CONTENT ─────────────────────────────────── */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .section { padding: 40px 0; }
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 20px;
+    }
+
+    /* ── FILTER PANEL ─────────────────────────────────── */
+    .filter-panel {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-top: 32px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      box-shadow: var(--card-shadow);
+    }
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .filter-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      white-space: nowrap;
+    }
+    .filter-divider {
+      width: 1px;
+      height: 28px;
+      background: var(--border);
+    }
+    .btn-toggle {
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all .15s ease;
+    }
+    .btn-toggle:hover { border-color: var(--teal); color: var(--teal); }
+    .btn-toggle.active {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: var(--white);
+      font-weight: 600;
+    }
+    .btn-check {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all .15s ease;
+      user-select: none;
+    }
+    .btn-check:hover { border-color: var(--teal); color: var(--teal); }
+    .btn-check.active {
+      background: var(--teal-light);
+      border-color: var(--teal);
+      color: var(--teal);
+      font-weight: 600;
+    }
+    .check-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      border: 2px solid currentColor;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 9px;
+      font-weight: 900;
+    }
+
+    /* ── CHARTS GRID ──────────────────────────────────── */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1.65fr 1fr;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    @media (max-width: 768px) { .charts-grid { grid-template-columns: 1fr; } }
+
+    .chart-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--card-shadow);
+    }
+    .chart-card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .chart-card-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+    .chart-legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .legend-line {
+      width: 18px;
+      height: 3px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .chart-annotation {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .annot-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .annot-swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    /* ── DATA TABLE ───────────────────────────────────── */
+    .table-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      margin-top: 20px;
+    }
+    .table-header {
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .table-header-title {
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      background: var(--teal);
+      color: var(--white);
+      border: none;
+      border-radius: 7px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background .15s;
+    }
+    .btn-download:hover { background: var(--teal-dark); }
+    .btn-download-outline {
+      background: transparent;
+      color: var(--teal);
+      border: 1.5px solid var(--teal);
+    }
+    .btn-download-outline:hover { background: var(--teal-light); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    thead th {
+      background: #F8FAFB;
+      padding: 11px 20px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+    thead th:hover { color: var(--teal); }
+    thead th .sort-icon { margin-left: 4px; opacity: .4; font-size: 10px; }
+    thead th.sorted { color: var(--teal); }
+    thead th.sorted .sort-icon { opacity: 1; }
+
+    tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--slate-light); }
+    tbody tr.anomalous { background: #FFFBEB; }
+    tbody tr.anomalous:hover { background: #FEF3C7; }
+    tbody tr.covid { background: #F0FDF4; }
+    tbody tr.covid:hover { background: #DCFCE7; }
+
+    td {
+      padding: 12px 20px;
+      vertical-align: middle;
+    }
+    td.year-col { font-weight: 600; font-size: 13px; }
+    td.pct-col { font-weight: 700; font-size: 15px; }
+    td.gap-col { font-weight: 700; }
+    .pct-mscs { color: var(--teal); }
+    .pct-tn   { color: var(--slate); }
+
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .4px;
+      text-transform: uppercase;
+    }
+    .pill-covid     { background: #DCFCE7; color: #15803D; }
+    .pill-anomalous { background: #FEF9C3; color: #92400E; }
+
+    .gap-bar-inline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .gap-bar-track {
+      flex: 1;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      max-width: 80px;
+    }
+    .gap-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width .3s ease;
+    }
+
+    /* ── SOURCES FOOTER ───────────────────────────────── */
+    .sources-section {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      margin-top: 20px;
+      box-shadow: var(--card-shadow);
+    }
+    .sources-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .source-row {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 8px 24px;
+      font-size: 13px;
+      margin-bottom: 10px;
+      align-items: baseline;
+    }
+    .source-key {
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+    }
+    .source-val { color: var(--text); }
+    .source-val a { color: var(--teal); text-decoration: none; font-weight: 500; }
+    .source-val a:hover { text-decoration: underline; }
+    .source-note {
+      margin-top: 14px;
+      padding: 12px 16px;
+      background: #FFFBEB;
+      border-left: 3px solid #F59E0B;
+      border-radius: 0 6px 6px 0;
+      font-size: 13px;
+      color: #78350F;
+    }
+
+    /* ── SIGNATURE FOOTER ─────────────────────────────── */
+    footer {
+      margin-top: 60px;
+      padding: 36px 24px;
+      border-top: 1px solid var(--border);
+      background: var(--white);
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .footer-sig { }
+    .footer-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--teal);
+      letter-spacing: -.2px;
+    }
+    .footer-title {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+    .footer-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
+    .footer-links { display: flex; gap: 12px; flex-wrap: wrap; }
+    .footer-links a {
+      font-size: 13px;
+      color: var(--teal);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .footer-links a:hover { text-decoration: underline; }
+    .footer-series {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="#">
+    <div class="nav-dot"></div>
+    Memphis Education · AI Challenge
+  </a>
+  <span class="nav-badge">Day 1 of 10</span>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-eyebrow">Memphis-Shelby County Schools · Chronic Absenteeism · 2016–2025</p>
+  <h1 class="hero-headline">
+    Memphis students miss 1 in 3 school days.<br>
+    Here's what 9 years of data shows — and where the state stands.
+  </h1>
+
+  <div class="hero-stat-block">
+    <div class="hero-number" id="hero-counter">0%</div>
+    <div class="hero-number-label">Chronically Absent · MSCS 2024-25</div>
+  </div>
+
+  <p class="hero-subtext">
+    vs <strong>18.3%</strong> Tennessee state average &nbsp;·&nbsp; 2024-25 school year
+  </p>
+
+  <div class="hero-cards">
+    <div class="hero-card">
+      <div class="hero-card-value">~31,800</div>
+      <div class="hero-card-label">MSCS Students Affected</div>
+    </div>
+    <div class="hero-card">
+      <div class="hero-card-value">105,186</div>
+      <div class="hero-card-label">Total MSCS Enrollment</div>
+    </div>
+    <div class="hero-card gap">
+      <div class="hero-card-value">+11.9pp</div>
+      <div class="hero-card-label">Gap vs State Average</div>
+      <div class="gap-badge">▲ Widening Every Year</div>
+    </div>
+    <div class="hero-card">
+      <div class="hero-card-value">↑ 78%</div>
+      <div class="hero-card-label">Increase Since 2019-20</div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN -->
+<main>
+<div class="container">
+
+  <!-- FILTER PANEL -->
+  <div class="filter-panel">
+    <div class="filter-group">
+      <span class="filter-label">Show</span>
+      <button class="btn-toggle active" id="btn-both" onclick="setView('both')">Both</button>
+      <button class="btn-toggle" id="btn-mscs" onclick="setView('mscs')">MSCS Only</button>
+      <button class="btn-toggle" id="btn-tn" onclick="setView('tn')">TN State Only</button>
+    </div>
+    <div class="filter-divider"></div>
+    <div class="filter-group">
+      <button class="btn-check" id="btn-covid" onclick="toggleCovid()">
+        <span class="check-dot" id="covid-dot"></span>
+        Highlight COVID Years
+      </button>
+      <button class="btn-check" id="btn-bubble" onclick="toggleBubble()">
+        <span class="check-dot" id="bubble-dot"></span>
+        Scale Points by Enrollment
+      </button>
+    </div>
+  </div>
+
+  <!-- CHARTS -->
+  <div class="charts-grid section">
+
+    <!-- TREND LINE CHART -->
+    <div class="chart-card">
+      <div class="chart-card-title">Chronic Absenteeism Trend · 2016–2025</div>
+      <div class="chart-card-subtitle">% of students missing 10%+ of school days (≈18 days/year)</div>
+      <div class="chart-legend">
+        <div class="legend-item">
+          <div class="legend-line" style="background:#0F6E56"></div>
+          Memphis-Shelby County Schools
+        </div>
+        <div class="legend-item">
+          <div class="legend-line" style="background:#94A3B8"></div>
+          Tennessee State Average
+        </div>
+      </div>
+      <div style="position:relative; height: 320px;">
+        <canvas id="trendChart"></canvas>
+      </div>
+      <div class="chart-annotation">
+        <div class="annot-tag">
+          <div class="annot-swatch" style="background:rgba(239,68,68,.15); border:1.5px solid rgba(239,68,68,.4)"></div>
+          COVID peak years (2020-21 & 2021-22)
+        </div>
+        <div class="annot-tag">
+          <div class="annot-swatch" style="background:#FEF9C3; border:1.5px solid #F59E0B"></div>
+          2017-18: data anomaly — treat with caution
+        </div>
+      </div>
+    </div>
+
+    <!-- GAP CHART -->
+    <div class="chart-card">
+      <div class="chart-card-title">MSCS vs State Gap · Per Year</div>
+      <div class="chart-card-subtitle">Percentage points above Tennessee state average</div>
+      <div style="position:relative; height:368px;">
+        <canvas id="gapChart"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- DATA TABLE -->
+  <div class="section" style="padding-top:0">
+    <div class="table-card">
+      <div class="table-header">
+        <div>
+          <div class="table-header-title">Year-by-Year Data — MSCS vs Tennessee</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:3px;">Click any column header to sort · Source: TDOE district-level chronic absenteeism files</div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn-download btn-download-outline" onclick="downloadCSV()">
+            ⬇ Download CSV
+          </button>
+          <a class="btn-download" href="absenteeism_master.xlsx" download>
+            ⬇ Download Excel
+          </a>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table id="dataTable">
+          <thead>
+            <tr>
+              <th onclick="sortTable(0)" data-col="0">Year <span class="sort-icon">↕</span></th>
+              <th onclick="sortTable(1)" data-col="1">MSCS % <span class="sort-icon">↕</span></th>
+              <th onclick="sortTable(2)" data-col="2">TN State % <span class="sort-icon">↕</span></th>
+              <th onclick="sortTable(3)" data-col="3">Gap (pp) <span class="sort-icon">↕</span></th>
+              <th onclick="sortTable(4)" data-col="4">MSCS Enrollment <span class="sort-icon">↕</span></th>
+              <th onclick="sortTable(5)" data-col="5">Est. Students Absent <span class="sort-icon">↕</span></th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SOURCES -->
+    <div class="sources-section" style="margin-top:20px;">
+      <div class="sources-title">Data Sources & Methodology</div>
+      <div class="source-row">
+        <span class="source-key">Source</span>
+        <span class="source-val">Tennessee Department of Education — District-Level Chronic Absenteeism Files, 2016-17 through 2024-25</span>
+      </div>
+      <div class="source-row">
+        <span class="source-key">URL</span>
+        <span class="source-val"><a href="https://www.tn.gov/education/districts/federal-programs-and-oversight/data/data-downloads.html" target="_blank" rel="noopener">tn.gov/education/districts/.../data-downloads.html ↗</a></span>
+      </div>
+      <div class="source-row">
+        <span class="source-key">Definition</span>
+        <span class="source-val">A student is chronically absent if they miss 10% or more of instructional days in a school year — approximately 18 days out of 180.</span>
+      </div>
+      <div class="source-row">
+        <span class="source-key">Filters Applied</span>
+        <span class="source-val">All Students subgroup · All Grades · District-level aggregate (not school-level)</span>
+      </div>
+      <div class="source-row">
+        <span class="source-key">Processing</span>
+        <span class="source-val">Raw files parsed with Python/pandas. Numbers verified against TDOE published reports.</span>
+      </div>
+      <div class="source-note">
+        ⚠ <strong>2017-18 data note:</strong> The MSCS chronic absenteeism figure for 2017-18 (12.9%) falls anomalously below adjacent years and even below the state average. This likely reflects data suppression or a methodology transition in TDOE reporting. Treat this data point with caution in trend analysis.
+      </div>
+    </div>
+
+  </div><!-- /section -->
+</div><!-- /container -->
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-sig">
+      <div class="footer-name">Mahendra Aarumalla</div>
+      <div class="footer-title">Data Scientist · AI-Driven Education Insights · Memphis, TN</div>
+    </div>
+    <div class="footer-right">
+      <div class="footer-links">
+        <a href="https://linkedin.com/in/a-mahendra" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a href="../index.html">Full 10-Day Series</a>
+      </div>
+      <div class="footer-series">Part of the 10-Day LinkedIn AI Challenge · Public education data only</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────────────────────
+const DATA = [
+  { year:'2016-17', mscs:16.9, tn:13.6, n:105808, anomalous:true,  covid:false },
+  { year:'2017-18', mscs:12.9, tn:13.3, n:103680, anomalous:true,  covid:false },
+  { year:'2018-19', mscs:18.4, tn:13.1, n:105612, anomalous:false, covid:false },
+  { year:'2019-20', mscs:18.6, tn:13.0, n:107016, anomalous:false, covid:false },
+  { year:'2020-21', mscs:19.0, tn:15.5, n:105869, anomalous:false, covid:true  },
+  { year:'2021-22', mscs:25.5, tn:20.3, n:102966, anomalous:false, covid:true  },
+  { year:'2022-23', mscs:28.9, tn:20.2, n:104365, anomalous:false, covid:false },
+  { year:'2023-24', mscs:29.5, tn:18.9, n:104823, anomalous:false, covid:false },
+  { year:'2024-25', mscs:30.2, tn:18.3, n:105186, anomalous:false, covid:false },
+];
+
+const nAbsent = d => Math.round(d.n * d.mscs / 100);
+const gap     = d => +(d.mscs - d.tn).toFixed(1);
+const fmt     = n => n.toLocaleString();
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let viewMode     = 'both';   // 'both' | 'mscs' | 'tn'
+let showCovid    = false;
+let showBubble   = false;
+let sortCol      = 0;
+let sortAsc      = true;
+
+// ── HERO COUNTER ANIMATION ────────────────────────────────────────────────────
+(function animateCounter() {
+  const el    = document.getElementById('hero-counter');
+  const target = 30.2;
+  const dur    = 1400;
+  const start  = performance.now();
+  function tick(now) {
+    const t = Math.min((now - start) / dur, 1);
+    const ease = t < .5 ? 2*t*t : -1+(4-2*t)*t;   // ease in-out quad
+    el.textContent = (ease * target).toFixed(1) + '%';
+    if (t < 1) requestAnimationFrame(tick);
+    else el.textContent = '30.2%';
+  }
+  requestAnimationFrame(tick);
+})();
+
+// ── FILTER CONTROLS ───────────────────────────────────────────────────────────
+function setView(mode) {
+  viewMode = mode;
+  ['both','mscs','tn'].forEach(m => {
+    document.getElementById('btn-'+m).classList.toggle('active', m === mode);
+  });
+  updateCharts();
+}
+
+function toggleCovid() {
+  showCovid = !showCovid;
+  const btn = document.getElementById('btn-covid');
+  const dot = document.getElementById('covid-dot');
+  btn.classList.toggle('active', showCovid);
+  dot.textContent = showCovid ? '✓' : '';
+  updateCharts();
+}
+
+function toggleBubble() {
+  showBubble = !showBubble;
+  const btn = document.getElementById('btn-bubble');
+  const dot = document.getElementById('bubble-dot');
+  btn.classList.toggle('active', showBubble);
+  dot.textContent = showBubble ? '✓' : '';
+  updateCharts();
+}
+
+// ── CHART SETUP ───────────────────────────────────────────────────────────────
+const TEAL    = '#0F6E56';
+const SLATE   = '#94A3B8';
+const RED     = '#DC2626';
+const ORANGE  = '#EA580C';
+const AMBER   = '#D97706';
+const GREEN   = '#16A34A';
+
+const labels = DATA.map(d => d.year);
+
+// Point styles for MSCS — anomalous = triangle, normal = circle
+function mscsPointStyle(ctx) {
+  return DATA[ctx.dataIndex].anomalous ? 'triangle' : 'circle';
+}
+function mscsPointColor(ctx) {
+  return DATA[ctx.dataIndex].anomalous ? '#F59E0B' : TEAL;
+}
+function mscsPointRadius(ctx) {
+  if (showBubble) {
+    const base = DATA[ctx.dataIndex].n;
+    const min = 103000, max = 107100;
+    return 5 + ((base - min) / (max - min)) * 9;
+  }
+  return DATA[ctx.dataIndex].anomalous ? 7 : 5;
+}
+
+// ── TREND CHART ───────────────────────────────────────────────────────────────
+const trendCtx = document.getElementById('trendChart').getContext('2d');
+
+// Inline canvas overlay plugin — no external dependency, works on GitHub Pages
+const overlayPlugin = {
+  id: 'customOverlay',
+  afterDraw(chart) {
+    const { ctx, chartArea, scales } = chart;
+    if (!chartArea || !scales.x) return;
+
+    // COVID band: covers indices 4 (2020-21) and 5 (2021-22)
+    // Use 3.5 → 5.5 so the band frames both bars symmetrically
+    if (showCovid) {
+      const x1 = scales.x.getPixelForValue(3.5);
+      const x2 = scales.x.getPixelForValue(5.5);
+      const bh = chartArea.bottom - chartArea.top;
+      ctx.save();
+      ctx.fillStyle = 'rgba(239,68,68,.09)';
+      ctx.fillRect(x1, chartArea.top, x2 - x1, bh);
+      ctx.strokeStyle = 'rgba(239,68,68,.28)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([]);
+      ctx.strokeRect(x1, chartArea.top, x2 - x1, bh);
+      ctx.font = '600 10px Inter, system-ui, sans-serif';
+      ctx.fillStyle = 'rgba(185,28,28,.75)';
+      ctx.fillText('COVID peak', x1 + 6, chartArea.top + 14);
+      ctx.restore();
+    }
+
+    // Anomaly dashed line at index 1 (2017-18)
+    const xA = scales.x.getPixelForValue(1);
+    ctx.save();
+    ctx.strokeStyle = 'rgba(245,158,11,.55)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath();
+    ctx.moveTo(xA, chartArea.top);
+    ctx.lineTo(xA, chartArea.bottom);
+    ctx.stroke();
+
+    // Label pill above the line
+    const label = '⚠ anomaly';
+    ctx.font = '600 10px Inter, system-ui, sans-serif';
+    ctx.setLineDash([]);
+    const tw = ctx.measureText(label).width;
+    const px = xA - tw / 2 - 5;
+    const py = chartArea.top + 6;
+    ctx.fillStyle = 'rgba(254,249,195,.95)';
+    ctx.beginPath();
+    ctx.roundRect(px, py, tw + 10, 17, 3);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(245,158,11,.6)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = '#92400E';
+    ctx.fillText(label, px + 5, py + 12);
+    ctx.restore();
+  }
+};
+
+let trendChart = new Chart(trendCtx, {
+  plugins: [overlayPlugin],
+  type: 'line',
+  data: {
+    labels,
+    datasets: [
+      {
+        label: 'MSCS',
+        data: DATA.map(d => d.mscs),
+        borderColor: TEAL,
+        backgroundColor: 'rgba(15,110,86,.08)',
+        borderWidth: 2.5,
+        fill: true,
+        tension: .35,
+        pointBackgroundColor: DATA.map((_, i) => ({ dataIndex: i } ) ).map(ctx => mscsPointColor(ctx)),
+        pointBorderColor: DATA.map(d => d.anomalous ? '#F59E0B' : TEAL),
+        pointRadius: DATA.map((d, i) => mscsPointRadius({ dataIndex: i })),
+        pointHoverRadius: 8,
+        pointStyle: DATA.map(d => d.anomalous ? 'triangle' : 'circle'),
+      },
+      {
+        label: 'TN State',
+        data: DATA.map(d => d.tn),
+        borderColor: SLATE,
+        backgroundColor: 'transparent',
+        borderWidth: 2,
+        fill: false,
+        tension: .35,
+        borderDash: [5, 3],
+        pointBackgroundColor: SLATE,
+        pointRadius: 4,
+        pointHoverRadius: 7,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: { duration: 900, easing: 'easeInOutQuart' },
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: 'rgba(15,23,42,.9)',
+        titleColor: '#F8FAFC',
+        bodyColor: '#CBD5E1',
+        padding: 12,
+        cornerRadius: 8,
+        callbacks: {
+          title: ctx => ctx[0].label,
+          label: ctx => {
+            const d = DATA[ctx.dataIndex];
+            if (ctx.dataset.label === 'MSCS') {
+              const lines = [
+                `  MSCS: ${d.mscs}%`,
+                `  Enrollment: ${fmt(d.n)}`,
+                `  Est. absent: ~${fmt(nAbsent(d))}`,
+              ];
+              if (d.anomalous) lines.push('  ⚠ Data anomaly — treat with caution');
+              if (d.covid)     lines.push('  🔴 COVID-impacted year');
+              return lines;
+            }
+            return `  TN State: ${d.tn}%`;
+          },
+          afterBody: ctx => {
+            const d = DATA[ctx[0].dataIndex];
+            const g = gap(d);
+            return [`  Gap: ${g > 0 ? '+' : ''}${g} pp vs state`];
+          }
+        }
+      },
+    },
+    scales: {
+      x: {
+        grid: { color: 'rgba(0,0,0,.04)' },
+        ticks: { font: { size: 11 }, color: '#64748B' }
+      },
+      y: {
+        min: 8, max: 35,
+        grid: { color: 'rgba(0,0,0,.06)' },
+        ticks: {
+          font: { size: 11 }, color: '#64748B',
+          callback: v => v + '%'
+        },
+        title: {
+          display: true,
+          text: 'Chronically Absent (%)',
+          font: { size: 11 },
+          color: '#94A3B8',
+        }
+      }
+    }
+  }
+});
+
+// ── GAP CHART ─────────────────────────────────────────────────────────────────
+const gapCtx = document.getElementById('gapChart').getContext('2d');
+
+function gapColor(d) {
+  const g = gap(d);
+  if (g < 0)   return '#94A3B8';   // negative = anomalous
+  if (g <= 3)  return '#16A34A';   // small gap
+  if (g <= 6)  return '#D97706';   // medium
+  if (g <= 9)  return '#EA580C';   // large
+  return '#DC2626';                 // very large
+}
+
+let gapChart = new Chart(gapCtx, {
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [{
+      label: 'Gap (pp)',
+      data: DATA.map(d => gap(d)),
+      backgroundColor: DATA.map(d => gapColor(d)),
+      borderRadius: 5,
+      borderSkipped: false,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: { duration: 900, easing: 'easeInOutQuart' },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: 'rgba(15,23,42,.9)',
+        titleColor: '#F8FAFC',
+        bodyColor: '#CBD5E1',
+        padding: 12,
+        cornerRadius: 8,
+        callbacks: {
+          label: ctx => {
+            const g = ctx.parsed.y;
+            return g < 0
+              ? `  Gap: ${g} pp  ⚠ MSCS below state avg`
+              : `  Gap: +${g} pp above state average`;
+          }
+        }
+      },
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { font: { size: 11 }, color: '#64748B' }
+      },
+      y: {
+        grid: { color: 'rgba(0,0,0,.06)' },
+        ticks: {
+          font: { size: 11 }, color: '#64748B',
+          callback: v => (v >= 0 ? '+' : '') + v + 'pp'
+        },
+        title: {
+          display: true,
+          text: 'Percentage Points Above TN Average',
+          font: { size: 10 },
+          color: '#94A3B8',
+        }
+      }
+    }
+  }
+});
+
+// ── UPDATE CHARTS ON FILTER CHANGE ───────────────────────────────────────────
+function updateCharts() {
+  // Trend datasets visibility
+  const showMscs = viewMode !== 'tn';
+  const showTN   = viewMode !== 'mscs';
+  trendChart.data.datasets[0].hidden = !showMscs;
+  trendChart.data.datasets[1].hidden = !showTN;
+
+  // Bubble size
+  trendChart.data.datasets[0].pointRadius = DATA.map((d, i) => mscsPointRadius({ dataIndex: i }));
+
+  trendChart.update();  // afterDraw re-runs automatically, reads current showCovid state
+
+  // Gap chart — dim when showing TN only
+  gapChart.data.datasets[0].backgroundColor = DATA.map(d =>
+    viewMode === 'tn'
+      ? 'rgba(148,163,184,.3)'
+      : gapColor(d)
+  );
+  gapChart.update();
+}
+
+// ── TABLE ─────────────────────────────────────────────────────────────────────
+let tableData = DATA.map(d => ({
+  year:     d.year,
+  mscs:     d.mscs,
+  tn:       d.tn,
+  gap:      gap(d),
+  n:        d.n,
+  nAbsent:  nAbsent(d),
+  covid:    d.covid,
+  anomalous:d.anomalous,
+}));
+
+function sortTable(col) {
+  if (sortCol === col) sortAsc = !sortAsc;
+  else { sortCol = col; sortAsc = true; }
+
+  // Update header indicators
+  document.querySelectorAll('thead th').forEach((th, i) => {
+    th.classList.toggle('sorted', i === col);
+    const icon = th.querySelector('.sort-icon');
+    if (icon) icon.textContent = i === col ? (sortAsc ? '↑' : '↓') : '↕';
+  });
+
+  const keys = ['year', 'mscs', 'tn', 'gap', 'n', 'nAbsent'];
+  const key = keys[col] || 'year';
+  tableData.sort((a, b) => {
+    const av = a[key], bv = b[key];
+    return sortAsc
+      ? (typeof av === 'string' ? av.localeCompare(bv) : av - bv)
+      : (typeof av === 'string' ? bv.localeCompare(av) : bv - av);
+  });
+  renderTable();
+}
+
+function gapPillColor(g) {
+  if (g < 0)  return '#94A3B8';
+  if (g <= 3) return '#16A34A';
+  if (g <= 6) return '#D97706';
+  if (g <= 9) return '#EA580C';
+  return '#DC2626';
+}
+
+function renderTable() {
+  const maxGap = Math.max(...tableData.map(d => Math.abs(d.gap)));
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = tableData.map(row => {
+    const g = row.gap;
+    const barW = Math.max(0, (g / maxGap) * 100).toFixed(0);
+    const barColor = gapPillColor(g);
+    const rowClass = row.anomalous ? 'anomalous' : row.covid ? 'covid' : '';
+    const notes = [
+      row.covid      ? '<span class="pill pill-covid">COVID year</span>' : '',
+      row.anomalous  ? '<span class="pill pill-anomalous">⚠ Data anomaly</span>' : '',
+    ].filter(Boolean).join(' ');
+    return `<tr class="${rowClass}">
+      <td class="year-col">${row.year}</td>
+      <td class="pct-col pct-mscs">${row.mscs.toFixed(1)}%</td>
+      <td class="pct-col pct-tn">${row.tn.toFixed(1)}%</td>
+      <td class="gap-col">
+        <div class="gap-bar-inline">
+          <span style="color:${barColor};min-width:42px;">${g >= 0 ? '+' : ''}${g.toFixed(1)}pp</span>
+          <div class="gap-bar-track">
+            <div class="gap-bar-fill" style="width:${barW}%;background:${barColor}"></div>
+          </div>
+        </div>
+      </td>
+      <td>${fmt(row.n)}</td>
+      <td>~${fmt(row.nAbsent)}</td>
+      <td>${notes}</td>
+    </tr>`;
+  }).join('');
+}
+
+renderTable();
+
+// ── CSV DOWNLOAD ──────────────────────────────────────────────────────────────
+function downloadCSV() {
+  const headers = ['School Year','MSCS % Chronic Absent','TN State % Chronic Absent',
+                   'Gap (pp)','MSCS Enrollment','Est. MSCS Students Absent','COVID Year','Data Note'];
+  const rows = DATA.map(d => [
+    d.year, d.mscs, d.tn, gap(d), d.n, nAbsent(d),
+    d.covid ? 'Yes' : 'No',
+    d.anomalous ? 'Possible suppression/methodology change' : ''
+  ]);
+  const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url  = URL.createObjectURL(blob);
+  const a    = Object.assign(document.createElement('a'), { href: url, download: 'mscs_absenteeism_trend.csv' });
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

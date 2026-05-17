@@ -1,0 +1,15 @@
+.DS_Store
+CLAUDE.md
+
+# Raw source data — not needed for GitHub Pages
+day1/District files/
+day1/State files/
+day1/build_master.py
+
+# Future day build scripts and raw data
+day*/build_*.py
+day*/*.csv
+day*/*.xls
+day*/data*/
+day*/District*/
+day*/State*/
