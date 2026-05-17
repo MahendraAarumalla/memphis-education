@@ -1,15 +1,12 @@
 .DS_Store
 CLAUDE.md
 
-# Raw source data — not needed for GitHub Pages
+# Raw source data files not needed for deployment
 day1/District files/
 day1/State files/
 day1/build_master.py
 
-# Future day build scripts and raw data
+# Future day build scripts (data/ subfolders ARE committed per day)
 day*/build_*.py
-day*/*.csv
-day*/*.xls
-day*/data*/
 day*/District*/
 day*/State*/
