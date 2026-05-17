@@ -677,6 +677,87 @@
       padding-top: 4px;
     }
 
+    /* ── WHY THE GAP ──────────────────────────────────── */
+    .why-section { padding: 40px 0 0; }
+    .why-header { margin-bottom: 24px; }
+    .why-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -.3px;
+      margin-bottom: 6px;
+    }
+    .why-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 900px) { .why-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .why-grid { grid-template-columns: 1fr; } }
+
+    .why-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--teal);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 20px 20px 16px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .why-card-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--teal);
+    }
+    .why-quote {
+      font-size: 14px;
+      font-style: italic;
+      color: var(--text);
+      line-height: 1.65;
+      flex: 1;
+    }
+    .why-quote::before { content: '\201C'; }
+    .why-quote::after  { content: '\201D'; }
+    .why-stat {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.65;
+      flex: 1;
+    }
+    .why-stat strong {
+      display: block;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--teal);
+      letter-spacing: -.3px;
+      margin-bottom: 4px;
+    }
+    .why-attribution {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+    .why-source-link {
+      font-size: 11px;
+      color: var(--teal);
+      text-decoration: none;
+      font-weight: 600;
+      align-self: flex-start;
+      padding-top: 2px;
+      border-bottom: 1px dashed rgba(15,110,86,.3);
+      transition: border-color .15s;
+    }
+    .why-source-link:hover { border-color: var(--teal); }
+
     /* ── SIGNATURE FOOTER ─────────────────────────────── */
     footer {
       margin-top: 60px;
@@ -842,6 +923,62 @@
     </div>
 
   </div>
+
+  <!-- WHY THE GAP -->
+  <div class="why-section">
+    <div class="why-header">
+      <div class="why-title">Why Are Kids Missing School?</div>
+      <div class="why-subtitle">Voices from Memphis — officials, educators, and data tell the story.</div>
+    </div>
+    <div class="why-grid">
+
+      <div class="why-card">
+        <div class="why-card-tag">Transportation &amp; Family Burden</div>
+        <div class="why-quote">If your high school student is the primary driver in a family, that means they have to get their siblings to school on time and then show up to their class, which means they're not even in class until maybe third period.</div>
+        <div class="why-attribution">Teacher at MSCS · Local Memphis · March 2026</div>
+        <a class="why-source-link" href="https://www.localmemphis.com/article/news/local/ice-family-responsibilities-adding-to-mscss-absenteeism/522-1dd6c82e-3056-4ba2-89f1-69cfa1857237" target="_blank" rel="noopener">Source ↗</a>
+      </div>
+
+      <div class="why-card">
+        <div class="why-card-tag">Immigration Enforcement Fear</div>
+        <div class="why-quote">In September, we saw the big influx of ICE into town, and it really affected attendance rates. Things didn't really recover from the beginning of the school year.</div>
+        <div class="why-attribution">MSCS Teacher · Local Memphis · March 2026</div>
+        <a class="why-source-link" href="https://www.localmemphis.com/article/news/local/ice-family-responsibilities-adding-to-mscss-absenteeism/522-1dd6c82e-3056-4ba2-89f1-69cfa1857237" target="_blank" rel="noopener">Source ↗</a>
+      </div>
+
+      <div class="why-card">
+        <div class="why-card-tag">Juvenile Crime Link</div>
+        <div class="why-quote">As we've seen juvenile crime increase, I started asking questions of Memphis Police. Time and again we're getting the answer: they are not in school.</div>
+        <div class="why-attribution">Former Mayor Jim Strickland · FOX13 Memphis · 2023</div>
+        <a class="why-source-link" href="https://www.fox13memphis.com/education/mscs-details-plan-after-thousands-of-students-are-missing-class/article_286addec-beef-11ed-bcae-cbf64cb94ab9.html" target="_blank" rel="noopener">Source ↗</a>
+      </div>
+
+      <div class="why-card">
+        <div class="why-card-tag">District Response</div>
+        <div class="why-quote">If we address our attendance issues on the front end, that will certainly help us with truancy on the back end.</div>
+        <div class="why-attribution">Stacey Davis, MSCS Director of Attendance · Chalkbeat TN · Feb 2026</div>
+        <a class="why-source-link" href="https://www.chalkbeat.org/tennessee/2026/02/25/memphis-high-schoolers-struggle-with-chronic-absenteeism/" target="_blank" rel="noopener">Source ↗</a>
+      </div>
+
+      <div class="why-card">
+        <div class="why-card-tag">District Investment</div>
+        <div class="why-stat">
+          <strong>$2.9M</strong>
+          MSCS pledged investment in reducing chronic absenteeism. 78 attendance liaisons deployed district-wide at a cost of $4.4 million per year.
+        </div>
+        <div class="why-attribution">MSCS 2024 Financial Audit · Chalkbeat TN · Nov 2025</div>
+        <a class="why-source-link" href="https://www.chalkbeat.org/tennessee/2025/11/03/memphis-school-leaders-say-chronic-absenteeism-could-decline-this-year/" target="_blank" rel="noopener">Source ↗</a>
+      </div>
+
+      <div class="why-card">
+        <div class="why-card-tag">School as Sanctuary</div>
+        <div class="why-quote">Some students don't see school as a sanctuary from the problems they encounter outside the building.</div>
+        <div class="why-attribution">Charter High School Counselor · Daily Memphian · April 2024</div>
+        <a class="why-source-link" href="https://dailymemphian.com/article/43305/chronic-absenteeism-memphis-shelby-county-schools-education" target="_blank" rel="noopener">Source ↗</a>
+      </div>
+
+    </div><!-- /why-grid -->
+  </div><!-- /why-section -->
 
   <!-- DATA TABLE -->
   <div class="section" style="padding-top:0">
