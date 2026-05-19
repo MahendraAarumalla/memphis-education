@@ -1,0 +1,125 @@
+system_id,district_name,abs_pct_2024,grad_pct_federal_2024,act_composite_2024,act_pct_21_plus_2024,data_source
+10,Anderson County,14.5,89.2,18.7,35.4,TDOE District Files 2023-24
+12,Oak Ridge,15.0,91.8,21.3,52.8,TDOE District Files 2023-24
+20,Bedford County,16.8,92.4,18.6,30.2,TDOE District Files 2023-24
+30,Benton County,15.5,97.6,18.9,35.8,TDOE District Files 2023-24
+40,Bledsoe County,19.7,83.3,16.8,22.7,TDOE District Files 2023-24
+50,Blount County,16.5,95.8,19.2,39.4,TDOE District Files 2023-24
+51,Alcoa,6.8,96.3,20.4,46.2,TDOE District Files 2023-24
+52,Maryville,8.0,91.4,23.2,67.3,TDOE District Files 2023-24
+60,Bradley County,17.2,92.9,19.2,39.4,TDOE District Files 2023-24
+61,Cleveland,24.5,94.1,19.2,37.9,TDOE District Files 2023-24
+70,Campbell County,21.3,83.0,16.8,18.2,TDOE District Files 2023-24
+80,Cannon County,16.4,85.6,17.4,29.8,TDOE District Files 2023-24
+92,Hollow Rock - Bruceton,9.6,91.5,17.1,25.6,TDOE District Files 2023-24
+93,Huntingdon Special School District,7.1,86.8,18.2,28.7,TDOE District Files 2023-24
+94,McKenzie,5.8,96.8,19.4,43.6,TDOE District Files 2023-24
+97,West Carroll Sp Dist,16.4,98.4,17.6,24.2,TDOE District Files 2023-24
+100,Carter County,20.4,85.3,18.0,28.7,TDOE District Files 2023-24
+101,Elizabethton,18.8,95.5,19.7,42.5,TDOE District Files 2023-24
+110,Cheatham County,19.4,87.6,19.3,35.4,TDOE District Files 2023-24
+120,Chester County,16.1,90.6,19.7,38.9,TDOE District Files 2023-24
+130,Claiborne County,23.1,89.5,17.9,24.2,TDOE District Files 2023-24
+140,Clay County,18.2,95.3,17.9,23.8,TDOE District Files 2023-24
+150,Cocke County,24.7,95.2,17.4,23.4,TDOE District Files 2023-24
+160,Coffee County,12.1,89.3,18.7,33.6,TDOE District Files 2023-24
+162,Tullahoma,17.8,87.8,20.3,46.2,TDOE District Files 2023-24
+170,Crockett County,10.3,97.2,17.8,24.6,TDOE District Files 2023-24
+180,Cumberland County,17.5,90.9,19.2,38.2,TDOE District Files 2023-24
+190,Davidson County,24.1,84.6,17.6,25.7,TDOE District Files 2023-24
+200,Decatur County,20.4,80.5,19.4,38.0,TDOE District Files 2023-24
+210,DeKalb County,16.7,85.3,19.7,37.9,TDOE District Files 2023-24
+220,Dickson County,15.4,94.8,19.0,34.4,TDOE District Files 2023-24
+230,Dyer County,11.1,96.3,20.4,47.6,TDOE District Files 2023-24
+231,Dyersburg,11.2,93.5,20.0,46.5,TDOE District Files 2023-24
+240,Fayette County Public Schools,20.1,87.6,16.5,16.1,TDOE District Files 2023-24
+250,Fentress County,21.1,96.9,19.2,33.9,TDOE District Files 2023-24
+260,Franklin County,17.4,86.2,18.2,28.3,TDOE District Files 2023-24
+271,Humboldt City Schools,21.7,85.7,15.7,7.8,TDOE District Files 2023-24
+272,Milan,11.4,88.7,19.1,34.2,TDOE District Files 2023-24
+273,Trenton,7.1,92.4,18.2,25.0,TDOE District Files 2023-24
+274,Bradford,1.2,88.9,20.7,44.1,TDOE District Files 2023-24
+275,Gibson Co Sp Dist,7.2,94.1,21.3,54.4,TDOE District Files 2023-24
+280,Giles County,17.0,86.8,18.9,31.8,TDOE District Files 2023-24
+290,Grainger County,20.4,83.8,17.3,24.6,TDOE District Files 2023-24
+300,Greene County,14.6,97.7,19.1,37.5,TDOE District Files 2023-24
+301,Greeneville,11.2,90.9,20.4,47.3,TDOE District Files 2023-24
+310,Grundy County,17.4,86.8,18.1,23.7,TDOE District Files 2023-24
+320,Hamblen County,19.1,90.1,18.5,32.5,TDOE District Files 2023-24
+330,Hamilton County,19.9,92.2,18.7,35.3,TDOE District Files 2023-24
+340,Hancock County,24.8,75.9,16.9,22.0,TDOE District Files 2023-24
+350,Hardeman County Schools,27.1,83.1,17.0,19.5,TDOE District Files 2023-24
+360,Hardin County,15.8,82.8,19.0,38.6,TDOE District Files 2023-24
+370,Hawkins County,23.9,94.8,18.3,29.7,TDOE District Files 2023-24
+380,Haywood County,20.7,87.3,15.5,9.1,TDOE District Files 2023-24
+390,Henderson County,18.5,90.2,19.7,42.7,TDOE District Files 2023-24
+400,Henry County,13.6,89.7,18.9,34.5,TDOE District Files 2023-24
+410,Hickman County,17.1,86.3,18.2,30.9,TDOE District Files 2023-24
+420,Houston County,22.6,88.1,19.1,32.1,TDOE District Files 2023-24
+430,Humphreys County,21.2,87.7,19.5,40.9,TDOE District Files 2023-24
+440,Jackson County,11.4,87.8,17.1,22.0,TDOE District Files 2023-24
+450,Jefferson County,19.1,92.8,18.8,35.1,TDOE District Files 2023-24
+460,Johnson County,16.0,79.6,17.5,23.4,TDOE District Files 2023-24
+470,Knox County,19.6,90.2,20.5,46.5,TDOE District Files 2023-24
+480,Lake County,24.7,79.2,16.8,19.1,TDOE District Files 2023-24
+490,Lauderdale County,19.8,83.3,17.3,19.9,TDOE District Files 2023-24
+500,Lawrence County,15.4,88.7,18.8,35.4,TDOE District Files 2023-24
+510,Lewis County,23.0,73.1,18.4,27.7,TDOE District Files 2023-24
+520,Lincoln County,17.7,93.8,19.8,41.8,TDOE District Files 2023-24
+521,Fayetteville,17.6,96.7,17.5,24.1,TDOE District Files 2023-24
+530,Loudon County,12.7,94.4,19.3,40.1,TDOE District Files 2023-24
+531,Lenoir City,15.4,96.7,19.2,37.6,TDOE District Files 2023-24
+540,McMinn County,15.1,90.2,19.3,36.3,TDOE District Files 2023-24
+550,McNairy County,13.1,91.3,18.8,34.7,TDOE District Files 2023-24
+560,Macon County,9.6,96.4,18.3,27.6,TDOE District Files 2023-24
+570,Madison County,28.9,92.2,17.1,21.7,TDOE District Files 2023-24
+580,Marion County,23.7,85.3,18.8,34.4,TDOE District Files 2023-24
+590,Marshall County,18.2,93.7,19.2,36.9,TDOE District Files 2023-24
+600,Maury County,18.8,85.9,17.4,24.8,TDOE District Files 2023-24
+610,Meigs County,6.4,94.4,18.8,31.7,TDOE District Files 2023-24
+620,Monroe County,18.4,85.6,17.6,25.1,TDOE District Files 2023-24
+630,Montgomery County,15.2,91.6,19.5,39.8,TDOE District Files 2023-24
+640,Moore County,14.3,90.0,18.8,29.8,TDOE District Files 2023-24
+650,Morgan County,13.5,93.2,16.5,14.8,TDOE District Files 2023-24
+660,Obion County,14.0,88.5,20.1,45.8,TDOE District Files 2023-24
+661,Union City,8.9,83.5,21.4,50.7,TDOE District Files 2023-24
+670,Overton County,16.9,85.5,18.3,29.3,TDOE District Files 2023-24
+680,Perry County,17.2,97.2,17.2,24.6,TDOE District Files 2023-24
+690,Pickett County,17.6,88.1,18.2,27.5,TDOE District Files 2023-24
+700,Polk County,21.5,79.4,18.4,32.4,TDOE District Files 2023-24
+710,Putnam County,17.1,89.4,19.8,42.3,TDOE District Files 2023-24
+720,Rhea County,17.3,87.4,18.9,37.9,TDOE District Files 2023-24
+730,Roane County,17.1,89.6,19.4,39.6,TDOE District Files 2023-24
+740,Robertson County,18.4,77.1,18.1,28.3,TDOE District Files 2023-24
+750,Rutherford County,11.9,96.1,19.9,41.4,TDOE District Files 2023-24
+760,Scott County,19.4,82.4,17.2,21.1,TDOE District Files 2023-24
+761,Oneida,16.7,97.6,19.3,43.0,TDOE District Files 2023-24
+770,Sequatchie County,32.7,91.4,19.2,38.8,TDOE District Files 2023-24
+780,Sevier County,23.3,90.6,18.9,34.0,TDOE District Files 2023-24
+792,Memphis-Shelby County Schools,29.5,82.8,16.4,16.5,TDOE District Files 2023-24
+793,Arlington,6.9,95.4,22.2,63.5,TDOE District Files 2023-24
+794,Bartlett,13.9,93.1,20.9,50.2,TDOE District Files 2023-24
+795,Collierville,10.2,93.7,23.4,67.1,TDOE District Files 2023-24
+796,Germantown,6.8,94.1,24.1,71.8,TDOE District Files 2023-24
+798,Millington Municipal Schools,20.0,90.8,19.3,38.6,TDOE District Files 2023-24
+800,Smith County,11.4,87.7,19.0,33.2,TDOE District Files 2023-24
+810,Stewart County,18.4,85.7,19.3,38.4,TDOE District Files 2023-24
+820,Sullivan County,21.2,93.4,18.6,33.2,TDOE District Files 2023-24
+821,Bristol,15.4,96.8,20.5,45.0,TDOE District Files 2023-24
+822,Kingsport,23.6,83.5,21.0,46.5,TDOE District Files 2023-24
+830,Sumner County,11.6,93.5,20.7,48.6,TDOE District Files 2023-24
+840,Tipton County,14.3,90.8,20.2,43.9,TDOE District Files 2023-24
+850,Trousdale County,12.6,91.0,19.4,41.7,TDOE District Files 2023-24
+860,Unicoi County,20.9,95.8,18.1,28.0,TDOE District Files 2023-24
+870,Union County,14.6,84.6,17.0,23.9,TDOE District Files 2023-24
+880,Van Buren County,15.4,98.3,18.7,34.5,TDOE District Files 2023-24
+890,Warren County,18.0,88.8,18.7,34.6,TDOE District Files 2023-24
+900,Washington County,15.9,94.2,19.8,41.5,TDOE District Files 2023-24
+901,Johnson City,13.1,94.1,20.8,46.9,TDOE District Files 2023-24
+910,Wayne County,16.4,80.3,17.6,25.6,TDOE District Files 2023-24
+920,Weakley County,11.4,92.2,20.0,42.6,TDOE District Files 2023-24
+930,White County,12.4,93.1,19.1,39.1,TDOE District Files 2023-24
+940,Williamson County,7.5,96.5,25.2,78.7,TDOE District Files 2023-24
+950,Wilson County,16.3,98.2,20.7,47.8,TDOE District Files 2023-24
+961,Alvin C. York Agricultural Institute,19.9,96.6,20.4,48.7,TDOE District Files 2023-24
+964,Tennessee Schools for the Deaf,22.1,76.9,,,TDOE District Files 2023-24

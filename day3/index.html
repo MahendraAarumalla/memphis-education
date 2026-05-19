@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 3 of 10 · All 147 TN Districts Ranked | From Memphis to 50 States</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --teal:       #0F6E56;
+      --teal-dark:  #0A4D3C;
+      --teal-light: #E8F4F1;
+      --red:        #DC2626;
+      --amber:      #D97706;
+      --green:      #16A34A;
+      --blue:       #2563EB;
+      --purple:     #7C3AED;
+      --slate:      #64748B;
+      --slate-light:#F1F5F9;
+      --border:     #E2E8F0;
+      --text:       #0F172A;
+      --muted:      #64748B;
+      --white:      #FFFFFF;
+      --bg:         #F8FAFB;
+      --shadow:     0 1px 3px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.06);
+      --radius:     12px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; font-size: 15px; }
+
+    nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 24px; height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 16px; position: sticky; top: 0; z-index: 100; }
+    .nav-brand { font-size: 13px; font-weight: 700; color: var(--teal); text-decoration: none; white-space: nowrap; }
+    .nav-links { display: flex; gap: 4px; }
+    .nav-links a { padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--muted); text-decoration: none; transition: background .15s, color .15s; }
+    .nav-links a:hover { background: var(--slate-light); color: var(--text); }
+    .nav-links a.active { background: var(--teal-light); color: var(--teal); }
+
+    .hero { background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 100%); color: var(--white); padding: 56px 24px 64px; text-align: center; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 0%, rgba(94,234,212,0.1) 0%, transparent 65%); pointer-events: none; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); border-radius: 20px; padding: 5px 16px; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 20px; }
+    .hero h1 { font-size: clamp(26px, 4.5vw, 50px); font-weight: 900; line-height: 1.1; letter-spacing: -1px; margin-bottom: 14px; max-width: 780px; margin-left: auto; margin-right: auto; }
+    .hero h1 em { color: #5EEAD4; font-style: normal; }
+    .hero-sub { font-size: clamp(14px, 2vw, 17px); opacity: .8; max-width: 600px; margin: 0 auto; line-height: 1.65; }
+
+    .stat-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; max-width: 900px; margin: -36px auto 0; padding: 0 24px; position: relative; z-index: 10; }
+    .stat-card { background: var(--white); border-radius: 14px; padding: 20px 18px; box-shadow: 0 4px 24px rgba(0,0,0,.10); text-align: center; }
+    .stat-num { font-size: 34px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+    .stat-num.teal { color: var(--teal); } .stat-num.amber { color: var(--amber); } .stat-num.green { color: var(--green); }
+    .stat-label { font-size: 11px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; color: var(--muted); line-height: 1.3; }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+    .section { margin-bottom: 48px; }
+    .section-hd { margin-bottom: 20px; }
+    .section-title { font-size: 20px; font-weight: 800; letter-spacing: -.3px; margin-bottom: 4px; }
+    .section-sub { font-size: 13px; color: var(--muted); }
+
+    .ai-box { background: linear-gradient(135deg, var(--teal-dark), var(--teal)); color: var(--white); border-radius: 14px; padding: 28px 28px 24px; margin-bottom: 40px; }
+    .ai-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; opacity: .6; margin-bottom: 12px; }
+    .ai-box p { font-size: 15px; line-height: 1.75; opacity: .93; }
+    .ai-box strong { color: #5EEAD4; }
+
+    .chart-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
+    .chart-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .chart-sub { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+    .chart-wrap { position: relative; }
+
+    .scatter-legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 16px; font-size: 12px; font-weight: 600; }
+    .leg-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+
+    .outlier-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(255px, 1fr)); gap: 14px; margin-top: 20px; }
+    .outlier-card { background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--teal); border-radius: var(--radius); padding: 18px 16px; }
+    .outlier-card.resilient { border-left-color: var(--green); }
+    .outlier-card.mscs { border-left-color: var(--amber); }
+    .outlier-rank { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+    .outlier-name { font-size: 15px; font-weight: 800; margin-bottom: 10px; }
+    .outlier-metrics { display: flex; gap: 16px; flex-wrap: wrap; }
+    .outlier-metric { text-align: center; }
+    .om-val { font-size: 20px; font-weight: 800; line-height: 1; }
+    .om-val.red { color: var(--red); } .om-val.green { color: var(--green); } .om-val.amber { color: var(--amber); } .om-val.blue { color: var(--blue); }
+    .om-label { font-size: 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+    .outlier-note { font-size: 12px; color: var(--muted); margin-top: 10px; line-height: 1.5; }
+
+    .search-row { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+    .search-input { flex: 1; min-width: 200px; padding: 10px 16px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 14px; color: var(--text); background: var(--white); outline: none; transition: border-color .15s; }
+    .search-input:focus { border-color: var(--teal); }
+    .sort-select { padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--text); background: var(--white); cursor: pointer; outline: none; }
+    .sort-select:focus { border-color: var(--teal); }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead { background: var(--slate-light); }
+    th { padding: 10px 14px; text-align: left; font-size: 10px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--border); white-space: nowrap; }
+    td { padding: 11px 14px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--slate-light); }
+    .mscs-row td { background: #FFFBEB; font-weight: 600; }
+    .mscs-row:hover td { background: #FEF3C7; }
+    .bar-cell { display: flex; align-items: center; gap: 8px; }
+    .mini-bar { height: 6px; border-radius: 3px; min-width: 4px; }
+    .quad-badge { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 10px; text-transform: uppercase; letter-spacing: .5px; }
+    .quad-strong { background: #DCFCE7; color: #15803D; }
+    .quad-resilient { background: #FEF9C3; color: #92400E; }
+    .quad-at-risk { background: #FEE2E2; color: #991B1B; }
+    .quad-struggling { background: #EDE9FE; color: #5B21B6; }
+
+    .downloads-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; margin-top: 20px; }
+    .downloads-header { padding: 22px 28px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .downloads-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .downloads-sub { font-size: 13px; color: var(--muted); max-width: 520px; line-height: 1.5; }
+    .btn-github { display: inline-flex; align-items: center; gap: 7px; padding: 8px 16px; border: 1.5px solid var(--border); border-radius: 7px; background: var(--white); font-family: inherit; font-size: 13px; font-weight: 600; color: var(--text); text-decoration: none; white-space: nowrap; flex-shrink: 0; transition: border-color .15s, color .15s; }
+    .btn-github:hover { border-color: var(--teal); color: var(--teal); }
+    .dl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+    @media (max-width: 700px) { .dl-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .dl-grid { grid-template-columns: 1fr; } }
+    .dl-card { padding: 18px 20px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 7px; }
+    .dl-card:nth-child(3n) { border-right: none; }
+    @media (max-width: 700px) { .dl-card:nth-child(3n) { border-right: 1px solid var(--border); } .dl-card:nth-child(2n) { border-right: none; } }
+    @media (max-width: 480px) { .dl-card { border-right: none; } }
+    .dl-card-master { background: var(--teal-light); border-color: rgba(15,110,86,.18); }
+    .dl-tag { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--teal); }
+    .dl-title { font-size: 13px; font-weight: 700; line-height: 1.4; }
+    .dl-year { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; }
+    .dl-filename { font-size: 11px; font-weight: 500; color: var(--text); word-break: break-all; font-family: 'Courier New', monospace; }
+    .dl-meta { display: flex; align-items: center; gap: 8px; }
+    .dl-badge { font-size: 10px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; }
+    .dl-badge.csv { background: #DBEAFE; color: #1D4ED8; } .dl-badge.xlsx { background: #DCFCE7; color: #15803D; }
+    .dl-size { font-size: 11px; color: var(--muted); }
+    .dl-btn { display: inline-flex; align-items: center; gap: 5px; padding: 7px 14px; background: var(--teal); color: var(--white); border: none; border-radius: 6px; font-family: inherit; font-size: 12px; font-weight: 600; text-decoration: none; cursor: pointer; transition: background .15s; align-self: flex-start; margin-top: 2px; }
+    .dl-btn:hover { background: var(--teal-dark); }
+    .dl-source { font-size: 11px; color: var(--muted); line-height: 1.4; margin-top: auto; padding-top: 4px; }
+
+    footer { background: #0F172A; color: rgba(255,255,255,.65); padding: 40px 24px; font-size: 13px; line-height: 1.8; text-align: center; }
+    footer strong { color: #fff; } footer a { color: #5EEAD4; text-decoration: none; } footer a:hover { text-decoration: underline; }
+    .footer-inner { max-width: 900px; margin: 0 auto; }
+    .footer-sources { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; text-align: left; margin-bottom: 28px; }
+    .footer-sources h4 { color: #fff; font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+    .footer-src { margin-bottom: 5px; font-size: 12px; }
+    .footer-div { border-top: 1px solid rgba(255,255,255,.1); padding-top: 20px; }
+    .footer-series { font-size: 12px; opacity: .55; margin-bottom: 6px; }
+    .footer-name { font-size: 15px; font-weight: 700; color: #fff; }
+    .footer-role { font-size: 13px; opacity: .7; margin-bottom: 8px; }
+    .footer-links { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; font-size: 12px; }
+    @media (max-width: 600px) { .stat-strip { grid-template-columns: repeat(2, 1fr); } .hero { padding: 40px 20px 52px; } }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="../">From Memphis to 50 States</a>
+  <div class="nav-links">
+    <a href="../day1/">Day 1</a>
+    <a href="../day2/">Day 2</a>
+    <a href="../day3/" class="active">Day 3</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">Day 3 of 10 · Tennessee Statewide</div>
+  <h1>147 Tennessee Districts.<br><em>Three Data Points Each.</em></h1>
+  <p class="hero-sub">AI found the 5 districts that defy every expectation — high absenteeism, strong graduation. Here's what 124 districts look like when you plot absenteeism against outcomes.</p>
+</div>
+
+<div class="stat-strip">
+  <div class="stat-card"><div class="stat-num teal">124</div><div class="stat-label">TN Districts<br>Analyzed</div></div>
+  <div class="stat-card"><div class="stat-num amber">17.0%</div><div class="stat-label">TN Average<br>Absenteeism</div></div>
+  <div class="stat-card"><div class="stat-num green">89.9%</div><div class="stat-label">TN Average<br>Graduation Rate</div></div>
+  <div class="stat-card"><div class="stat-num teal">18.9</div><div class="stat-label">TN Average<br>ACT Composite</div></div>
+</div>
+
+<div class="container">
+
+  <div class="ai-box" style="margin-top:48px">
+    <div class="ai-label">🤖 AI Analysis — Key Finding</div>
+    <p>
+      Across 124 Tennessee districts in 2023–24, <strong>absenteeism alone does not predict graduation rate</strong> —
+      and the exceptions reveal the real story. Of 66 districts with above-average absenteeism,
+      <strong>26 still maintained above-average graduation rates</strong>, defying the expected pattern.
+      Sequatchie County leads: <strong>32.7% absenteeism yet 91.4% graduation</strong>.
+      Meanwhile, Memphis-Shelby County Schools sits in the at-risk quadrant — <strong>29.5% absenteeism
+      and only 82.8% graduation</strong>, 7 points below the state average. The ACT composite gap is stark:
+      Williamson County scores <strong>25.2</strong> while MSCS scores <strong>16.4</strong> —
+      an <strong>8.8-point gap</strong> within the same state funding system. Policy choices at the
+      district level, not absenteeism alone, appear to determine whether students graduate.
+    </p>
+  </div>
+
+  <div class="section">
+    <div class="section-hd">
+      <div class="section-title">Absenteeism vs. Graduation Rate — All 124 Districts</div>
+      <div class="section-sub">Each dot is one Tennessee school district · 2023–24 · Hover for details · MSCS = star ⭐ · Dashed lines = TN averages</div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Does Absenteeism Predict Graduation? — Scatter Plot</div>
+      <div class="chart-sub">Source: TDOE District-Level Absenteeism + Graduation Rate Files · 2023–24 · Color = quadrant relative to TN averages (abs 17.0%, grad 89.9%)</div>
+      <div class="chart-wrap" style="height:440px"><canvas id="scatterChart"></canvas></div>
+      <div class="scatter-legend">
+        <span><span class="leg-dot" style="background:#16A34A"></span>Strong (low abs, high grad)</span>
+        <span><span class="leg-dot" style="background:#D97706"></span>Resilient (high abs, high grad)</span>
+        <span><span class="leg-dot" style="background:#DC2626"></span>At-Risk (high abs, low grad)</span>
+        <span><span class="leg-dot" style="background:#7C3AED"></span>Struggling (low abs, low grad)</span>
+        <span><span class="leg-dot" style="background:#F59E0B"></span>MSCS (Memphis)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-hd">
+      <div class="section-title">The 5 Districts That Defy the Pattern</div>
+      <div class="section-sub">High chronic absenteeism — yet graduation rates above the state average. AI identified these as the most counter-intuitive outcomes in the dataset.</div>
+    </div>
+    <div class="outlier-grid">
+      <div class="outlier-card resilient">
+        <div class="outlier-rank">Outlier #1 — Most Resilient</div>
+        <div class="outlier-name">Sequatchie County</div>
+        <div class="outlier-metrics">
+          <div class="outlier-metric"><div class="om-val red">32.7%</div><div class="om-label">Absenteeism</div></div>
+          <div class="outlier-metric"><div class="om-val green">91.4%</div><div class="om-label">Graduation</div></div>
+          <div class="outlier-metric"><div class="om-val blue">19.2</div><div class="om-label">ACT Avg</div></div>
+        </div>
+        <div class="outlier-note">Highest absenteeism among all high-graduation districts. Nearly 1 in 3 students chronically absent, yet graduation rate exceeds the TN state average by 1.5 points.</div>
+      </div>
+      <div class="outlier-card resilient">
+        <div class="outlier-rank">Outlier #2</div>
+        <div class="outlier-name">Madison County</div>
+        <div class="outlier-metrics">
+          <div class="outlier-metric"><div class="om-val red">28.9%</div><div class="om-label">Absenteeism</div></div>
+          <div class="outlier-metric"><div class="om-val green">92.2%</div><div class="om-label">Graduation</div></div>
+          <div class="outlier-metric"><div class="om-val blue">17.1</div><div class="om-label">ACT Avg</div></div>
+        </div>
+        <div class="outlier-note">Jackson-based district. Absenteeism nearly double the state average but graduation 2.3 points above. Suggests strong student retention programs despite attendance challenges.</div>
+      </div>
+      <div class="outlier-card resilient">
+        <div class="outlier-rank">Outlier #3</div>
+        <div class="outlier-name">Cocke County</div>
+        <div class="outlier-metrics">
+          <div class="outlier-metric"><div class="om-val red">24.7%</div><div class="om-label">Absenteeism</div></div>
+          <div class="outlier-metric"><div class="om-val green">95.2%</div><div class="om-label">Graduation</div></div>
+          <div class="outlier-metric"><div class="om-val blue">17.4</div><div class="om-label">ACT Avg</div></div>
+        </div>
+        <div class="outlier-note">95.2% graduation despite 24.7% chronic absence — one of the largest gaps between these two metrics statewide. Top-quartile graduation with well-above-average absenteeism.</div>
+      </div>
+      <div class="outlier-card resilient">
+        <div class="outlier-rank">Outlier #4</div>
+        <div class="outlier-name">Hawkins County</div>
+        <div class="outlier-metrics">
+          <div class="outlier-metric"><div class="om-val red">23.9%</div><div class="om-label">Absenteeism</div></div>
+          <div class="outlier-metric"><div class="om-val green">94.8%</div><div class="om-label">Graduation</div></div>
+          <div class="outlier-metric"><div class="om-val blue">18.3</div><div class="om-label">ACT Avg</div></div>
+        </div>
+        <div class="outlier-note">Northeastern TN. Absenteeism 40% above state average, graduation 5 points above it. ACT near state average — strong outcomes despite significant attendance pressure.</div>
+      </div>
+      <div class="outlier-card resilient">
+        <div class="outlier-rank">Outlier #5</div>
+        <div class="outlier-name">Cleveland</div>
+        <div class="outlier-metrics">
+          <div class="outlier-metric"><div class="om-val red">24.5%</div><div class="om-label">Absenteeism</div></div>
+          <div class="outlier-metric"><div class="om-val green">94.1%</div><div class="om-label">Graduation</div></div>
+          <div class="outlier-metric"><div class="om-val blue">19.2</div><div class="om-label">ACT Avg</div></div>
+        </div>
+        <div class="outlier-note">Bradley County's city district. High absenteeism with 94.1% graduation and above-average ACT — a rare combination. Outperforms peers with similar attendance profiles.</div>
+      </div>
+      <div class="outlier-card mscs">
+        <div class="outlier-rank">Memphis Context — At-Risk Quadrant</div>
+        <div class="outlier-name">Memphis-Shelby County Schools ⭐</div>
+        <div class="outlier-metrics">
+          <div class="outlier-metric"><div class="om-val red">29.5%</div><div class="om-label">Absenteeism</div></div>
+          <div class="outlier-metric"><div class="om-val amber">82.8%</div><div class="om-label">Graduation</div></div>
+          <div class="outlier-metric"><div class="om-val amber">16.4</div><div class="om-label">ACT Avg</div></div>
+        </div>
+        <div class="outlier-note">MSCS absenteeism is comparable to the 5 resilient districts above — but graduation and ACT outcomes don't match. Scale (110,000+ students) and funding gaps are likely differentiating factors.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-hd">
+      <div class="section-title">Search Any Tennessee District</div>
+      <div class="section-sub">Type a district name · Sort by any metric · All 124 districts with complete 2023–24 data</div>
+    </div>
+    <div class="search-row">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search district name…" autocomplete="off">
+      <select class="sort-select" id="sortSelect">
+        <option value="name">Sort: District Name</option>
+        <option value="abs_desc">Sort: Absenteeism (High → Low)</option>
+        <option value="abs_asc">Sort: Absenteeism (Low → High)</option>
+        <option value="grad_desc">Sort: Graduation (High → Low)</option>
+        <option value="grad_asc">Sort: Graduation (Low → High)</option>
+        <option value="act_desc">Sort: ACT Score (High → Low)</option>
+        <option value="act_asc">Sort: ACT Score (Low → High)</option>
+      </select>
+    </div>
+    <div class="chart-card" style="padding:0">
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>District</th><th>Absenteeism</th><th>Graduation Rate</th><th>ACT Avg</th><th>ACT ≥ 21</th><th>Quadrant</th>
+          </tr></thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-top:10px" id="rowCount"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-hd">
+      <div class="section-title">Download Raw Data</div>
+      <div class="section-sub">All source files pulled directly from Tennessee Department of Education — raw as downloaded, no modifications.</div>
+    </div>
+    <div class="downloads-card">
+      <div class="downloads-header">
+        <div>
+          <div class="downloads-title">TDOE District-Level Files — Absenteeism · Graduation · ACT · 2023–24</div>
+          <div class="downloads-sub">4 source files + 1 merged master CSV · All Tennessee districts · All Students subgroup</div>
+        </div>
+        <a class="btn-github" href="https://github.com/MahendraAarumalla/memphis-education/tree/main/day3/data" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          View all on GitHub
+        </a>
+      </div>
+      <div class="dl-grid">
+        <div class="dl-card">
+          <div class="dl-tag">Day 3 · Absenteeism</div>
+          <div class="dl-title">TN District Chronic Absenteeism — 2023–24</div>
+          <div class="dl-year">School Year 2023–24 · All Districts · All Subgroups</div>
+          <div class="dl-filename">district_chronic_absenteeism_suppressed_2024.xlsx</div>
+          <div class="dl-meta"><span class="dl-badge xlsx">XLSX</span><span class="dl-size">~200 KB</span></div>
+          <a class="dl-btn" href="https://raw.githubusercontent.com/MahendraAarumalla/memphis-education/main/day3/data/district_chronic_absenteeism_suppressed_2024.xlsx" download>⬇ Download</a>
+          <div class="dl-source">Source: TN Dept. of Education · tn.gov/education/data</div>
+        </div>
+        <div class="dl-card">
+          <div class="dl-tag">Day 3 · Graduation</div>
+          <div class="dl-title">TN District Graduation Rate — 2023–24</div>
+          <div class="dl-year">School Year 2023–24 · All Districts · Federal ACGR</div>
+          <div class="dl-filename">2023-24_district_grad_rate_suppressed.xlsx</div>
+          <div class="dl-meta"><span class="dl-badge xlsx">XLSX</span><span class="dl-size">116 KB</span></div>
+          <a class="dl-btn" href="https://raw.githubusercontent.com/MahendraAarumalla/memphis-education/main/day3/data/2023-24_district_grad_rate_suppressed.xlsx" download>⬇ Download</a>
+          <div class="dl-source">Source: TN Dept. of Education · tn.gov/education/data</div>
+        </div>
+        <div class="dl-card">
+          <div class="dl-tag">Day 3 · Graduation</div>
+          <div class="dl-title">TN District Graduation Rate — 2022–23</div>
+          <div class="dl-year">School Year 2022–23 · All Districts · Federal ACGR</div>
+          <div class="dl-filename">2022-23_district_grad_rate_suppressed.xlsx</div>
+          <div class="dl-meta"><span class="dl-badge xlsx">XLSX</span><span class="dl-size">134 KB</span></div>
+          <a class="dl-btn" href="https://raw.githubusercontent.com/MahendraAarumalla/memphis-education/main/day3/data/2022-23_district_grad_rate_suppressed.xlsx" download>⬇ Download</a>
+          <div class="dl-source">Source: TN Dept. of Education · tn.gov/education/data</div>
+        </div>
+        <div class="dl-card">
+          <div class="dl-tag">Day 3 · ACT Scores</div>
+          <div class="dl-title">TN District ACT Scores — 2023–24</div>
+          <div class="dl-year">School Year 2023–24 · All Districts · All Subgroups</div>
+          <div class="dl-filename">2023-24_ACT_district_suppressed.xlsx</div>
+          <div class="dl-meta"><span class="dl-badge xlsx">XLSX</span><span class="dl-size">53 KB</span></div>
+          <a class="dl-btn" href="https://raw.githubusercontent.com/MahendraAarumalla/memphis-education/main/day2/data/2023-24_ACT_district_suppressed.xlsx" download>⬇ Download</a>
+          <div class="dl-source">Source: TN Dept. of Education · tn.gov/education/data</div>
+        </div>
+        <div class="dl-card dl-card-master">
+          <div class="dl-tag">Day 3 · Master Dataset</div>
+          <div class="dl-title">All 124 TN Districts — 3 Metrics Merged</div>
+          <div class="dl-year">Absenteeism · Graduation · ACT · 2023–24</div>
+          <div class="dl-filename">tn_districts_master_2024.csv</div>
+          <div class="dl-meta"><span class="dl-badge csv">CSV</span><span class="dl-size">~12 KB</span></div>
+          <a class="dl-btn" href="https://raw.githubusercontent.com/MahendraAarumalla/memphis-education/main/day3/data/tn_districts_master_2024.csv" download>⬇ Download</a>
+          <div class="dl-source">Built from 3 TDOE source files · Verified against published reports</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-sources">
+      <div>
+        <h4>Data Sources</h4>
+        <div class="footer-src">📊 <strong>TDOE District Absenteeism 2023–24</strong><br>
+          <a href="https://www.tn.gov/education/districts/federal-programs-and-oversight/data/data-downloads.html" target="_blank" rel="noopener">tn.gov/education → Data Downloads → Chronic Absenteeism</a></div>
+        <div class="footer-src">📋 <strong>TDOE District Graduation Rates 2023–24</strong><br>
+          <a href="https://www.tn.gov/education/districts/federal-programs-and-oversight/data/data-downloads.html" target="_blank" rel="noopener">tn.gov/education → Data Downloads → Graduation Rate</a></div>
+        <div class="footer-src">📈 <strong>TDOE District ACT Scores 2023–24</strong><br>
+          <a href="https://www.tn.gov/education/districts/federal-programs-and-oversight/data/data-downloads.html" target="_blank" rel="noopener">tn.gov/education → Data Downloads → ACT</a></div>
+      </div>
+      <div>
+        <h4>About This Series</h4>
+        <p style="font-size:12px;line-height:1.7;color:rgba(255,255,255,.6)">
+          Day 3 of a 10-day challenge — one AI-powered education dashboard per day using only
+          public government data. No demographic framing. All analysis uses district type,
+          funding, and geography lenses.<br><br>
+          <strong style="color:#fff">All data is public-source only.</strong>
+        </p>
+      </div>
+    </div>
+    <div class="footer-div">
+      <div class="footer-series">From Memphis to 50 States — AI Meets Education Data · Day 3 of 10</div>
+      <div class="footer-name">Mahendra Aarumalla</div>
+      <div class="footer-role">Data Scientist · AI-Driven Education Insights · Memphis, TN</div>
+      <div class="footer-links">
+        <a href="https://linkedin.com/in/a-mahendra" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a href="../">Full 10-Day Series</a>
+        <a href="../day2/">← Day 2</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+const DISTRICTS = [{"id":10,"name":"Anderson County","abs":14.5,"grad":89.2,"act":18.7,"act21":35.4,"quad":"struggling"},{"id":12,"name":"Oak Ridge","abs":15.0,"grad":91.8,"act":21.3,"act21":52.8,"quad":"strong"},{"id":20,"name":"Bedford County","abs":16.8,"grad":92.4,"act":18.6,"act21":30.2,"quad":"resilient"},{"id":30,"name":"Benton County","abs":15.5,"grad":97.6,"act":18.9,"act21":35.8,"quad":"strong"},{"id":40,"name":"Bledsoe County","abs":19.7,"grad":83.3,"act":16.8,"act21":22.7,"quad":"at-risk"},{"id":50,"name":"Blount County","abs":16.5,"grad":95.8,"act":19.2,"act21":39.4,"quad":"strong"},{"id":51,"name":"Alcoa","abs":6.8,"grad":96.3,"act":20.4,"act21":46.2,"quad":"strong"},{"id":52,"name":"Maryville","abs":8.0,"grad":91.4,"act":23.2,"act21":67.3,"quad":"strong"},{"id":60,"name":"Bradley County","abs":17.2,"grad":92.9,"act":19.2,"act21":39.4,"quad":"resilient"},{"id":61,"name":"Cleveland","abs":24.5,"grad":94.1,"act":19.2,"act21":37.9,"quad":"resilient"},{"id":70,"name":"Campbell County","abs":21.3,"grad":83.0,"act":16.8,"act21":18.2,"quad":"at-risk"},{"id":80,"name":"Cannon County","abs":16.4,"grad":85.6,"act":17.4,"act21":29.8,"quad":"struggling"},{"id":92,"name":"Hollow Rock - Bruceton","abs":9.6,"grad":91.5,"act":17.1,"act21":25.6,"quad":"strong"},{"id":93,"name":"Huntingdon Special School District","abs":7.1,"grad":86.8,"act":18.2,"act21":28.7,"quad":"struggling"},{"id":94,"name":"McKenzie","abs":5.8,"grad":96.8,"act":19.4,"act21":43.6,"quad":"strong"},{"id":97,"name":"West Carroll Sp Dist","abs":16.4,"grad":98.4,"act":17.6,"act21":24.2,"quad":"strong"},{"id":100,"name":"Carter County","abs":20.4,"grad":85.3,"act":18.0,"act21":28.7,"quad":"at-risk"},{"id":101,"name":"Elizabethton","abs":18.8,"grad":95.5,"act":19.7,"act21":42.5,"quad":"resilient"},{"id":110,"name":"Cheatham County","abs":19.4,"grad":87.6,"act":19.3,"act21":35.4,"quad":"at-risk"},{"id":120,"name":"Chester County","abs":16.1,"grad":90.6,"act":19.7,"act21":38.9,"quad":"strong"},{"id":130,"name":"Claiborne County","abs":23.1,"grad":89.5,"act":17.9,"act21":24.2,"quad":"at-risk"},{"id":140,"name":"Clay County","abs":18.2,"grad":95.3,"act":17.9,"act21":23.8,"quad":"resilient"},{"id":150,"name":"Cocke County","abs":24.7,"grad":95.2,"act":17.4,"act21":23.4,"quad":"resilient"},{"id":160,"name":"Coffee County","abs":12.1,"grad":89.3,"act":18.7,"act21":33.6,"quad":"struggling"},{"id":162,"name":"Tullahoma","abs":17.8,"grad":87.8,"act":20.3,"act21":46.2,"quad":"at-risk"},{"id":170,"name":"Crockett County","abs":10.3,"grad":97.2,"act":17.8,"act21":24.6,"quad":"strong"},{"id":180,"name":"Cumberland County","abs":17.5,"grad":90.9,"act":19.2,"act21":38.2,"quad":"resilient"},{"id":190,"name":"Davidson County","abs":24.1,"grad":84.6,"act":17.6,"act21":25.7,"quad":"at-risk"},{"id":200,"name":"Decatur County","abs":20.4,"grad":80.5,"act":19.4,"act21":38.0,"quad":"at-risk"},{"id":210,"name":"DeKalb County","abs":16.7,"grad":85.3,"act":19.7,"act21":37.9,"quad":"at-risk"},{"id":220,"name":"Dickson County","abs":15.4,"grad":94.8,"act":19.0,"act21":34.4,"quad":"strong"},{"id":230,"name":"Dyer County","abs":11.1,"grad":96.3,"act":20.4,"act21":47.6,"quad":"strong"},{"id":231,"name":"Dyersburg","abs":11.2,"grad":93.5,"act":20.0,"act21":46.5,"quad":"strong"},{"id":240,"name":"Fayette County Public Schools","abs":20.1,"grad":87.6,"act":16.5,"act21":16.1,"quad":"at-risk"},{"id":250,"name":"Fentress County","abs":21.1,"grad":96.9,"act":19.2,"act21":33.9,"quad":"resilient"},{"id":260,"name":"Franklin County","abs":17.4,"grad":86.2,"act":18.2,"act21":28.3,"quad":"at-risk"},{"id":271,"name":"Humboldt City Schools","abs":21.7,"grad":85.7,"act":15.7,"act21":7.8,"quad":"at-risk"},{"id":272,"name":"Milan","abs":11.4,"grad":88.7,"act":19.1,"act21":34.2,"quad":"struggling"},{"id":273,"name":"Trenton","abs":7.1,"grad":92.4,"act":18.2,"act21":25.0,"quad":"strong"},{"id":274,"name":"Bradford","abs":1.2,"grad":88.9,"act":20.7,"act21":44.1,"quad":"struggling"},{"id":275,"name":"Gibson Co Sp Dist","abs":7.2,"grad":94.1,"act":21.3,"act21":54.4,"quad":"strong"},{"id":280,"name":"Giles County","abs":17.0,"grad":86.8,"act":18.9,"act21":31.8,"quad":"at-risk"},{"id":290,"name":"Grainger County","abs":20.4,"grad":83.8,"act":17.3,"act21":24.6,"quad":"at-risk"},{"id":300,"name":"Greene County","abs":14.6,"grad":97.7,"act":19.1,"act21":37.5,"quad":"strong"},{"id":301,"name":"Greeneville","abs":11.2,"grad":90.9,"act":20.4,"act21":47.3,"quad":"strong"},{"id":310,"name":"Grundy County","abs":17.4,"grad":86.8,"act":18.1,"act21":23.7,"quad":"at-risk"},{"id":320,"name":"Hamblen County","abs":19.1,"grad":90.1,"act":18.5,"act21":32.5,"quad":"resilient"},{"id":330,"name":"Hamilton County","abs":19.9,"grad":92.2,"act":18.7,"act21":35.3,"quad":"resilient"},{"id":340,"name":"Hancock County","abs":24.8,"grad":75.9,"act":16.9,"act21":22.0,"quad":"at-risk"},{"id":350,"name":"Hardeman County Schools","abs":27.1,"grad":83.1,"act":17.0,"act21":19.5,"quad":"at-risk"},{"id":360,"name":"Hardin County","abs":15.8,"grad":82.8,"act":19.0,"act21":38.6,"quad":"struggling"},{"id":370,"name":"Hawkins County","abs":23.9,"grad":94.8,"act":18.3,"act21":29.7,"quad":"resilient"},{"id":380,"name":"Haywood County","abs":20.7,"grad":87.3,"act":15.5,"act21":9.1,"quad":"at-risk"},{"id":390,"name":"Henderson County","abs":18.5,"grad":90.2,"act":19.7,"act21":42.7,"quad":"resilient"},{"id":400,"name":"Henry County","abs":13.6,"grad":89.7,"act":18.9,"act21":34.5,"quad":"struggling"},{"id":410,"name":"Hickman County","abs":17.1,"grad":86.3,"act":18.2,"act21":30.9,"quad":"at-risk"},{"id":420,"name":"Houston County","abs":22.6,"grad":88.1,"act":19.1,"act21":32.1,"quad":"at-risk"},{"id":430,"name":"Humphreys County","abs":21.2,"grad":87.7,"act":19.5,"act21":40.9,"quad":"at-risk"},{"id":440,"name":"Jackson County","abs":11.4,"grad":87.8,"act":17.1,"act21":22.0,"quad":"struggling"},{"id":450,"name":"Jefferson County","abs":19.1,"grad":92.8,"act":18.8,"act21":35.1,"quad":"resilient"},{"id":460,"name":"Johnson County","abs":16.0,"grad":79.6,"act":17.5,"act21":23.4,"quad":"struggling"},{"id":470,"name":"Knox County","abs":19.6,"grad":90.2,"act":20.5,"act21":46.5,"quad":"resilient"},{"id":480,"name":"Lake County","abs":24.7,"grad":79.2,"act":16.8,"act21":19.1,"quad":"at-risk"},{"id":490,"name":"Lauderdale County","abs":19.8,"grad":83.3,"act":17.3,"act21":19.9,"quad":"at-risk"},{"id":500,"name":"Lawrence County","abs":15.4,"grad":88.7,"act":18.8,"act21":35.4,"quad":"struggling"},{"id":510,"name":"Lewis County","abs":23.0,"grad":73.1,"act":18.4,"act21":27.7,"quad":"at-risk"},{"id":520,"name":"Lincoln County","abs":17.7,"grad":93.8,"act":19.8,"act21":41.8,"quad":"resilient"},{"id":521,"name":"Fayetteville","abs":17.6,"grad":96.7,"act":17.5,"act21":24.1,"quad":"resilient"},{"id":530,"name":"Loudon County","abs":12.7,"grad":94.4,"act":19.3,"act21":40.1,"quad":"strong"},{"id":531,"name":"Lenoir City","abs":15.4,"grad":96.7,"act":19.2,"act21":37.6,"quad":"strong"},{"id":540,"name":"McMinn County","abs":15.1,"grad":90.2,"act":19.3,"act21":36.3,"quad":"strong"},{"id":550,"name":"McNairy County","abs":13.1,"grad":91.3,"act":18.8,"act21":34.7,"quad":"strong"},{"id":560,"name":"Macon County","abs":9.6,"grad":96.4,"act":18.3,"act21":27.6,"quad":"strong"},{"id":570,"name":"Madison County","abs":28.9,"grad":92.2,"act":17.1,"act21":21.7,"quad":"resilient"},{"id":580,"name":"Marion County","abs":23.7,"grad":85.3,"act":18.8,"act21":34.4,"quad":"at-risk"},{"id":590,"name":"Marshall County","abs":18.2,"grad":93.7,"act":19.2,"act21":36.9,"quad":"resilient"},{"id":600,"name":"Maury County","abs":18.8,"grad":85.9,"act":17.4,"act21":24.8,"quad":"at-risk"},{"id":610,"name":"Meigs County","abs":6.4,"grad":94.4,"act":18.8,"act21":31.7,"quad":"strong"},{"id":620,"name":"Monroe County","abs":18.4,"grad":85.6,"act":17.6,"act21":25.1,"quad":"at-risk"},{"id":630,"name":"Montgomery County","abs":15.2,"grad":91.6,"act":19.5,"act21":39.8,"quad":"strong"},{"id":640,"name":"Moore County","abs":14.3,"grad":90.0,"act":18.8,"act21":29.8,"quad":"strong"},{"id":650,"name":"Morgan County","abs":13.5,"grad":93.2,"act":16.5,"act21":14.8,"quad":"strong"},{"id":660,"name":"Obion County","abs":14.0,"grad":88.5,"act":20.1,"act21":45.8,"quad":"struggling"},{"id":661,"name":"Union City","abs":8.9,"grad":83.5,"act":21.4,"act21":50.7,"quad":"struggling"},{"id":670,"name":"Overton County","abs":16.9,"grad":85.5,"act":18.3,"act21":29.3,"quad":"at-risk"},{"id":680,"name":"Perry County","abs":17.2,"grad":97.2,"act":17.2,"act21":24.6,"quad":"resilient"},{"id":690,"name":"Pickett County","abs":17.6,"grad":88.1,"act":18.2,"act21":27.5,"quad":"at-risk"},{"id":700,"name":"Polk County","abs":21.5,"grad":79.4,"act":18.4,"act21":32.4,"quad":"at-risk"},{"id":710,"name":"Putnam County","abs":17.1,"grad":89.4,"act":19.8,"act21":42.3,"quad":"at-risk"},{"id":720,"name":"Rhea County","abs":17.3,"grad":87.4,"act":18.9,"act21":37.9,"quad":"at-risk"},{"id":730,"name":"Roane County","abs":17.1,"grad":89.6,"act":19.4,"act21":39.6,"quad":"at-risk"},{"id":740,"name":"Robertson County","abs":18.4,"grad":77.1,"act":18.1,"act21":28.3,"quad":"at-risk"},{"id":750,"name":"Rutherford County","abs":11.9,"grad":96.1,"act":19.9,"act21":41.4,"quad":"strong"},{"id":760,"name":"Scott County","abs":19.4,"grad":82.4,"act":17.2,"act21":21.1,"quad":"at-risk"},{"id":761,"name":"Oneida","abs":16.7,"grad":97.6,"act":19.3,"act21":43.0,"quad":"resilient"},{"id":770,"name":"Sequatchie County","abs":32.7,"grad":91.4,"act":19.2,"act21":38.8,"quad":"resilient"},{"id":780,"name":"Sevier County","abs":23.3,"grad":90.6,"act":18.9,"act21":34.0,"quad":"resilient"},{"id":792,"name":"Memphis-Shelby County Schools","abs":29.5,"grad":82.8,"act":16.4,"act21":16.5,"quad":"at-risk"},{"id":793,"name":"Arlington","abs":6.9,"grad":95.4,"act":22.2,"act21":63.5,"quad":"strong"},{"id":794,"name":"Bartlett","abs":13.9,"grad":93.1,"act":20.9,"act21":50.2,"quad":"strong"},{"id":795,"name":"Collierville","abs":10.2,"grad":93.7,"act":23.4,"act21":67.1,"quad":"strong"},{"id":796,"name":"Germantown","abs":6.8,"grad":94.1,"act":24.1,"act21":71.8,"quad":"strong"},{"id":798,"name":"Millington Municipal Schools","abs":20.0,"grad":90.8,"act":19.3,"act21":38.6,"quad":"resilient"},{"id":800,"name":"Smith County","abs":11.4,"grad":87.7,"act":19.0,"act21":33.2,"quad":"struggling"},{"id":810,"name":"Stewart County","abs":18.4,"grad":85.7,"act":19.3,"act21":38.4,"quad":"at-risk"},{"id":820,"name":"Sullivan County","abs":21.2,"grad":93.4,"act":18.6,"act21":33.2,"quad":"resilient"},{"id":821,"name":"Bristol","abs":15.4,"grad":96.8,"act":20.5,"act21":45.0,"quad":"strong"},{"id":822,"name":"Kingsport","abs":23.6,"grad":83.5,"act":21.0,"act21":46.5,"quad":"at-risk"},{"id":830,"name":"Sumner County","abs":11.6,"grad":93.5,"act":20.7,"act21":48.6,"quad":"strong"},{"id":840,"name":"Tipton County","abs":14.3,"grad":90.8,"act":20.2,"act21":43.9,"quad":"strong"},{"id":850,"name":"Trousdale County","abs":12.6,"grad":91.0,"act":19.4,"act21":41.7,"quad":"strong"},{"id":860,"name":"Unicoi County","abs":20.9,"grad":95.8,"act":18.1,"act21":28.0,"quad":"resilient"},{"id":870,"name":"Union County","abs":14.6,"grad":84.6,"act":17.0,"act21":23.9,"quad":"struggling"},{"id":880,"name":"Van Buren County","abs":15.4,"grad":98.3,"act":18.7,"act21":34.5,"quad":"strong"},{"id":890,"name":"Warren County","abs":18.0,"grad":88.8,"act":18.7,"act21":34.6,"quad":"at-risk"},{"id":900,"name":"Washington County","abs":15.9,"grad":94.2,"act":19.8,"act21":41.5,"quad":"strong"},{"id":901,"name":"Johnson City","abs":13.1,"grad":94.1,"act":20.8,"act21":46.9,"quad":"strong"},{"id":910,"name":"Wayne County","abs":16.4,"grad":80.3,"act":17.6,"act21":25.6,"quad":"struggling"},{"id":920,"name":"Weakley County","abs":11.4,"grad":92.2,"act":20.0,"act21":42.6,"quad":"strong"},{"id":930,"name":"White County","abs":12.4,"grad":93.1,"act":19.1,"act21":39.1,"quad":"strong"},{"id":940,"name":"Williamson County","abs":7.5,"grad":96.5,"act":25.2,"act21":78.7,"quad":"strong"},{"id":950,"name":"Wilson County","abs":16.3,"grad":98.2,"act":20.7,"act21":47.8,"quad":"strong"},{"id":961,"name":"Alvin C. York Agricultural Institute","abs":19.9,"grad":96.6,"act":20.4,"act21":48.7,"quad":"resilient"},{"id":964,"name":"Tennessee Schools for the Deaf","abs":22.1,"grad":76.9,"act":null,"act21":null,"quad":"at-risk"}];
+
+const TN_AVG_ABS = 17.0, TN_AVG_GRAD = 89.9, MSCS_ID = 792;
+
+// SCATTER
+const scatterOverlay = {
+  id: 'scatterOverlay',
+  afterDraw(chart) {
+    const { ctx, chartArea, scales } = chart;
+    if (!chartArea || !scales.x || !scales.y) return;
+    const xAvg = scales.x.getPixelForValue(TN_AVG_ABS);
+    const yAvg = scales.y.getPixelForValue(TN_AVG_GRAD);
+    ctx.save();
+    ctx.setLineDash([5,4]); ctx.strokeStyle = 'rgba(100,116,139,0.4)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(xAvg, chartArea.top); ctx.lineTo(xAvg, chartArea.bottom); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(chartArea.left, yAvg); ctx.lineTo(chartArea.right, yAvg); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.font = '600 10px Inter, sans-serif'; ctx.fillStyle = 'rgba(100,116,139,0.5)';
+    ctx.textAlign = 'right';  ctx.fillText('LOW ABS / HIGH GRAD', xAvg - 6, chartArea.top + 14);
+    ctx.textAlign = 'left';   ctx.fillText('HIGH ABS / HIGH GRAD', xAvg + 6, chartArea.top + 14);
+    ctx.textAlign = 'right';  ctx.fillText('LOW ABS / LOW GRAD', xAvg - 6, chartArea.bottom - 6);
+    ctx.textAlign = 'left';   ctx.fillText('HIGH ABS / LOW GRAD', xAvg + 6, chartArea.bottom - 6);
+    ctx.restore();
+  }
+};
+
+function makeDs(quad, color) {
+  return { label: quad,
+    data: DISTRICTS.filter(d => d.quad === quad && d.id !== MSCS_ID).map(d => ({ x: d.abs, y: d.grad, label: d.name, act: d.act })),
+    backgroundColor: color + 'BB', borderColor: color, borderWidth: 1.5, pointRadius: 5, pointHoverRadius: 7, order: 2 };
+}
+const mscs = DISTRICTS.find(d => d.id === MSCS_ID);
+new Chart(document.getElementById('scatterChart').getContext('2d'), {
+  type: 'scatter', plugins: [scatterOverlay],
+  data: { datasets: [
+    makeDs('strong','#16A34A'), makeDs('resilient','#D97706'), makeDs('at-risk','#DC2626'), makeDs('struggling','#7C3AED'),
+    { label:'MSCS', data:[{ x:mscs.abs, y:mscs.grad, label:mscs.name, act:mscs.act }],
+      backgroundColor:'#F59E0B', borderColor:'#92400E', borderWidth:2.5, pointRadius:9, pointHoverRadius:12, pointStyle:'star', order:1 }
+  ]},
+  options: { responsive:true, maintainAspectRatio:false,
+    plugins: { legend:{display:false}, tooltip:{ callbacks:{
+      title: i => i[0].raw.label || '',
+      label: i => { const d=i.raw; const l=[`Absenteeism: ${d.x}%`,`Graduation: ${d.y}%`]; if(d.act) l.push(`ACT: ${d.act}`); return l; }
+    }}},
+    scales: {
+      x: { title:{display:true,text:'Chronic Absenteeism Rate (%)',font:{size:12},color:'#64748B'}, min:0, max:38, grid:{color:'rgba(0,0,0,0.04)'}, ticks:{callback:v=>v+'%',font:{size:11}} },
+      y: { title:{display:true,text:'Graduation Rate (%) — Federal ACGR',font:{size:12},color:'#64748B'}, min:65, max:102, grid:{color:'rgba(0,0,0,0.04)'}, ticks:{callback:v=>v+'%',font:{size:11}} }
+    }
+  }
+});
+
+// TABLE
+const QLABELS = { strong:'Strong', resilient:'Resilient', 'at-risk':'At-Risk', struggling:'Struggling' };
+let sort = 'name', search = '';
+
+function absBar(p) { const w=Math.round((p/35)*80); const c=p>=25?'#DC2626':p>=17?'#D97706':'#16A34A'; return `<div class="bar-cell"><span style="width:${w}px;background:${c}" class="mini-bar"></span>${p}%</div>`; }
+function gradBar(p) { const w=Math.round(Math.max(0,(p-65)/35)*80); const c=p>=92?'#16A34A':p>=85?'#D97706':'#DC2626'; return `<div class="bar-cell"><span style="width:${w}px;background:${c}" class="mini-bar"></span>${p}%</div>`; }
+
+function render() {
+  let rows = DISTRICTS.filter(d => d.name.toLowerCase().includes(search.toLowerCase()));
+  if (sort === 'name') { rows.sort((a,b) => a.name.localeCompare(b.name)); }
+  else { const [k,dir] = sort.split('_'); rows.sort((a,b) => { const va=a[k]??-999,vb=b[k]??-999; return dir==='desc'?vb-va:va-vb; }); }
+  document.getElementById('tableBody').innerHTML = rows.map(d => {
+    const m = d.id === MSCS_ID;
+    return `<tr class="${m?'mscs-row':''}"><td><strong>${d.name}</strong>${m?' ⭐':''}</td><td>${absBar(d.abs)}</td><td>${gradBar(d.grad)}</td><td>${d.act??'—'}</td><td>${d.act21!=null?d.act21+'%':'—'}</td><td><span class="quad-badge quad-${d.quad}">${QLABELS[d.quad]}</span></td></tr>`;
+  }).join('');
+  document.getElementById('rowCount').textContent = `Showing ${rows.length} of ${DISTRICTS.length} districts`;
+}
+document.getElementById('searchInput').addEventListener('input', e => { search = e.target.value; render(); });
+document.getElementById('sortSelect').addEventListener('change', e => { sort = e.target.value; render(); });
+render();
+
+}); // end DOMContentLoaded
+</script>
+</body>
+</html>
