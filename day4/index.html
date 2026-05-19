@@ -10,7 +10,7 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --teal:#0F6E56; --teal-dark:#0A4D3C; --teal-light:#E8F4F1;
+
       --red:#DC2626; --amber:#D97706; --green:#16A34A; --blue:#2563EB; --purple:#7C3AED;
       --slate:#64748B; --slate-light:#F1F5F9; --border:#E2E8F0;
       --text:#0F172A; --muted:#64748B; --white:#FFFFFF; --bg:#F8FAFB;
@@ -140,35 +140,59 @@
 
 <div class="hero">
   <div class="hero-badge">Day 4 of 10 · Tennessee Equity Analysis</div>
-  <h1>Tennessee's Test Scores Went Up.<br><em>Not for Everyone.</em></h1>
-  <p class="hero-sub">AI analyzed 140 Tennessee districts from 2019 to 2024. Statewide ELA improved. But Math proficiency declined in 3 of 4 income bands — and the gap between low-income and high-income districts widened in every subject.</p>
+  <h1>9 Years of Tennessee Test Data.<br><em>Memphis Never Caught Up.</em></h1>
+  <p class="hero-sub">TCAP proficiency from 2015 to 2025 — every year of available data. Memphis-Shelby County Schools has never closed its gap with the state average. After COVID, it widened. The income-equity gap between districts widened too.</p>
 </div>
 
 <div class="stat-strip">
-  <div class="stat-card"><div class="stat-num teal">140</div><div class="stat-label">TN Districts<br>Analyzed</div></div>
-  <div class="stat-card"><div class="stat-num red">−2.0</div><div class="stat-label">Math Change<br>Low-Income Avg</div></div>
-  <div class="stat-card"><div class="stat-num amber">+2.2</div><div class="stat-label">ELA Gain<br>Low-Income Avg</div></div>
-  <div class="stat-card"><div class="stat-num red">−7.2</div><div class="stat-label">MSCS Math<br>2019 → 2024</div></div>
+  <div class="stat-card"><div class="stat-num teal">9</div><div class="stat-label">Years of TCAP<br>Data Analyzed</div></div>
+  <div class="stat-card"><div class="stat-num red">18.6</div><div class="stat-label">Point Math Gap<br>MSCS vs TN (2025)</div></div>
+  <div class="stat-card"><div class="stat-num amber">7.4%</div><div class="stat-label">MSCS Math Low<br>Post-COVID 2021</div></div>
+  <div class="stat-card"><div class="stat-num red">−7.2</div><div class="stat-label">MSCS Math Pts<br>2019 → 2024</div></div>
 </div>
 
 <div class="container">
 
   <div class="ai-box" style="margin-top:48px">
-    <div class="ai-label">🤖 AI Analysis — Key Finding</div>
+    <div class="ai-label">🤖 AI Analysis — 9-Year Finding</div>
     <p>
-      From 2019 to 2024, Tennessee's statewide TCAP results look like a recovery story.
-      But when districts are grouped by county median household income, a different pattern emerges.
-      <strong>Math proficiency fell in 3 of 4 income bands</strong> — declining most sharply in the lowest-income
-      quartile (−2.0 points avg) while only upper-middle-income districts held a marginal gain (+0.6).
-      ELA improved across all groups, but <strong>low-income districts gained just 2.2 points vs. 4.6 points
-      in lower-middle-income districts</strong> — barely half the recovery rate.
-      Social Studies showed the widest divergence: <strong>upper-middle districts gained 6.4 points;
-      low-income districts gained only 2.8</strong>.
-      Memphis-Shelby County Schools — despite sitting in Shelby County's higher-income band —
-      saw math proficiency drop <strong>7.2 points</strong> (27.2% → 20.0%), the steepest decline of any
-      large district in the state. Policy responses focused on statewide averages risk masking
-      the communities where students are falling furthest behind.
+      Nine years of TCAP data reveal a consistent pattern: Memphis-Shelby County Schools has
+      tracked 10–20 points below the Tennessee state average across every subject, every year.
+      The 2017 drop statewide reflects the shift to TNReady's higher standard — not a true learning collapse.
+      But the COVID impact on MSCS was catastrophic and distinctive: <strong>Math proficiency fell to 7.4%
+      in 2021</strong>, compared to 29.4% for the state — a 22-point gap at the nadir.
+      By 2025, MSCS Math recovered only to 22.6% while the TN average reached 41.2% —
+      <strong>an 18.6-point gap that is wider than it was before the pandemic</strong> (12.7 points in 2019).
+      Income quartile analysis of the 2019 → 2024 window shows Math declined in 3 of 4 income bands,
+      with low-income districts losing 2.0 points on average while the state touted overall gains.
+      ELA improved across all groups, but <strong>gains were twice as large in lower-middle-income districts
+      vs. low-income districts</strong>. The pattern is not a funding story alone —
+      it is a compounding geographic and policy story that statewide averages systematically obscure.
     </p>
+  </div>
+
+  <!-- CHART 0: Multi-year trend -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="section-title">9-Year TCAP Trend — MSCS vs. Tennessee Average</div>
+      <div class="section-sub">% students at proficiency (All Students, Grades 3–8) · 2015–2025 · Select a subject</div>
+    </div>
+    <div class="chart-card">
+      <div class="tab-row" id="trendTabs">
+        <button class="tab-btn active" data-subj="ela">ELA</button>
+        <button class="tab-btn" data-subj="math">Math</button>
+        <button class="tab-btn" data-subj="science">Science</button>
+        <button class="tab-btn" data-subj="ss">Social Studies</button>
+      </div>
+      <div class="chart-wrap" style="height:340px"><canvas id="trendChart"></canvas></div>
+      <div class="caveat-box" style="margin-top:14px">
+        ⚠️ <strong>Three metrics used across this chart.</strong>
+        2015: Proficient/Advanced (pre-TNReady). 2017–2021: On Track or Mastered (TNReady).
+        2022–2025: Met or Exceeded Expectations (new benchmark). Metric changes explain
+        the 2017 and 2022 drops — not necessarily real learning declines. Use for directional trends only.
+        2016 = EOC only (no grades 3-8). 2020 = COVID testing waiver. Science data unavailable for 2019; Social Studies unavailable for 2015–2016.
+      </div>
+    </div>
   </div>
 
   <!-- CHART 1: Subject tabs -->
@@ -226,11 +250,11 @@
     </div>
   </div>
 
-  <!-- CHART 3: MSCS -->
+  <!-- CHART 3: MSCS vs TN 2025 -->
   <div class="section">
     <div class="section-hd">
-      <div class="section-title">Memphis-Shelby County Schools — The Math Collapse</div>
-      <div class="section-sub">MSCS proficiency by subject · 2019 vs 2024 · Math dropped 7.2 points — steepest decline of any large TN district</div>
+      <div class="section-title">Memphis vs. Tennessee — Current State (2025)</div>
+      <div class="section-sub">MSCS vs TN state average by subject · 2025 ACH assessment · Gap widest in Math: 18.6 points</div>
     </div>
     <div class="chart-card">
       <div class="chart-wrap" style="height:270px"><canvas id="mscsChart"></canvas></div>
@@ -422,6 +446,102 @@ document.addEventListener('DOMContentLoaded', function () {
 
 const DISTRICTS = [{"id":10,"name":"Anderson County","ela19":29.7,"ela24":34.9,"ela_d":5.2,"math19":35.6,"math24":35.6,"math_d":0.0,"ss19":34.3,"ss24":42.4,"ss_d":8.1,"income":55200,"q":"Q3 Upper-Mid"},{"id":11,"name":"Clinton","ela19":43.5,"ela24":50.2,"ela_d":6.7,"math19":54.0,"math24":51.5,"math_d":-2.5,"ss19":51.8,"ss24":64.0,"ss_d":12.2,"income":55200,"q":"Q3 Upper-Mid"},{"id":12,"name":"Oak Ridge","ela19":37.8,"ela24":47.9,"ela_d":10.1,"math19":37.9,"math24":54.5,"math_d":16.6,"ss19":42.0,"ss24":57.8,"ss_d":15.8,"income":55200,"q":"Q3 Upper-Mid"},{"id":20,"name":"Bedford County","ela19":24.9,"ela24":30.8,"ela_d":5.9,"math19":30.7,"math24":35.6,"math_d":4.9,"ss19":31.3,"ss24":32.6,"ss_d":1.3,"income":55100,"q":"Q3 Upper-Mid"},{"id":30,"name":"Benton County","ela19":32.7,"ela24":31.3,"ela_d":-1.4,"math19":40.5,"math24":29.8,"math_d":-10.7,"ss19":44.8,"ss24":36.4,"ss_d":-8.4,"income":42800,"q":"Q1 Low-Income"},{"id":40,"name":"Bledsoe County","ela19":26.3,"ela24":33.9,"ela_d":7.6,"math19":34.9,"math24":34.6,"math_d":-0.3,"ss19":30.7,"ss24":35.7,"ss_d":5.0,"income":38500,"q":"Q1 Low-Income"},{"id":50,"name":"Blount County","ela19":31.4,"ela24":37.7,"ela_d":6.3,"math19":37.2,"math24":39.0,"math_d":1.8,"ss19":41.9,"ss24":43.6,"ss_d":1.7,"income":60200,"q":"Q4 High-Income"},{"id":51,"name":"Alcoa","ela19":34.0,"ela24":39.0,"ela_d":5.0,"math19":41.1,"math24":48.5,"math_d":7.4,"ss19":42.6,"ss24":63.0,"ss_d":20.4,"income":60200,"q":"Q4 High-Income"},{"id":52,"name":"Maryville","ela19":57.0,"ela24":62.4,"ela_d":5.4,"math19":62.5,"math24":67.6,"math_d":5.1,"ss19":72.2,"ss24":75.3,"ss_d":3.1,"income":60200,"q":"Q4 High-Income"},{"id":60,"name":"Bradley County","ela19":35.3,"ela24":40.3,"ela_d":5.0,"math19":41.8,"math24":43.4,"math_d":1.6,"ss19":39.1,"ss24":41.8,"ss_d":2.7,"income":57400,"q":"Q4 High-Income"},{"id":61,"name":"Cleveland","ela19":31.8,"ela24":30.1,"ela_d":-1.7,"math19":33.3,"math24":30.3,"math_d":-3.0,"ss19":38.7,"ss24":36.7,"ss_d":-2.0,"income":57400,"q":"Q4 High-Income"},{"id":70,"name":"Campbell County","ela19":24.4,"ela24":28.1,"ela_d":3.7,"math19":30.1,"math24":32.7,"math_d":2.6,"ss19":19.8,"ss24":25.9,"ss_d":6.1,"income":37300,"q":"Q1 Low-Income"},{"id":80,"name":"Cannon County","ela19":24.5,"ela24":21.1,"ela_d":-3.4,"math19":27.5,"math24":17.1,"math_d":-10.4,"ss19":31.1,"ss24":29.7,"ss_d":-1.4,"income":49500,"q":"Q3 Upper-Mid"},{"id":92,"name":"Hollow Rock - Bruceton","ela19":30.1,"ela24":26.8,"ela_d":-3.3,"math19":41.1,"math24":39.8,"math_d":-1.3,"ss19":19.9,"ss24":21.0,"ss_d":1.1,"income":43200,"q":"Q1 Low-Income"},{"id":93,"name":"Huntingdon Special School District","ela19":32.9,"ela24":37.7,"ela_d":4.8,"math19":41.4,"math24":46.9,"math_d":5.5,"ss19":42.3,"ss24":44.5,"ss_d":2.2,"income":43200,"q":"Q1 Low-Income"},{"id":94,"name":"McKenzie","ela19":34.5,"ela24":33.7,"ela_d":-0.8,"math19":45.7,"math24":43.9,"math_d":-1.8,"ss19":48.0,"ss24":60.9,"ss_d":12.9,"income":43200,"q":"Q1 Low-Income"},{"id":95,"name":"South Carroll","ela19":39.0,"ela24":25.9,"ela_d":-13.1,"math19":46.6,"math24":26.1,"math_d":-20.5,"ss19":40.0,"ss24":27.1,"ss_d":-12.9,"income":43200,"q":"Q1 Low-Income"},{"id":97,"name":"West Carroll Sp Dist","ela19":29.0,"ela24":33.8,"ela_d":4.8,"math19":30.9,"math24":25.5,"math_d":-5.4,"ss19":29.6,"ss24":36.8,"ss_d":7.2,"income":43200,"q":"Q1 Low-Income"},{"id":100,"name":"Carter County","ela19":29.7,"ela24":34.1,"ela_d":4.4,"math19":35.7,"math24":37.9,"math_d":2.2,"ss19":39.8,"ss24":41.9,"ss_d":2.1,"income":44100,"q":"Q2 Lower-Mid"},{"id":101,"name":"Elizabethton","ela19":43.0,"ela24":49.2,"ela_d":6.2,"math19":51.4,"math24":47.4,"math_d":-4.0,"ss19":62.0,"ss24":59.5,"ss_d":-2.5,"income":44100,"q":"Q2 Lower-Mid"},{"id":110,"name":"Cheatham County","ela19":31.3,"ela24":36.6,"ela_d":5.3,"math19":41.4,"math24":39.7,"math_d":-1.7,"ss19":34.8,"ss24":42.0,"ss_d":7.2,"income":69400,"q":"Q4 High-Income"},{"id":120,"name":"Chester County","ela19":40.2,"ela24":42.2,"ela_d":2.0,"math19":49.6,"math24":48.5,"math_d":-1.1,"ss19":42.1,"ss24":51.0,"ss_d":8.9,"income":48300,"q":"Q3 Upper-Mid"},{"id":130,"name":"Claiborne County","ela19":29.0,"ela24":29.2,"ela_d":0.2,"math19":37.2,"math24":28.3,"math_d":-8.9,"ss19":28.6,"ss24":32.8,"ss_d":4.2,"income":39100,"q":"Q1 Low-Income"},{"id":140,"name":"Clay County","ela19":24.6,"ela24":30.0,"ela_d":5.4,"math19":32.7,"math24":27.4,"math_d":-5.3,"ss19":25.5,"ss24":23.1,"ss_d":-2.4,"income":39200,"q":"Q1 Low-Income"},{"id":150,"name":"Cocke County","ela19":29.2,"ela24":28.8,"ela_d":-0.4,"math19":34.5,"math24":37.3,"math_d":2.8,"ss19":29.9,"ss24":38.6,"ss_d":8.7,"income":39400,"q":"Q1 Low-Income"},{"id":151,"name":"Newport","ela19":40.4,"ela24":50.3,"ela_d":9.9,"math19":40.0,"math24":39.9,"math_d":-0.1,"ss19":63.1,"ss24":64.6,"ss_d":1.5,"income":39400,"q":"Q1 Low-Income"},{"id":160,"name":"Coffee County","ela19":33.1,"ela24":34.2,"ela_d":1.1,"math19":36.9,"math24":36.9,"math_d":0.0,"ss19":31.3,"ss24":43.4,"ss_d":12.1,"income":54700,"q":"Q3 Upper-Mid"},{"id":161,"name":"Manchester","ela19":34.1,"ela24":38.2,"ela_d":4.1,"math19":34.9,"math24":46.6,"math_d":11.7,"ss19":43.6,"ss24":47.0,"ss_d":3.4,"income":54700,"q":"Q3 Upper-Mid"},{"id":162,"name":"Tullahoma","ela19":26.0,"ela24":33.8,"ela_d":7.8,"math19":28.9,"math24":34.8,"math_d":5.9,"ss19":27.5,"ss24":36.8,"ss_d":9.3,"income":54700,"q":"Q3 Upper-Mid"},{"id":170,"name":"Crockett County","ela19":28.5,"ela24":33.7,"ela_d":5.2,"math19":46.6,"math24":48.0,"math_d":1.4,"ss19":48.7,"ss24":40.9,"ss_d":-7.8,"income":44800,"q":"Q2 Lower-Mid"},{"id":171,"name":"Alamo","ela19":46.5,"ela24":58.5,"ela_d":12.0,"math19":59.0,"math24":56.7,"math_d":-2.3,"ss19":50.6,"ss24":46.7,"ss_d":-3.9,"income":44800,"q":"Q2 Lower-Mid"},{"id":172,"name":"Bells","ela19":34.5,"ela24":42.8,"ela_d":8.3,"math19":62.4,"math24":58.3,"math_d":-4.1,"ss19":null,"ss24":null,"ss_d":null,"income":44800,"q":"Q2 Lower-Mid"},{"id":180,"name":"Cumberland County","ela19":35.6,"ela24":37.1,"ela_d":1.5,"math19":40.8,"math24":42.1,"math_d":1.3,"ss19":42.5,"ss24":40.4,"ss_d":-2.1,"income":48200,"q":"Q3 Upper-Mid"},{"id":190,"name":"Davidson County","ela19":25.9,"ela24":29.6,"ela_d":3.7,"math19":29.9,"math24":29.3,"math_d":-0.6,"ss19":27.7,"ss24":33.7,"ss_d":6.0,"income":66800,"q":"Q4 High-Income"},{"id":200,"name":"Decatur County","ela19":31.3,"ela24":39.0,"ela_d":7.7,"math19":54.2,"math24":49.8,"math_d":-4.4,"ss19":39.2,"ss24":42.0,"ss_d":2.8,"income":41200,"q":"Q1 Low-Income"},{"id":210,"name":"DeKalb County","ela19":28.6,"ela24":32.5,"ela_d":3.9,"math19":33.8,"math24":30.4,"math_d":-3.4,"ss19":37.6,"ss24":37.9,"ss_d":0.3,"income":45600,"q":"Q2 Lower-Mid"},{"id":220,"name":"Dickson County","ela19":37.3,"ela24":43.0,"ela_d":5.7,"math19":47.6,"math24":41.6,"math_d":-6.0,"ss19":53.6,"ss24":58.2,"ss_d":4.6,"income":61500,"q":"Q4 High-Income"},{"id":230,"name":"Dyer County","ela19":38.0,"ela24":41.8,"ela_d":3.8,"math19":53.0,"math24":50.2,"math_d":-2.8,"ss19":44.0,"ss24":61.7,"ss_d":17.7,"income":47200,"q":"Q2 Lower-Mid"},{"id":231,"name":"Dyersburg","ela19":34.5,"ela24":33.3,"ela_d":-1.2,"math19":46.4,"math24":43.0,"math_d":-3.4,"ss19":47.2,"ss24":49.0,"ss_d":1.8,"income":47200,"q":"Q2 Lower-Mid"},{"id":240,"name":"Fayette County Public Schools","ela19":18.8,"ela24":19.6,"ela_d":0.8,"math19":19.7,"math24":17.1,"math_d":-2.6,"ss19":15.4,"ss24":24.3,"ss_d":8.9,"income":66100,"q":"Q4 High-Income"},{"id":250,"name":"Fentress County","ela19":33.7,"ela24":35.2,"ela_d":1.5,"math19":38.1,"math24":34.4,"math_d":-3.7,"ss19":32.5,"ss24":38.3,"ss_d":5.8,"income":38200,"q":"Q1 Low-Income"},{"id":260,"name":"Franklin County","ela19":27.1,"ela24":28.4,"ela_d":1.3,"math19":27.8,"math24":28.1,"math_d":0.3,"ss19":25.4,"ss24":26.1,"ss_d":0.7,"income":53400,"q":"Q3 Upper-Mid"},{"id":271,"name":"Humboldt City Schools","ela19":13.5,"ela24":11.8,"ela_d":-1.7,"math19":14.7,"math24":8.0,"math_d":-6.7,"ss19":24.8,"ss24":18.8,"ss_d":-6.0,"income":46100,"q":"Q2 Lower-Mid"},{"id":272,"name":"Milan","ela19":34.8,"ela24":33.7,"ela_d":-1.1,"math19":54.5,"math24":46.2,"math_d":-8.3,"ss19":51.3,"ss24":56.4,"ss_d":5.1,"income":46100,"q":"Q2 Lower-Mid"},{"id":273,"name":"Trenton","ela19":23.2,"ela24":36.5,"ela_d":13.3,"math19":39.1,"math24":36.6,"math_d":-2.5,"ss19":29.7,"ss24":51.8,"ss_d":22.1,"income":46100,"q":"Q2 Lower-Mid"},{"id":274,"name":"Bradford","ela19":33.5,"ela24":40.1,"ela_d":6.6,"math19":52.5,"math24":39.3,"math_d":-13.2,"ss19":49.6,"ss24":44.7,"ss_d":-4.9,"income":46100,"q":"Q2 Lower-Mid"},{"id":275,"name":"Gibson Co Sp Dist","ela19":41.8,"ela24":48.9,"ela_d":7.1,"math19":60.9,"math24":57.8,"math_d":-3.1,"ss19":55.8,"ss24":65.9,"ss_d":10.1,"income":46100,"q":"Q2 Lower-Mid"},{"id":280,"name":"Giles County","ela19":29.9,"ela24":33.2,"ela_d":3.3,"math19":41.1,"math24":39.2,"math_d":-1.9,"ss19":35.6,"ss24":42.4,"ss_d":6.8,"income":49100,"q":"Q3 Upper-Mid"},{"id":290,"name":"Grainger County","ela19":28.6,"ela24":33.4,"ela_d":4.8,"math19":34.2,"math24":32.5,"math_d":-1.7,"ss19":30.0,"ss24":30.6,"ss_d":0.6,"income":45300,"q":"Q2 Lower-Mid"},{"id":300,"name":"Greene County","ela19":27.9,"ela24":35.7,"ela_d":7.8,"math19":43.6,"math24":46.3,"math_d":2.7,"ss19":40.6,"ss24":51.8,"ss_d":11.2,"income":46200,"q":"Q2 Lower-Mid"},{"id":301,"name":"Greeneville","ela19":37.8,"ela24":47.4,"ela_d":9.6,"math19":45.3,"math24":45.8,"math_d":0.5,"ss19":54.6,"ss24":58.9,"ss_d":4.3,"income":46200,"q":"Q2 Lower-Mid"},{"id":310,"name":"Grundy County","ela19":23.7,"ela24":30.4,"ela_d":6.7,"math19":27.7,"math24":36.4,"math_d":8.7,"ss19":25.0,"ss24":39.3,"ss_d":14.3,"income":33400,"q":"Q1 Low-Income"},{"id":320,"name":"Hamblen County","ela19":30.7,"ela24":36.9,"ela_d":6.2,"math19":37.7,"math24":39.7,"math_d":2.0,"ss19":42.2,"ss24":51.1,"ss_d":8.9,"income":49100,"q":"Q3 Upper-Mid"},{"id":330,"name":"Hamilton County","ela19":33.4,"ela24":37.2,"ela_d":3.8,"math19":43.2,"math24":39.4,"math_d":-3.8,"ss19":41.4,"ss24":46.3,"ss_d":4.9,"income":61500,"q":"Q4 High-Income"},{"id":340,"name":"Hancock County","ela19":18.4,"ela24":26.4,"ela_d":8.0,"math19":15.8,"math24":29.0,"math_d":13.2,"ss19":23.9,"ss24":25.8,"ss_d":1.9,"income":29200,"q":"Q1 Low-Income"},{"id":350,"name":"Hardeman County Schools","ela19":21.2,"ela24":24.5,"ela_d":3.3,"math19":23.4,"math24":22.9,"math_d":-0.5,"ss19":21.8,"ss24":20.2,"ss_d":-1.6,"income":39100,"q":"Q1 Low-Income"},{"id":360,"name":"Hardin County","ela19":26.6,"ela24":31.2,"ela_d":4.6,"math19":29.2,"math24":31.4,"math_d":2.2,"ss19":37.0,"ss24":35.2,"ss_d":-1.8,"income":41500,"q":"Q1 Low-Income"},{"id":370,"name":"Hawkins County","ela19":28.9,"ela24":33.3,"ela_d":4.4,"math19":32.7,"math24":31.7,"math_d":-1.0,"ss19":32.5,"ss24":38.1,"ss_d":5.6,"income":45600,"q":"Q2 Lower-Mid"},{"id":371,"name":"Rogersville","ela19":38.4,"ela24":30.6,"ela_d":-7.8,"math19":45.0,"math24":32.1,"math_d":-12.9,"ss19":50.0,"ss24":29.8,"ss_d":-20.2,"income":45600,"q":"Q2 Lower-Mid"},{"id":380,"name":"Haywood County","ela19":17.8,"ela24":18.7,"ela_d":0.9,"math19":20.5,"math24":10.9,"math_d":-9.6,"ss19":19.3,"ss24":17.8,"ss_d":-1.5,"income":34100,"q":"Q1 Low-Income"},{"id":390,"name":"Henderson County","ela19":38.1,"ela24":38.4,"ela_d":0.3,"math19":54.7,"math24":45.3,"math_d":-9.4,"ss19":43.1,"ss24":51.1,"ss_d":8.0,"income":44400,"q":"Q2 Lower-Mid"},{"id":391,"name":"Lexington","ela19":31.3,"ela24":43.7,"ela_d":12.4,"math19":41.2,"math24":46.8,"math_d":5.6,"ss19":51.4,"ss24":66.5,"ss_d":15.1,"income":44400,"q":"Q2 Lower-Mid"},{"id":400,"name":"Henry County","ela19":30.0,"ela24":39.9,"ela_d":9.9,"math19":35.2,"math24":50.1,"math_d":14.9,"ss19":41.0,"ss24":49.5,"ss_d":8.5,"income":46300,"q":"Q2 Lower-Mid"},{"id":401,"name":"Paris","ela19":33.9,"ela24":38.1,"ela_d":4.2,"math19":44.3,"math24":51.1,"math_d":6.8,"ss19":48.4,"ss24":59.8,"ss_d":11.4,"income":46300,"q":"Q2 Lower-Mid"},{"id":410,"name":"Hickman County","ela19":27.6,"ela24":29.1,"ela_d":1.5,"math19":32.6,"math24":33.6,"math_d":1.0,"ss19":37.2,"ss24":40.3,"ss_d":3.1,"income":49400,"q":"Q3 Upper-Mid"},{"id":420,"name":"Houston County","ela19":28.5,"ela24":22.5,"ela_d":-6.0,"math19":27.1,"math24":23.6,"math_d":-3.5,"ss19":40.9,"ss24":32.4,"ss_d":-8.5,"income":45300,"q":"Q2 Lower-Mid"},{"id":430,"name":"Humphreys County","ela19":30.5,"ela24":25.2,"ela_d":-5.3,"math19":38.0,"math24":29.4,"math_d":-8.6,"ss19":32.5,"ss24":37.8,"ss_d":5.3,"income":49700,"q":"Q3 Upper-Mid"},{"id":440,"name":"Jackson County","ela19":27.4,"ela24":35.0,"ela_d":7.6,"math19":29.7,"math24":37.1,"math_d":7.4,"ss19":19.3,"ss24":47.9,"ss_d":28.6,"income":39300,"q":"Q1 Low-Income"},{"id":450,"name":"Jefferson County","ela19":28.3,"ela24":38.6,"ela_d":10.3,"math19":30.8,"math24":37.6,"math_d":6.8,"ss19":36.6,"ss24":50.4,"ss_d":13.8,"income":52600,"q":"Q3 Upper-Mid"},{"id":460,"name":"Johnson County","ela19":29.6,"ela24":23.1,"ela_d":-6.5,"math19":41.1,"math24":23.0,"math_d":-18.1,"ss19":47.9,"ss24":26.1,"ss_d":-21.8,"income":38200,"q":"Q1 Low-Income"},{"id":470,"name":"Knox County","ela19":38.7,"ela24":41.2,"ela_d":2.5,"math19":40.8,"math24":40.3,"math_d":-0.5,"ss19":49.1,"ss24":52.2,"ss_d":3.1,"income":64800,"q":"Q4 High-Income"},{"id":480,"name":"Lake County","ela19":22.0,"ela24":23.6,"ela_d":1.6,"math19":22.3,"math24":15.0,"math_d":-7.3,"ss19":18.1,"ss24":35.7,"ss_d":17.6,"income":29400,"q":"Q1 Low-Income"},{"id":490,"name":"Lauderdale County","ela19":24.6,"ela24":25.9,"ela_d":1.3,"math19":33.4,"math24":26.9,"math_d":-6.5,"ss19":31.2,"ss24":20.2,"ss_d":-11.0,"income":36200,"q":"Q1 Low-Income"},{"id":500,"name":"Lawrence County","ela19":34.7,"ela24":38.1,"ela_d":3.4,"math19":40.4,"math24":41.7,"math_d":1.3,"ss19":34.7,"ss24":41.4,"ss_d":6.7,"income":47300,"q":"Q2 Lower-Mid"},{"id":510,"name":"Lewis County","ela19":31.7,"ela24":28.2,"ela_d":-3.5,"math19":39.2,"math24":27.7,"math_d":-11.5,"ss19":21.4,"ss24":29.1,"ss_d":7.7,"income":39400,"q":"Q1 Low-Income"},{"id":520,"name":"Lincoln County","ela19":36.5,"ela24":37.5,"ela_d":1.0,"math19":48.0,"math24":37.3,"math_d":-10.7,"ss19":39.0,"ss24":47.3,"ss_d":8.3,"income":51700,"q":"Q3 Upper-Mid"},{"id":521,"name":"Fayetteville","ela19":25.6,"ela24":27.2,"ela_d":1.6,"math19":36.6,"math24":33.3,"math_d":-3.3,"ss19":25.6,"ss24":35.4,"ss_d":9.8,"income":51700,"q":"Q3 Upper-Mid"},{"id":530,"name":"Loudon County","ela19":38.8,"ela24":41.3,"ela_d":2.5,"math19":54.1,"math24":44.4,"math_d":-9.7,"ss19":45.3,"ss24":43.6,"ss_d":-1.7,"income":69200,"q":"Q4 High-Income"},{"id":531,"name":"Lenoir City","ela19":27.5,"ela24":27.6,"ela_d":0.1,"math19":42.6,"math24":36.5,"math_d":-6.1,"ss19":45.0,"ss24":41.5,"ss_d":-3.5,"income":69200,"q":"Q4 High-Income"},{"id":540,"name":"McMinn County","ela19":30.3,"ela24":34.1,"ela_d":3.8,"math19":37.6,"math24":41.4,"math_d":3.8,"ss19":41.8,"ss24":45.8,"ss_d":4.0,"income":49300,"q":"Q3 Upper-Mid"},{"id":541,"name":"Athens","ela19":40.1,"ela24":42.1,"ela_d":2.0,"math19":48.5,"math24":46.2,"math_d":-2.3,"ss19":45.0,"ss24":45.4,"ss_d":0.4,"income":49300,"q":"Q3 Upper-Mid"},{"id":542,"name":"Etowah","ela19":30.7,"ela24":34.3,"ela_d":3.6,"math19":43.1,"math24":46.6,"math_d":3.5,"ss19":19.8,"ss24":27.8,"ss_d":8.0,"income":49300,"q":"Q3 Upper-Mid"},{"id":550,"name":"McNairy County","ela19":31.0,"ela24":35.4,"ela_d":4.4,"math19":38.1,"math24":32.5,"math_d":-5.6,"ss19":32.7,"ss24":46.0,"ss_d":13.3,"income":41300,"q":"Q1 Low-Income"},{"id":560,"name":"Macon County","ela19":31.4,"ela24":33.6,"ela_d":2.2,"math19":42.1,"math24":41.7,"math_d":-0.4,"ss19":41.8,"ss24":44.9,"ss_d":3.1,"income":50700,"q":"Q3 Upper-Mid"},{"id":570,"name":"Madison County","ela19":18.6,"ela24":25.7,"ela_d":7.1,"math19":21.5,"math24":25.2,"math_d":3.7,"ss19":21.4,"ss24":27.3,"ss_d":5.9,"income":49200,"q":"Q3 Upper-Mid"},{"id":580,"name":"Marion County","ela19":26.3,"ela24":33.5,"ela_d":7.2,"math19":29.0,"math24":35.6,"math_d":6.6,"ss19":33.9,"ss24":47.4,"ss_d":13.5,"income":47500,"q":"Q2 Lower-Mid"},{"id":581,"name":"Richard City","ela19":30.0,"ela24":15.4,"ela_d":-14.6,"math19":39.0,"math24":19.2,"math_d":-19.8,"ss19":14.8,"ss24":8.2,"ss_d":-6.6,"income":47500,"q":"Q2 Lower-Mid"},{"id":590,"name":"Marshall County","ela19":31.6,"ela24":32.8,"ela_d":1.2,"math19":42.7,"math24":39.2,"math_d":-3.5,"ss19":31.3,"ss24":42.8,"ss_d":11.5,"income":53800,"q":"Q3 Upper-Mid"},{"id":600,"name":"Maury County","ela19":23.7,"ela24":30.1,"ela_d":6.4,"math19":25.7,"math24":33.2,"math_d":7.5,"ss19":29.2,"ss24":34.0,"ss_d":4.8,"income":69400,"q":"Q4 High-Income"},{"id":610,"name":"Meigs County","ela19":27.7,"ela24":32.8,"ela_d":5.1,"math19":34.6,"math24":34.1,"math_d":-0.5,"ss19":35.2,"ss24":37.3,"ss_d":2.1,"income":46200,"q":"Q2 Lower-Mid"},{"id":620,"name":"Monroe County","ela19":28.7,"ela24":27.6,"ela_d":-1.1,"math19":29.0,"math24":27.6,"math_d":-1.4,"ss19":39.8,"ss24":38.2,"ss_d":-1.6,"income":45500,"q":"Q2 Lower-Mid"},{"id":621,"name":"Sweetwater","ela19":27.7,"ela24":32.8,"ela_d":5.1,"math19":34.0,"math24":37.5,"math_d":3.5,"ss19":29.3,"ss24":38.8,"ss_d":9.5,"income":45500,"q":"Q2 Lower-Mid"},{"id":630,"name":"Montgomery County","ela19":39.6,"ela24":39.4,"ela_d":-0.2,"math19":48.4,"math24":37.9,"math_d":-10.5,"ss19":54.3,"ss24":53.3,"ss_d":-1.0,"income":63800,"q":"Q4 High-Income"},{"id":640,"name":"Moore County","ela19":29.7,"ela24":35.2,"ela_d":5.5,"math19":37.2,"math24":43.3,"math_d":6.1,"ss19":44.2,"ss24":54.5,"ss_d":10.3,"income":64600,"q":"Q4 High-Income"},{"id":650,"name":"Morgan County","ela19":20.3,"ela24":25.0,"ela_d":4.7,"math19":19.2,"math24":25.6,"math_d":6.4,"ss19":13.4,"ss24":20.4,"ss_d":7.0,"income":37300,"q":"Q1 Low-Income"},{"id":660,"name":"Obion County","ela19":37.1,"ela24":41.3,"ela_d":4.2,"math19":41.9,"math24":49.8,"math_d":7.9,"ss19":44.9,"ss24":52.7,"ss_d":7.8,"income":45100,"q":"Q2 Lower-Mid"},{"id":661,"name":"Union City","ela19":27.5,"ela24":41.7,"ela_d":14.2,"math19":37.1,"math24":46.3,"math_d":9.2,"ss19":36.6,"ss24":47.1,"ss_d":10.5,"income":45100,"q":"Q2 Lower-Mid"},{"id":670,"name":"Overton County","ela19":31.4,"ela24":34.5,"ela_d":3.1,"math19":40.4,"math24":41.7,"math_d":1.3,"ss19":39.4,"ss24":42.2,"ss_d":2.8,"income":41600,"q":"Q1 Low-Income"},{"id":680,"name":"Perry County","ela19":29.3,"ela24":26.6,"ela_d":-2.7,"math19":28.2,"math24":28.1,"math_d":-0.1,"ss19":19.9,"ss24":30.8,"ss_d":10.9,"income":39200,"q":"Q1 Low-Income"},{"id":690,"name":"Pickett County","ela19":24.1,"ela24":32.9,"ela_d":8.8,"math19":17.7,"math24":26.0,"math_d":8.3,"ss19":24.1,"ss24":18.9,"ss_d":-5.2,"income":40700,"q":"Q1 Low-Income"},{"id":700,"name":"Polk County","ela19":31.6,"ela24":33.3,"ela_d":1.7,"math19":41.5,"math24":33.9,"math_d":-7.6,"ss19":38.3,"ss24":35.6,"ss_d":-2.7,"income":42400,"q":"Q1 Low-Income"},{"id":710,"name":"Putnam County","ela19":32.8,"ela24":39.0,"ela_d":6.2,"math19":40.9,"math24":48.6,"math_d":7.7,"ss19":33.7,"ss24":40.7,"ss_d":7.0,"income":52600,"q":"Q3 Upper-Mid"},{"id":720,"name":"Rhea County","ela19":34.1,"ela24":40.1,"ela_d":6.0,"math19":44.3,"math24":51.0,"math_d":6.7,"ss19":38.8,"ss24":45.3,"ss_d":6.5,"income":44200,"q":"Q2 Lower-Mid"},{"id":721,"name":"Dayton","ela19":35.5,"ela24":41.1,"ela_d":5.6,"math19":46.3,"math24":45.3,"math_d":-1.0,"ss19":42.1,"ss24":48.1,"ss_d":6.0,"income":44200,"q":"Q2 Lower-Mid"},{"id":730,"name":"Roane County","ela19":35.7,"ela24":36.6,"ela_d":0.9,"math19":43.5,"math24":42.4,"math_d":-1.1,"ss19":46.2,"ss24":46.9,"ss_d":0.7,"income":51400,"q":"Q3 Upper-Mid"},{"id":740,"name":"Robertson County","ela19":29.3,"ela24":30.0,"ela_d":0.7,"math19":35.2,"math24":31.4,"math_d":-3.8,"ss19":34.3,"ss24":33.8,"ss_d":-0.5,"income":67500,"q":"Q4 High-Income"},{"id":750,"name":"Rutherford County","ela19":39.2,"ela24":44.7,"ela_d":5.5,"math19":47.8,"math24":48.6,"math_d":0.8,"ss19":50.2,"ss24":56.6,"ss_d":6.4,"income":75200,"q":"Q4 High-Income"},{"id":751,"name":"Murfreesboro","ela19":37.0,"ela24":42.0,"ela_d":5.0,"math19":53.5,"math24":45.6,"math_d":-7.9,"ss19":27.8,"ss24":23.9,"ss_d":-3.9,"income":75200,"q":"Q4 High-Income"},{"id":760,"name":"Scott County","ela19":29.6,"ela24":32.3,"ela_d":2.7,"math19":31.8,"math24":34.4,"math_d":2.6,"ss19":24.3,"ss24":35.6,"ss_d":11.3,"income":36300,"q":"Q1 Low-Income"},{"id":761,"name":"Oneida","ela19":35.6,"ela24":34.4,"ela_d":-1.2,"math19":30.5,"math24":33.7,"math_d":3.2,"ss19":45.7,"ss24":37.5,"ss_d":-8.2,"income":36300,"q":"Q1 Low-Income"},{"id":770,"name":"Sequatchie County","ela19":26.1,"ela24":28.2,"ela_d":2.1,"math19":30.3,"math24":31.8,"math_d":1.5,"ss19":41.1,"ss24":38.9,"ss_d":-2.2,"income":46400,"q":"Q2 Lower-Mid"},{"id":780,"name":"Sevier County","ela19":29.7,"ela24":31.9,"ela_d":2.2,"math19":37.6,"math24":38.3,"math_d":0.7,"ss19":37.2,"ss24":38.9,"ss_d":1.7,"income":55400,"q":"Q4 High-Income"},{"id":792,"name":"Memphis-Shelby County Schools ⭐","ela19":20.6,"ela24":22.4,"ela_d":1.8,"math19":27.2,"math24":20.0,"math_d":-7.2,"ss19":23.1,"ss24":24.3,"ss_d":1.2,"income":56800,"q":"Q4 High-Income"},{"id":793,"name":"Arlington","ela19":57.5,"ela24":64.0,"ela_d":6.5,"math19":68.0,"math24":70.1,"math_d":2.1,"ss19":58.7,"ss24":73.0,"ss_d":14.3,"income":56800,"q":"Q4 High-Income"},{"id":794,"name":"Bartlett","ela19":45.6,"ela24":47.5,"ela_d":1.9,"math19":55.6,"math24":53.9,"math_d":-1.7,"ss19":57.4,"ss24":60.2,"ss_d":2.8,"income":56800,"q":"Q4 High-Income"},{"id":795,"name":"Collierville","ela19":60.2,"ela24":66.6,"ela_d":6.4,"math19":66.7,"math24":73.3,"math_d":6.6,"ss19":73.5,"ss24":76.9,"ss_d":3.4,"income":56800,"q":"Q4 High-Income"},{"id":796,"name":"Germantown","ela19":62.7,"ela24":70.1,"ela_d":7.4,"math19":70.0,"math24":75.1,"math_d":5.1,"ss19":73.0,"ss24":67.7,"ss_d":-5.3,"income":56800,"q":"Q4 High-Income"},{"id":797,"name":"Lakeland","ela19":63.1,"ela24":64.1,"ela_d":1.0,"math19":73.6,"math24":64.1,"math_d":-9.5,"ss19":62.0,"ss24":64.6,"ss_d":2.6,"income":56800,"q":"Q4 High-Income"},{"id":798,"name":"Millington Municipal Schools","ela19":27.2,"ela24":32.1,"ela_d":4.9,"math19":33.8,"math24":29.6,"math_d":-4.2,"ss19":26.9,"ss24":32.8,"ss_d":5.9,"income":56800,"q":"Q4 High-Income"},{"id":800,"name":"Smith County","ela19":35.3,"ela24":41.0,"ela_d":5.7,"math19":47.2,"math24":42.7,"math_d":-4.5,"ss19":32.1,"ss24":41.0,"ss_d":8.9,"income":53700,"q":"Q3 Upper-Mid"},{"id":810,"name":"Stewart County","ela19":39.3,"ela24":39.4,"ela_d":0.1,"math19":43.3,"math24":44.6,"math_d":1.3,"ss19":40.3,"ss24":57.4,"ss_d":17.1,"income":49600,"q":"Q3 Upper-Mid"},{"id":820,"name":"Sullivan County","ela19":31.7,"ela24":37.1,"ela_d":5.4,"math19":33.6,"math24":37.4,"math_d":3.8,"ss19":37.5,"ss24":40.6,"ss_d":3.1,"income":53600,"q":"Q3 Upper-Mid"},{"id":821,"name":"Bristol","ela19":40.1,"ela24":40.1,"ela_d":0.0,"math19":46.1,"math24":44.2,"math_d":-1.9,"ss19":51.1,"ss24":55.9,"ss_d":4.8,"income":53600,"q":"Q3 Upper-Mid"},{"id":822,"name":"Kingsport","ela19":39.2,"ela24":44.4,"ela_d":5.2,"math19":45.7,"math24":45.8,"math_d":0.1,"ss19":52.5,"ss24":56.8,"ss_d":4.3,"income":53600,"q":"Q3 Upper-Mid"},{"id":830,"name":"Sumner County","ela19":43.6,"ela24":48.2,"ela_d":4.6,"math19":58.5,"math24":58.0,"math_d":-0.5,"ss19":52.0,"ss24":59.2,"ss_d":7.2,"income":78300,"q":"Q4 High-Income"},{"id":840,"name":"Tipton County","ela19":34.5,"ela24":33.1,"ela_d":-1.4,"math19":52.2,"math24":44.1,"math_d":-8.1,"ss19":43.3,"ss24":49.6,"ss_d":6.3,"income":64300,"q":"Q4 High-Income"},{"id":850,"name":"Trousdale County","ela19":43.7,"ela24":44.5,"ela_d":0.8,"math19":57.7,"math24":56.8,"math_d":-0.9,"ss19":49.7,"ss24":63.2,"ss_d":13.5,"income":52500,"q":"Q3 Upper-Mid"},{"id":860,"name":"Unicoi County","ela19":28.0,"ela24":35.0,"ela_d":7.0,"math19":34.2,"math24":42.4,"math_d":8.2,"ss19":45.0,"ss24":56.3,"ss_d":11.3,"income":43300,"q":"Q2 Lower-Mid"},{"id":870,"name":"Union County","ela19":22.0,"ela24":21.8,"ela_d":-0.2,"math19":21.8,"math24":17.8,"math_d":-4.0,"ss19":28.6,"ss24":17.9,"ss_d":-10.7,"income":41700,"q":"Q1 Low-Income"},{"id":880,"name":"Van Buren County","ela19":27.3,"ela24":35.6,"ela_d":8.3,"math19":44.7,"math24":48.8,"math_d":4.1,"ss19":30.4,"ss24":43.0,"ss_d":12.6,"income":41300,"q":"Q1 Low-Income"},{"id":890,"name":"Warren County","ela19":27.9,"ela24":29.7,"ela_d":1.8,"math19":30.4,"math24":27.7,"math_d":-2.7,"ss19":40.4,"ss24":34.8,"ss_d":-5.6,"income":48100,"q":"Q3 Upper-Mid"},{"id":900,"name":"Washington County","ela19":43.1,"ela24":45.4,"ela_d":2.3,"math19":49.5,"math24":45.9,"math_d":-3.6,"ss19":47.8,"ss24":51.7,"ss_d":3.9,"income":57100,"q":"Q4 High-Income"},{"id":901,"name":"Johnson City","ela19":47.8,"ela24":58.7,"ela_d":10.9,"math19":59.8,"math24":59.5,"math_d":-0.3,"ss19":62.4,"ss24":69.6,"ss_d":7.2,"income":57100,"q":"Q4 High-Income"},{"id":910,"name":"Wayne County","ela19":29.0,"ela24":26.3,"ela_d":-2.7,"math19":27.0,"math24":21.1,"math_d":-5.9,"ss19":32.3,"ss24":32.2,"ss_d":-0.1,"income":37500,"q":"Q1 Low-Income"},{"id":920,"name":"Weakley County","ela19":38.2,"ela24":45.4,"ela_d":7.2,"math19":46.8,"math24":48.7,"math_d":1.9,"ss19":43.6,"ss24":54.2,"ss_d":10.6,"income":45200,"q":"Q2 Lower-Mid"},{"id":930,"name":"White County","ela19":28.1,"ela24":40.8,"ela_d":12.7,"math19":39.8,"math24":47.8,"math_d":8.0,"ss19":41.6,"ss24":55.5,"ss_d":13.9,"income":47500,"q":"Q2 Lower-Mid"},{"id":940,"name":"Williamson County","ela19":66.7,"ela24":67.5,"ela_d":0.8,"math19":74.5,"math24":72.4,"math_d":-2.1,"ss19":77.8,"ss24":79.1,"ss_d":1.3,"income":118500,"q":"Q4 High-Income"},{"id":941,"name":"Franklin SSD","ela19":50.9,"ela24":56.0,"ela_d":5.1,"math19":62.3,"math24":55.7,"math_d":-6.6,"ss19":65.1,"ss24":58.5,"ss_d":-6.6,"income":118500,"q":"Q4 High-Income"},{"id":950,"name":"Wilson County","ela19":45.0,"ela24":51.2,"ela_d":6.2,"math19":55.4,"math24":55.8,"math_d":0.4,"ss19":56.8,"ss24":66.9,"ss_d":10.1,"income":85200,"q":"Q4 High-Income"},{"id":951,"name":"Lebanon","ela19":36.2,"ela24":38.0,"ela_d":1.8,"math19":46.3,"math24":43.0,"math_d":-3.3,"ss19":47.7,"ss24":44.2,"ss_d":-3.5,"income":85200,"q":"Q4 High-Income"}];
 
+// ── Multi-year trend data (TNReady / ACH only, All Students, All Grades) ──────
+const YEARS = ['2015','2017','2018','2019','2021','2022','2023','2024','2025'];
+const TREND = {
+  ela:     { mscs:[32.6,20.4,21.6,20.6,13.0,20.5,20.7,22.4,23.7], tn:[48.0,32.8,32.8,32.4,27.7,34.0,35.5,35.8,37.2] },
+  math:    { mscs:[39.1,21.2,22.5,27.2, 7.4,14.5,17.0,20.0,22.6], tn:[55.3,36.8,35.8,39.9,29.4,33.8,38.3,39.1,41.2] },
+  science: { mscs:[47.1,40.6,42.0,null,13.8,19.3,23.5,25.6,26.6], tn:[66.0,60.6,59.6,null,38.5,39.3,42.3,42.9,45.1] },
+  ss:      { mscs:[null,null,21.5,23.1,13.8,21.7,22.2,24.3,26.4], tn:[null,null,37.3,38.5,36.8,42.2,42.4,42.8,46.7] },
+};
+
+// Vertical annotation lines at metric-change years
+const vLinePlugin = {
+  id:'vLines',
+  afterDraw(chart) {
+    const {ctx, scales:{x,y}} = chart;
+    const ann = [
+      {idx:1, label:'TNReady introduced', color:'#94A3B8'},
+      {idx:5, label:'New benchmark (2022)', color:'#D97706'},
+    ];
+    ctx.save();
+    ann.forEach(({idx,label,color}) => {
+      const xPos = x.getPixelForValue(idx);
+      ctx.setLineDash([5,4]);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(xPos, y.top + 18);
+      ctx.lineTo(xPos, y.bottom);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = color;
+      ctx.font = '10px Inter, system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(label, xPos, y.top + 14);
+    });
+    ctx.restore();
+  }
+};
+
+let trendChart;
+function buildTrendChart(subj) {
+  const d = TREND[subj];
+  if (trendChart) trendChart.destroy();
+  trendChart = new Chart(document.getElementById('trendChart').getContext('2d'), {
+    type: 'line',
+    plugins: [vLinePlugin],
+    data: {
+      labels: YEARS,
+      datasets: [
+        {
+          label: 'TN State Average',
+          data: d.tn,
+          borderColor: '#94A3B8',
+          backgroundColor: 'rgba(148,163,184,0.12)',
+          borderWidth: 2.5,
+          pointRadius: 5, pointHoverRadius: 7,
+          tension: 0.2, spanGaps: false, fill: false,
+        },
+        {
+          label: 'Memphis-Shelby County Schools',
+          data: d.mscs,
+          borderColor: '#0F6E56',
+          backgroundColor: 'rgba(15,110,86,0.10)',
+          borderWidth: 2.5,
+          pointRadius: 5, pointHoverRadius: 7,
+          tension: 0.2, spanGaps: false, fill: false,
+        },
+      ],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      layout: { padding: { top: 20 } },
+      plugins: {
+        legend: { position:'top', labels:{font:{size:12},usePointStyle:true,pointStyleWidth:10} },
+        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw != null ? ctx.raw + '%' : 'No data'}` } }
+      },
+      scales: {
+        x: { grid:{display:false}, ticks:{font:{size:11}} },
+        y: {
+          min: 0,
+          title: { display:true, text:'% Students at Proficiency', font:{size:11}, color:'#64748B' },
+          ticks: { callback: v => v + '%', font:{size:11} },
+          grid: { color:'rgba(0,0,0,0.04)' }
+        }
+      }
+    }
+  });
+}
+buildTrendChart('ela');
+document.querySelectorAll('#trendTabs .tab-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('#trendTabs .tab-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    buildTrendChart(this.dataset.subj);
+  });
+});
+
 const QD = {
   labels:['Q1 Low-Income','Q2 Lower-Mid','Q3 Upper-Mid','Q4 High-Income'],
   ela:{y19:[28.3,32.0,32.5,39.3],y24:[30.5,36.6,35.8,43.0]},
@@ -492,14 +612,14 @@ renderChangeBars('elaChangeBars',[2.2,4.6,3.2,3.7]);
 renderChangeBars('mathChangeBars',[-2.0,-0.4,0.6,-1.7]);
 renderChangeBars('ssChangeBars',[2.8,4.4,6.4,3.5]);
 
-// Chart 3 — MSCS
+// Chart 3 — MSCS vs TN 2025
 new Chart(document.getElementById('mscsChart').getContext('2d'),{
   type:'bar',
   data:{
-    labels:['ELA','Math','Social Studies'],
+    labels:['ELA','Math','Science','Social Studies'],
     datasets:[
-      {label:'2019',data:[20.6,27.2,23.1],backgroundColor:'#0F6E5655',borderColor:'#0F6E56',borderWidth:2,borderRadius:4},
-      {label:'2024',data:[22.4,20.0,24.3],backgroundColor:'#0F6E56CC',borderColor:'#0F6E56',borderWidth:2,borderRadius:4}
+      {label:'TN State Avg 2025',data:[37.2,41.2,45.1,46.7],backgroundColor:'#94A3B855',borderColor:'#94A3B8',borderWidth:2,borderRadius:4},
+      {label:'MSCS 2025',data:[23.7,22.6,26.6,26.4],backgroundColor:'#0F6E56BB',borderColor:'#0F6E56',borderWidth:2,borderRadius:4}
     ]
   },
   options:{
@@ -510,7 +630,7 @@ new Chart(document.getElementById('mscsChart').getContext('2d'),{
     },
     scales:{
       x:{grid:{display:false}},
-      y:{min:0,max:35,title:{display:true,text:'% Students at Proficiency',font:{size:11},color:'#64748B'},
+      y:{min:0,max:60,title:{display:true,text:'% Students at Proficiency',font:{size:11},color:'#64748B'},
          ticks:{callback:v=>v+'%',font:{size:11}},grid:{color:'rgba(0,0,0,0.04)'}}
     }
   }
