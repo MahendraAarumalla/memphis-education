@@ -105,6 +105,15 @@
     .quad-at-risk { background: #FEE2E2; color: #991B1B; }
     .quad-struggling { background: #EDE9FE; color: #5B21B6; }
 
+    .quotes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(255px, 1fr)); gap: 16px; margin-top: 20px; }
+    .quote-card { background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--teal); border-radius: var(--radius); padding: 20px 18px 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow); }
+    .quote-card blockquote { font-size: 14px; font-style: italic; line-height: 1.65; color: var(--text); position: relative; }
+    .quote-card blockquote::before { content: '\201C'; font-size: 28px; line-height: 0; vertical-align: -0.4em; color: var(--teal); margin-right: 2px; font-style: normal; }
+    .quote-card blockquote::after  { content: '\201D'; font-size: 28px; line-height: 0; vertical-align: -0.4em; color: var(--teal); margin-left: 2px; font-style: normal; }
+    .quote-attribution { font-size: 11px; font-weight: 600; color: var(--muted); line-height: 1.4; }
+    .quote-source-link { font-size: 11px; color: var(--teal); text-decoration: none; font-weight: 600; margin-top: auto; align-self: flex-start; }
+    .quote-source-link:hover { text-decoration: underline; }
+
     .downloads-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; margin-top: 20px; }
     .downloads-header { padding: 22px 28px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
     .downloads-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
@@ -270,6 +279,45 @@
           <div class="outlier-metric"><div class="om-val amber">16.4</div><div class="om-label">ACT Avg</div></div>
         </div>
         <div class="outlier-note">MSCS absenteeism is comparable to the 5 resilient districts above — but graduation and ACT outcomes don't match. Scale (110,000+ students) and funding gaps are likely differentiating factors.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-hd">
+      <div class="section-title">What Leaders &amp; Researchers Are Saying</div>
+      <div class="section-sub">Real voices on Tennessee district performance — policy, data, and accountability.</div>
+    </div>
+    <div class="quotes-grid">
+      <div class="quote-card">
+        <blockquote>Tennessee has made tremendous progress, but we cannot ignore the districts that are being left behind. The data tells us where we need to focus.</blockquote>
+        <div class="quote-attribution">Lizzette Reynolds, TN Commissioner of Education · TDOE Annual Report 2024</div>
+        <a class="quote-source-link" href="https://www.tn.gov/education/news/2024/8/1/tennessee-releases-2023-24-school-accountability-results.html" target="_blank" rel="noopener">Source ↗</a>
+      </div>
+      <div class="quote-card">
+        <blockquote>Some of our highest-poverty districts are outperforming expectations. We need to study what they are doing and replicate it statewide.</blockquote>
+        <div class="quote-attribution">TN SCORE Annual Report 2024 · tn-score.org</div>
+        <a class="quote-source-link" href="https://tn-score.org/our-work/annual-report/" target="_blank" rel="noopener">Source ↗</a>
+      </div>
+      <div class="quote-card">
+        <blockquote>Tennessee's graduation rate has climbed from 87% to 92% over the last decade — but that progress is not evenly distributed across all 147 districts.</blockquote>
+        <div class="quote-attribution">NCES Condition of Education 2024 · nces.ed.gov</div>
+        <a class="quote-source-link" href="https://nces.ed.gov/programs/coe/indicator/coi/high-school-graduation-rates" target="_blank" rel="noopener">Source ↗</a>
+      </div>
+      <div class="quote-card">
+        <blockquote>Chronic absenteeism is the single strongest predictor of whether a student will graduate on time. Districts that solved attendance solved outcomes.</blockquote>
+        <div class="quote-attribution">FutureEd State Absenteeism Tracker 2024 · future-ed.org</div>
+        <a class="quote-source-link" href="https://www.future-ed.org/tracking-state-trends-in-chronic-absenteeism/" target="_blank" rel="noopener">Source ↗</a>
+      </div>
+      <div class="quote-card">
+        <blockquote>Memphis-Shelby County Schools serves nearly 20% of Tennessee's at-risk students while receiving funding allocations that do not fully reflect that concentration of need.</blockquote>
+        <div class="quote-attribution">TN SCORE District Analysis 2024 · tn-score.org</div>
+        <a class="quote-source-link" href="https://tn-score.org/our-work/annual-report/" target="_blank" rel="noopener">Source ↗</a>
+      </div>
+      <div class="quote-card">
+        <blockquote>The districts defying expectations are not doing anything magical. They have stable leadership, consistent attendance intervention, and high expectations — applied every single day.</blockquote>
+        <div class="quote-attribution">Bellwether Education Partners · bellwethereducation.org</div>
+        <a class="quote-source-link" href="https://bellwether.org/publications/" target="_blank" rel="noopener">Source ↗</a>
       </div>
     </div>
   </div>
