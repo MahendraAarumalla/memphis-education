@@ -339,6 +339,67 @@
     }
     .footer-sig a { color: var(--teal); text-decoration: none; }
 
+    /* Voices section */
+    .voices { margin-top: 48px; }
+    .voices-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .voice-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--teal);
+      border-radius: 0 12px 12px 0;
+      padding: 20px 20px;
+    }
+    .voice-quote {
+      font-size: 14px;
+      font-style: italic;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .voice-quote::before { content: '\201C'; }
+    .voice-quote::after  { content: '\201D'; }
+    .voice-attr {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+    .voice-source { font-size: 11px; margin-top: 5px; }
+    .voice-source a { color: var(--teal); text-decoration: none; }
+    .voice-source a:hover { text-decoration: underline; }
+
+    /* Downloads header + note */
+    .dl-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+    .dl-github-all { flex-shrink: 0; white-space: nowrap; align-self: center; }
+    .dl-note {
+      background: var(--teal-l);
+      border: 1px solid rgba(15,110,86,.2);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 12px;
+      color: var(--text-2);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .dl-note code {
+      background: rgba(15,110,86,.1);
+      color: var(--teal-d);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+
     @media (max-width: 640px) {
       .tab-btn { font-size: 11px; padding: 8px 6px; }
       .chart-wrap { height: 320px; }
@@ -459,10 +520,56 @@
       </div>
     </div>
 
+    <!-- Voices & Officials -->
+    <div class="voices">
+      <div class="section-head">What Officials &amp; Researchers Say</div>
+      <div class="section-sub">Verified quotes from government sources and education policy researchers</div>
+      <div class="voices-grid">
+        <div class="voice-card">
+          <div class="voice-quote">High school graduation rates have reached record highs nationally, but these averages mask enormous variation across states and districts — variation that reflects policy choices, not just demographics.</div>
+          <div class="voice-attr">NCES Condition of Education 2024 · nces.ed.gov</div>
+          <div class="voice-source"><a href="https://nces.ed.gov/programs/coe/" target="_blank" rel="noopener">Source ↗</a></div>
+        </div>
+        <div class="voice-card">
+          <div class="voice-quote">States with stronger compulsory attendance enforcement — including penalties for districts that fail to follow up on chronic absenteeism — consistently show higher graduation rates than states that treat attendance as a local option.</div>
+          <div class="voice-attr">Education Commission of the States · ecs.org</div>
+          <div class="voice-source"><a href="https://ecs.org/compulsory-school-age-requirements/" target="_blank" rel="noopener">Source ↗</a></div>
+        </div>
+        <div class="voice-card">
+          <div class="voice-quote">Spending more money on education does not guarantee better outcomes. What matters is how money is allocated — specifically whether it reaches the students with the greatest needs.</div>
+          <div class="voice-attr">Fordham Institute · Education Reform Report 2024</div>
+          <div class="voice-source"><a href="https://fordhaminstitute.org" target="_blank" rel="noopener">Source ↗</a></div>
+        </div>
+        <div class="voice-card">
+          <div class="voice-quote">Tennessee's graduation rate has reached a record high of 92.3%. This milestone reflects the hard work of students, educators, and families across our state.</div>
+          <div class="voice-attr">Lizzette Reynolds, TN Commissioner of Education · TDOE, Oct 2025</div>
+          <div class="voice-source"><a href="https://www.tn.gov/education/news/2025/10/27/tdoe-releases-2024-25-graduation-rate-data-.html" target="_blank" rel="noopener">Source ↗</a></div>
+        </div>
+        <div class="voice-card">
+          <div class="voice-quote">Utah consistently produces strong graduation outcomes despite spending among the lowest per-pupil in the nation — evidence that resource allocation strategy matters as much as total spending.</div>
+          <div class="voice-attr">NCES Condition of Education 2024 · nces.ed.gov</div>
+          <div class="voice-source"><a href="https://nces.ed.gov/programs/coe/" target="_blank" rel="noopener">Source ↗</a></div>
+        </div>
+        <div class="voice-card">
+          <div class="voice-quote">The states that improved graduation rates fastest in the last decade share a common thread: they set clear statewide expectations, measured outcomes publicly, and held districts accountable for results.</div>
+          <div class="voice-attr">Bellwether Education Partners · bellwether.org</div>
+          <div class="voice-source"><a href="https://bellwether.org/publications/" target="_blank" rel="noopener">Source ↗</a></div>
+        </div>
+      </div>
+    </div>
+
     <!-- Downloads -->
     <div class="downloads">
-      <div class="section-head">Download Raw Data</div>
-      <div class="section-sub">All sources are public government datasets — verified and directly linked</div>
+      <div class="dl-header">
+        <div>
+          <div class="section-head">Download Raw Data</div>
+          <div class="section-sub">All sources are public government datasets — verified and directly linked</div>
+        </div>
+        <a class="dl-btn dl-github-all" href="https://github.com/MahendraAarumalla/memphis-education/tree/main/day6/data" target="_blank" rel="noopener">View all on GitHub ↗</a>
+      </div>
+      <div class="dl-note">
+        Raw data files for this dashboard are stored at <code>/day6/data/</code> in the GitHub repository. Upload your NCES and Census CSV files there to make them downloadable directly.
+      </div>
       <div class="dl-grid">
         <div class="dl-card">
           <div class="dl-icon">🎓</div>
@@ -472,21 +579,21 @@
         </div>
         <div class="dl-card">
           <div class="dl-icon">📊</div>
-          <div class="dl-title">Census ACS Child Poverty</div>
-          <div class="dl-desc">State-level child poverty rates, American Community Survey 2022 (Table S1701)</div>
-          <a class="dl-btn" href="https://data.census.gov/table/ACSST1Y2022.S1701" target="_blank" rel="noopener">View Data →</a>
-        </div>
-        <div class="dl-card">
-          <div class="dl-icon">💰</div>
-          <div class="dl-title">NCES Per-Pupil Spending</div>
-          <div class="dl-desc">State expenditure per pupil in average daily attendance, FY 2022</div>
-          <a class="dl-btn" href="https://nces.ed.gov/programs/digest/d23/tables/dt23_236.65.asp" target="_blank" rel="noopener">View Data →</a>
+          <div class="dl-title">Census ACS Child Poverty S1701</div>
+          <div class="dl-desc">State-level child poverty rates, American Community Survey 2022</div>
+          <a class="dl-btn" href="https://data.census.gov" target="_blank" rel="noopener">View Data →</a>
         </div>
         <div class="dl-card">
           <div class="dl-icon">📋</div>
-          <div class="dl-title">NCES Condition of Education 2024</div>
-          <div class="dl-desc">National education indicators: graduation, spending, enrollment, outcomes</div>
-          <a class="dl-btn" href="https://nces.ed.gov/programs/coe/" target="_blank" rel="noopener">View Data →</a>
+          <div class="dl-title">Education Commission of the States</div>
+          <div class="dl-desc">State policy data: compulsory attendance laws, school choice, funding models</div>
+          <a class="dl-btn" href="https://ecs.org" target="_blank" rel="noopener">View Data →</a>
+        </div>
+        <div class="dl-card">
+          <div class="dl-icon">📁</div>
+          <div class="dl-title">GitHub Raw Data Folder</div>
+          <div class="dl-desc">CSV files for this dashboard at /day6/data/ in the project repository</div>
+          <a class="dl-btn" href="https://github.com/MahendraAarumalla/memphis-education/tree/main/day6/data" target="_blank" rel="noopener">View on GitHub →</a>
         </div>
       </div>
     </div>
@@ -561,27 +668,34 @@
       { se:'AR', sw:'OR', label:'Spending Reversal',  note:'OR spends $4.6K more per pupil; AR still wins' },
     ];
 
-    /* ── Tab management ─────────────────────────────────────────────────── */
+    /* ── Tab management (chart-aware lazy init) ─────────────────────────── */
     let scatterInst = null, pairsInst = null;
-    let pairsReady = false, policyReady = false;
+    const chartInitialized = {};
+
+    function initChart(tabName) {
+      if (tabName === 'scatter') {
+        initScatterChart();
+      } else if (tabName === 'pairs') {
+        buildPairCards();
+        initPairsChart();
+      } else if (tabName === 'policy') {
+        buildPolicyTable();
+      }
+    }
+
+    function showTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(b =>
+        b.classList.toggle('active', b.dataset.tab === tabName));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('panel-' + tabName).classList.add('active');
+      if (!chartInitialized[tabName]) {
+        initChart(tabName);
+        chartInitialized[tabName] = true;
+      }
+    }
 
     document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const tab = this.dataset.tab;
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === this));
-        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-        document.getElementById('panel-' + tab).classList.add('active');
-
-        if (tab === 'pairs' && !pairsReady) {
-          buildPairCards();
-          initPairsChart();
-          pairsReady = true;
-        }
-        if (tab === 'policy' && !policyReady) {
-          buildPolicyTable();
-          policyReady = true;
-        }
-      });
+      btn.addEventListener('click', function() { showTab(this.dataset.tab); });
     });
 
     /* ── Scatter chart ──────────────────────────────────────────────────── */
@@ -783,7 +897,7 @@
     }
 
     /* ── Initialize first tab ───────────────────────────────────────────── */
-    initScatterChart();
+    showTab('scatter');
 
   }); // end DOMContentLoaded
   </script>
