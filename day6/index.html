@@ -5,149 +5,222 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Day 6 — Same Poverty, 15-Point Graduation Gap | From Memphis to 50 States</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --teal: #0F6E56;
-      --teal-d: #0A4F3E;
-      --teal-l: #E8F5F0;
-      --teal-m: #14A07A;
-      --orange: #D97706;
-      --orange-l: #FFF7ED;
-      --text: #111827;
-      --text-2: #6B7280;
-      --border: #E5E7EB;
-      --bg: #F9FAFB;
+      --teal:    #0F6E56;
+      --teal-d:  #0A4F3E;
+      --teal-l:  #E8F5F0;
+      --amber:   #E8A838;
+      --slate:   #2E4057;
+      --text:    #1A1A2E;
+      --text-2:  #6B7280;
+      --border:  #E5E7EB;
+      --bg:      #FAFAF8;
+      --card:    #ffffff;
     }
 
     body {
-      font-family: 'Inter', system-ui, sans-serif;
+      font-family: 'DM Sans', system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
+      border-top: 3px solid var(--teal);
     }
 
-    /* Hero */
+    /* Noise texture overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.022;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+    }
+
+    /* Section reveal animations */
+    .section {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Hero ────────────────────────────────────────────────────────────── */
     .hero {
       background: var(--teal-d);
       color: #fff;
-      padding: 56px 24px 48px;
+      padding: 56px 24px 52px;
       text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 200px;
+      background: radial-gradient(ellipse at center, rgba(94,234,212,0.08) 0%, transparent 70%);
+      pointer-events: none;
     }
     .eyebrow {
+      font-family: 'DM Sans', sans-serif;
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 500;
       letter-spacing: 2.5px;
       text-transform: uppercase;
-      opacity: .6;
-      margin-bottom: 16px;
+      opacity: .55;
+      margin-bottom: 22px;
+    }
+    .hero-accent-line {
+      width: 48px;
+      height: 3px;
+      background: linear-gradient(90deg, #5EEAD4, rgba(94,234,212,0.1));
+      margin: 0 auto 22px;
+      border-radius: 2px;
     }
     .hero h1 {
-      font-size: clamp(26px, 4.5vw, 50px);
-      font-weight: 900;
-      line-height: 1.1;
-      letter-spacing: -1.5px;
-      margin-bottom: 16px;
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: clamp(28px, 5vw, 54px);
+      font-weight: 400;
+      line-height: 1.12;
+      letter-spacing: -0.5px;
+      margin-bottom: 18px;
     }
     .hero h1 em {
-      font-style: normal;
+      font-style: italic;
       color: #5EEAD4;
     }
     .hero-sub {
+      font-family: 'DM Sans', sans-serif;
       font-size: clamp(14px, 2vw, 17px);
+      font-weight: 300;
       opacity: .8;
-      max-width: 600px;
-      margin: 0 auto 32px;
-      line-height: 1.65;
+      max-width: 580px;
+      margin: 0 auto 34px;
+      line-height: 1.72;
     }
     .nav-back {
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      font-family: 'DM Sans', sans-serif;
       font-size: 12px;
-      font-weight: 600;
-      color: rgba(255,255,255,.65);
+      font-weight: 500;
+      color: rgba(255,255,255,.6);
       text-decoration: none;
-      border: 1px solid rgba(255,255,255,.2);
+      border: 1px solid rgba(255,255,255,.18);
       border-radius: 20px;
       padding: 6px 16px;
-      transition: all .15s;
+      transition: all .2s ease;
     }
-    .nav-back:hover { color: #fff; border-color: rgba(255,255,255,.5); }
+    .nav-back:hover { color: #fff; border-color: rgba(255,255,255,.45); }
 
-    /* Stats row */
+    /* ── Stat cards ──────────────────────────────────────────────────────── */
     .stats-row {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       gap: 14px;
       max-width: 820px;
-      margin: -24px auto 0;
+      margin: -26px auto 0;
       padding: 0 24px;
+      position: relative;
+      z-index: 10;
     }
     .stat-card {
-      background: #fff;
+      background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px 14px;
+      border-radius: 14px;
+      padding: 22px 14px;
       text-align: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,.06);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 50%;
+      background: radial-gradient(ellipse at 50% -20%, rgba(15,110,86,0.07) 0%, transparent 80%);
+      pointer-events: none;
+    }
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.11);
     }
     .stat-num {
-      font-size: 34px;
-      font-weight: 900;
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 38px;
+      font-weight: 400;
       color: var(--teal);
       line-height: 1;
-      margin-bottom: 6px;
+      margin-bottom: 7px;
+      letter-spacing: -0.5px;
     }
-    .stat-num.orange { color: var(--orange); }
-    .stat-unit { font-size: 20px; font-weight: 700; }
+    .stat-num.amber { color: var(--amber); }
+    .stat-unit { font-size: 20px; }
     .stat-label {
-      font-size: 11px;
-      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10.5px;
+      font-weight: 500;
       text-transform: uppercase;
-      letter-spacing: .7px;
+      letter-spacing: .8px;
       color: var(--text-2);
     }
 
-    /* Main */
+    /* ── Container ───────────────────────────────────────────────────────── */
     .container {
       max-width: 980px;
       margin: 0 auto;
-      padding: 52px 24px 0;
+      padding: 56px 24px 0;
     }
 
-    /* AI insight */
+    /* ── AI insight ──────────────────────────────────────────────────────── */
     .ai-insight {
       background: var(--teal-l);
       border-left: 4px solid var(--teal);
-      border-radius: 0 12px 12px 0;
-      padding: 20px 24px;
-      margin-bottom: 40px;
+      border-radius: 0 14px 14px 0;
+      padding: 22px 26px;
+      margin-bottom: 44px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
     }
     .ai-label {
+      font-family: 'DM Sans', sans-serif;
       font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
+      font-weight: 600;
+      letter-spacing: 1.8px;
       text-transform: uppercase;
       color: var(--teal);
-      margin-bottom: 8px;
+      margin-bottom: 9px;
     }
     .ai-insight p {
       font-size: 15px;
-      line-height: 1.75;
+      font-weight: 400;
+      line-height: 1.8;
       color: var(--text);
     }
 
-    /* Tabs */
+    /* ── Tabs ────────────────────────────────────────────────────────────── */
+    .tab-section { margin-bottom: 0; }
     .tab-bar {
       display: flex;
       gap: 4px;
-      margin-bottom: 24px;
-      background: #E5E7EB;
-      border-radius: 10px;
+      margin-bottom: 20px;
+      background: #EBEBEA;
+      border-radius: 11px;
       padding: 4px;
     }
     .tab-btn {
@@ -155,19 +228,19 @@
       background: none;
       border: none;
       cursor: pointer;
-      font-family: inherit;
+      font-family: 'DM Sans', sans-serif;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 500;
       color: var(--text-2);
       padding: 10px 10px;
-      border-radius: 7px;
-      transition: all .15s;
+      border-radius: 8px;
+      transition: all .2s ease;
       white-space: nowrap;
     }
     .tab-btn.active {
-      background: #fff;
+      background: var(--card);
       color: var(--teal);
-      box-shadow: 0 1px 4px rgba(0,0,0,.1);
+      box-shadow: 0 1px 6px rgba(0,0,0,0.1);
     }
     .tab-btn:hover:not(.active) { color: var(--text); }
 
@@ -175,17 +248,31 @@
     .tab-panel.active { display: block; }
 
     .chart-card {
-      background: #fff;
+      background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 28px;
-      box-shadow: 0 2px 10px rgba(0,0,0,.04);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+      transition: box-shadow 0.2s ease;
     }
-    .chart-title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
-    .chart-sub { font-size: 13px; color: var(--text-2); margin-bottom: 24px; line-height: 1.5; }
+    .chart-card:hover { box-shadow: 0 5px 22px rgba(0,0,0,0.09); }
+    .chart-title {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 19px;
+      font-weight: 400;
+      letter-spacing: -0.2px;
+      margin-bottom: 4px;
+    }
+    .chart-sub {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-2);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
     .chart-wrap { position: relative; height: 440px; }
 
-    /* Pairs section */
+    /* ── Pairs ───────────────────────────────────────────────────────────── */
     .pairs-summary {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -195,31 +282,37 @@
     .pair-card {
       background: var(--bg);
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 11px;
       padding: 14px 16px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
+    .pair-card:hover { transform: translateY(-2px); box-shadow: 0 5px 16px rgba(0,0,0,0.08); }
     .pair-label {
       font-size: 10px;
-      font-weight: 700;
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: .8px;
       color: var(--text-2);
       margin-bottom: 8px;
     }
-    .pair-states {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 4px;
+    .pair-states { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .pair-abbr {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 23px;
+      font-weight: 400;
     }
-    .pair-abbr { font-size: 20px; font-weight: 900; }
     .pair-abbr.se { color: var(--teal); }
-    .pair-abbr.sw { color: var(--orange); }
+    .pair-abbr.sw { color: var(--amber); }
     .pair-vs { font-size: 11px; color: var(--text-2); }
-    .pair-gap-num { font-size: 22px; font-weight: 900; color: var(--teal-d); }
+    .pair-gap-num {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 25px;
+      font-weight: 400;
+      color: var(--teal-d);
+    }
     .pair-gap-note { font-size: 11px; color: var(--text-2); margin-top: 2px; line-height: 1.4; }
 
-    /* Policy table */
+    /* ── Policy table ────────────────────────────────────────────────────── */
     .policy-wrap {
       overflow-x: auto;
       border-radius: 12px;
@@ -229,6 +322,7 @@
     thead th {
       background: var(--teal-d);
       color: #fff;
+      font-family: 'DM Sans', sans-serif;
       font-weight: 600;
       font-size: 11px;
       text-transform: uppercase;
@@ -237,7 +331,7 @@
       text-align: left;
       white-space: nowrap;
     }
-    tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background .12s; }
     tbody tr:last-child { border-bottom: none; }
     tbody tr:hover { background: var(--teal-l); }
     tbody tr.hl { background: #FFFBEB; }
@@ -245,14 +339,14 @@
     .tag {
       display: inline-block;
       font-size: 10px;
-      font-weight: 700;
+      font-weight: 600;
       padding: 2px 8px;
       border-radius: 12px;
       text-transform: uppercase;
       letter-spacing: .4px;
     }
-    .tag-se  { background: var(--teal-l); color: var(--teal-d); }
-    .tag-sw  { background: var(--orange-l); color: #92400E; }
+    .tag-se        { background: var(--teal-l); color: var(--teal-d); }
+    .tag-sw        { background: #FFF8E7; color: #92400E; }
     .tag-universal { background: #FEE2E2; color: #991B1B; }
     .tag-targeted  { background: #FEF3C7; color: #92400E; }
     .tag-limited   { background: #F3F4F6; color: #374151; }
@@ -260,64 +354,145 @@
     .sbar { display: flex; align-items: center; gap: 8px; }
     .sbar-fill { height: 6px; border-radius: 3px; background: var(--teal); flex-shrink: 0; }
 
-    /* Key findings */
-    .findings { margin-top: 48px; }
+    /* ── Findings ────────────────────────────────────────────────────────── */
+    .findings { margin-top: 52px; }
     .findings-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 16px;
     }
     .finding-card {
-      background: #fff;
+      background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px 20px;
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
+    .finding-card:hover { transform: translateY(-2px); box-shadow: 0 7px 22px rgba(0,0,0,0.09); }
     .finding-num {
-      font-size: 28px;
-      font-weight: 900;
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 30px;
+      font-weight: 400;
       color: var(--teal);
+      opacity: .75;
+      margin-bottom: 8px;
+    }
+    .finding-title { font-size: 14px; font-weight: 600; margin-bottom: 7px; }
+    .finding-body  { font-size: 13px; font-weight: 400; color: var(--text-2); line-height: 1.67; }
+
+    /* ── Section headings ────────────────────────────────────────────────── */
+    .section-head {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 23px;
+      font-weight: 400;
+      letter-spacing: -0.3px;
       margin-bottom: 6px;
     }
-    .finding-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
-    .finding-body { font-size: 13px; color: var(--text-2); line-height: 1.6; }
-    .section-head { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
-    .section-sub  { font-size: 14px; color: var(--text-2); margin-bottom: 24px; }
+    .section-sub { font-size: 14px; font-weight: 400; color: var(--text-2); margin-bottom: 24px; }
 
-    /* Downloads */
+    /* ── Voices ──────────────────────────────────────────────────────────── */
+    .voices { margin-top: 52px; }
+    .voices-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .voice-card {
+      background: #F7F9F8;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--teal);
+      border-radius: 0 14px 14px 0;
+      padding: 20px 22px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .voice-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.09); }
+    .voice-quote {
+      font-size: 14px;
+      font-style: italic;
+      line-height: 1.75;
+      color: #2D3748;
+      margin-bottom: 13px;
+    }
+    .voice-quote::before { content: '\201C'; }
+    .voice-quote::after  { content: '\201D'; }
+    .voice-attr {
+      font-size: 11px;
+      font-weight: 600;
+      font-variant: small-caps;
+      letter-spacing: 0.5px;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+    .voice-source { font-size: 11px; margin-top: 6px; }
+    .voice-source a { color: var(--teal); text-decoration: none; }
+    .voice-source a:hover { text-decoration: underline; }
+
+    /* ── Downloads ───────────────────────────────────────────────────────── */
     .downloads { margin-top: 52px; }
+    .dl-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+    .dl-github-all { flex-shrink: 0; white-space: nowrap; align-self: center; }
+    .dl-note {
+      background: var(--teal-l);
+      border: 1px solid rgba(15,110,86,.18);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 12px;
+      color: var(--text-2);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .dl-note code {
+      background: rgba(15,110,86,.1);
+      color: var(--teal-d);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
     .dl-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 14px;
     }
     .dl-card {
-      background: #fff;
+      background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .dl-icon { font-size: 24px; margin-bottom: 10px; }
-    .dl-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-    .dl-desc { font-size: 12px; color: var(--text-2); margin-bottom: 12px; line-height: 1.5; }
+    .dl-card:hover { transform: translateY(-2px); box-shadow: 0 7px 22px rgba(0,0,0,0.09); }
+    .dl-icon  { font-size: 24px; margin-bottom: 10px; }
+    .dl-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .dl-desc  { font-size: 12px; color: var(--text-2); margin-bottom: 12px; line-height: 1.5; }
     .dl-btn {
       display: inline-block;
       background: var(--teal);
       color: #fff;
+      font-family: 'DM Sans', sans-serif;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 500;
       padding: 7px 16px;
       border-radius: 8px;
       text-decoration: none;
-      transition: background .15s;
+      transition: all 0.2s ease;
     }
-    .dl-btn:hover { background: var(--teal-d); }
+    .dl-btn:hover { background: var(--teal-d); transform: translateY(-1px); }
 
-    /* Footer */
+    /* ── Footer ──────────────────────────────────────────────────────────── */
     footer {
-      margin-top: 64px;
+      margin-top: 68px;
       padding: 32px 24px;
-      background: #fff;
+      background: var(--card);
       border-top: 1px solid var(--border);
     }
     .footer-inner { max-width: 980px; margin: 0 auto; }
@@ -339,67 +514,6 @@
     }
     .footer-sig a { color: var(--teal); text-decoration: none; }
 
-    /* Voices section */
-    .voices { margin-top: 48px; }
-    .voices-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
-    }
-    .voice-card {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--teal);
-      border-radius: 0 12px 12px 0;
-      padding: 20px 20px;
-    }
-    .voice-quote {
-      font-size: 14px;
-      font-style: italic;
-      line-height: 1.7;
-      color: var(--text);
-      margin-bottom: 12px;
-    }
-    .voice-quote::before { content: '\201C'; }
-    .voice-quote::after  { content: '\201D'; }
-    .voice-attr {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-2);
-      line-height: 1.5;
-    }
-    .voice-source { font-size: 11px; margin-top: 5px; }
-    .voice-source a { color: var(--teal); text-decoration: none; }
-    .voice-source a:hover { text-decoration: underline; }
-
-    /* Downloads header + note */
-    .dl-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 4px;
-    }
-    .dl-github-all { flex-shrink: 0; white-space: nowrap; align-self: center; }
-    .dl-note {
-      background: var(--teal-l);
-      border: 1px solid rgba(15,110,86,.2);
-      border-radius: 8px;
-      padding: 12px 16px;
-      font-size: 12px;
-      color: var(--text-2);
-      line-height: 1.6;
-      margin-bottom: 20px;
-    }
-    .dl-note code {
-      background: rgba(15,110,86,.1);
-      color: var(--teal-d);
-      padding: 1px 5px;
-      border-radius: 4px;
-      font-family: monospace;
-    }
-
     @media (max-width: 640px) {
       .tab-btn { font-size: 11px; padding: 8px 6px; }
       .chart-wrap { height: 320px; }
@@ -411,6 +525,7 @@
 
   <div class="hero">
     <p class="eyebrow">Day 6 of 10 · Southeast vs Southwest · Education Policy Analysis</p>
+    <div class="hero-accent-line"></div>
     <h1>Same Poverty Rate.<br><em>15-Point Graduation Gap.</em></h1>
     <p class="hero-sub">Alabama and Arizona share nearly identical child poverty rates — about 20% — yet Alabama graduates 91% of its students while Arizona graduates 76%. AI analysis of 16 states reveals the three policy levers that drive this 15-point gap.</p>
     <a class="nav-back" href="../">← Back to all 10 days</a>
@@ -418,87 +533,89 @@
 
   <div class="stats-row">
     <div class="stat-card">
-      <div class="stat-num">15<span class="stat-unit">pt</span></div>
+      <div class="stat-num"><span class="counter" data-target="15">0</span><span class="stat-unit">pt</span></div>
       <div class="stat-label">Graduation Gap</div>
     </div>
     <div class="stat-card">
-      <div class="stat-num">16</div>
+      <div class="stat-num"><span class="counter" data-target="16">0</span></div>
       <div class="stat-label">States Analyzed</div>
     </div>
     <div class="stat-card">
-      <div class="stat-num orange">~20<span class="stat-unit">%</span></div>
+      <div class="stat-num amber">~<span class="counter" data-target="20">0</span><span class="stat-unit">%</span></div>
       <div class="stat-label">Child Poverty — Both States</div>
     </div>
     <div class="stat-card">
-      <div class="stat-num">3</div>
+      <div class="stat-num"><span class="counter" data-target="3">0</span></div>
       <div class="stat-label">Policy Levers Found</div>
     </div>
   </div>
 
   <div class="container">
 
-    <div class="ai-insight">
+    <div class="ai-insight section">
       <div class="ai-label">AI Analysis · Policy Finding</div>
       <p>Alabama and Arizona share nearly identical child poverty rates — about 20% of children living below the poverty line. Yet Alabama graduates 91% of its high school students while Arizona graduates just 76%, a gap that poverty alone cannot explain. AI analysis of 16 states across the Southeast and Southwest identifies three policy levers that consistently drive this divergence: <strong>equalized state funding formulas</strong> that reduce reliance on local property taxes, <strong>compulsory attendance requirements through age 17 or 18</strong> that keep students enrolled through critical years, and <strong>early adoption of science-of-reading curriculum</strong>. States that stacked all three outperformed similarly-impoverished states that pursued decentralized school choice expansion without those foundational investments.</p>
     </div>
 
-    <div class="tab-bar">
-      <button class="tab-btn active" data-tab="scatter">Poverty vs Graduation</button>
-      <button class="tab-btn" data-tab="pairs">Matched State Pairs</button>
-      <button class="tab-btn" data-tab="policy">Policy Explorer</button>
-    </div>
+    <div class="tab-section section">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="scatter">Poverty vs Graduation</button>
+        <button class="tab-btn" data-tab="pairs">Matched State Pairs</button>
+        <button class="tab-btn" data-tab="policy">Policy Explorer</button>
+      </div>
 
-    <!-- Tab 1: Scatter -->
-    <div id="panel-scatter" class="tab-panel active">
-      <div class="chart-card">
-        <div class="chart-title">Child Poverty Rate vs. 4-Year Graduation Rate — 16 States</div>
-        <div class="chart-sub">Southeast (teal) vs Southwest/West (orange) · Hover any point for details · 2021–22 NCES ACGR + Census ACS data</div>
-        <div class="chart-wrap">
-          <canvas id="scatterChart"></canvas>
+      <!-- Tab 1: Scatter -->
+      <div id="panel-scatter" class="tab-panel active">
+        <div class="chart-card">
+          <div class="chart-title">Child Poverty Rate vs. 4-Year Graduation Rate — 16 States</div>
+          <div class="chart-sub">Southeast (teal) vs Southwest/West (amber) · Hover any point for details · 2021–22 NCES ACGR + Census ACS data</div>
+          <div class="chart-wrap">
+            <canvas id="scatterChart"></canvas>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Tab 2: Pairs -->
-    <div id="panel-pairs" class="tab-panel">
-      <div class="chart-card">
-        <div class="chart-title">Matched State Pairs — Similar Poverty, Different Outcomes</div>
-        <div class="chart-sub">Each pair is matched on child poverty rate. Graduation rates tell a strikingly different story. Teal = Southeast · Orange = Southwest/West</div>
-        <div class="pairs-summary" id="pairCards"></div>
-        <div class="chart-wrap" style="height:360px">
-          <canvas id="pairsChart"></canvas>
+      <!-- Tab 2: Pairs -->
+      <div id="panel-pairs" class="tab-panel">
+        <div class="chart-card">
+          <div class="chart-title">Matched State Pairs — Similar Poverty, Different Outcomes</div>
+          <div class="chart-sub">Each pair is matched on child poverty rate. Graduation rates tell a strikingly different story. Teal = Southeast · Amber = Southwest/West</div>
+          <div class="pairs-summary" id="pairCards"></div>
+          <div class="chart-wrap" style="height:360px">
+            <canvas id="pairsChart"></canvas>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Tab 3: Policy -->
-    <div id="panel-policy" class="tab-panel">
-      <div class="chart-card">
-        <div class="chart-title">Policy Explorer — All 16 States</div>
-        <div class="chart-sub">Sorted by graduation rate. Highlighted rows = primary matched pair (AL vs AZ). Compare funding model, compulsory attendance, voucher scale, and reading reform year.</div>
-        <div class="policy-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>State</th>
-                <th>Region</th>
-                <th>Child Poverty</th>
-                <th>Grad Rate</th>
-                <th>Compulsory Age</th>
-                <th>Voucher Program</th>
-                <th>Funding Model</th>
-                <th>Reading Reform</th>
-                <th>Per-Pupil ($K)</th>
-              </tr>
-            </thead>
-            <tbody id="policyTableBody"></tbody>
-          </table>
+      <!-- Tab 3: Policy -->
+      <div id="panel-policy" class="tab-panel">
+        <div class="chart-card">
+          <div class="chart-title">Policy Explorer — All 16 States</div>
+          <div class="chart-sub">Sorted by graduation rate. Highlighted rows = primary matched pair (AL vs AZ). Compare funding model, compulsory attendance, voucher scale, and reading reform year.</div>
+          <div class="policy-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>State</th>
+                  <th>Region</th>
+                  <th>Child Poverty</th>
+                  <th>Grad Rate</th>
+                  <th>Compulsory Age</th>
+                  <th>Voucher Program</th>
+                  <th>Funding Model</th>
+                  <th>Reading Reform</th>
+                  <th>Per-Pupil ($K)</th>
+                </tr>
+              </thead>
+              <tbody id="policyTableBody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
+    </div><!-- /tab-section -->
 
     <!-- Key Findings -->
-    <div class="findings">
+    <div class="findings section">
       <div class="section-head">Three Policy Levers That Explain the Gap</div>
       <div class="section-sub">AI identified these variables by comparing states with similar poverty but divergent graduation outcomes</div>
       <div class="findings-grid">
@@ -521,7 +638,7 @@
     </div>
 
     <!-- Voices & Officials -->
-    <div class="voices">
+    <div class="voices section">
       <div class="section-head">What Officials &amp; Researchers Say</div>
       <div class="section-sub">Verified quotes from government sources and education policy researchers</div>
       <div class="voices-grid">
@@ -559,7 +676,7 @@
     </div>
 
     <!-- Downloads -->
-    <div class="downloads">
+    <div class="downloads section">
       <div class="dl-header">
         <div>
           <div class="section-head">Download Raw Data</div>
@@ -635,6 +752,26 @@
   <script>
   document.addEventListener('DOMContentLoaded', function() {
 
+    /* ── Counter animation ──────────────────────────────────────────────── */
+    function animateCounter(el, target, duration) {
+      const start = performance.now();
+      (function tick(now) {
+        const p = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(eased * target);
+        if (p < 1) requestAnimationFrame(tick);
+      })(start);
+    }
+    document.querySelectorAll('.counter[data-target]').forEach(el => {
+      animateCounter(el, parseInt(el.dataset.target), 1400);
+    });
+
+    /* ── Section reveal (IntersectionObserver) ──────────────────────────── */
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.section').forEach(s => revealObserver.observe(s));
+
     /* ── State data ─────────────────────────────────────────────────────── */
     const stateData = [
       // Southeast
@@ -668,19 +805,14 @@
       { se:'AR', sw:'OR', label:'Spending Reversal',  note:'OR spends $4.6K more per pupil; AR still wins' },
     ];
 
-    /* ── Tab management (chart-aware lazy init) ─────────────────────────── */
+    /* ── Tab management ─────────────────────────────────────────────────── */
     let scatterInst = null, pairsInst = null;
     const chartInitialized = {};
 
     function initChart(tabName) {
-      if (tabName === 'scatter') {
-        initScatterChart();
-      } else if (tabName === 'pairs') {
-        buildPairCards();
-        initPairsChart();
-      } else if (tabName === 'policy') {
-        buildPolicyTable();
-      }
+      if      (tabName === 'scatter') initScatterChart();
+      else if (tabName === 'pairs')  { buildPairCards(); initPairsChart(); }
+      else if (tabName === 'policy') buildPolicyTable();
     }
 
     function showTab(tabName) {
@@ -688,10 +820,7 @@
         b.classList.toggle('active', b.dataset.tab === tabName));
       document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
       document.getElementById('panel-' + tabName).classList.add('active');
-      if (!chartInitialized[tabName]) {
-        initChart(tabName);
-        chartInitialized[tabName] = true;
-      }
+      if (!chartInitialized[tabName]) { initChart(tabName); chartInitialized[tabName] = true; }
     }
 
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -704,15 +833,13 @@
       afterDatasetsDraw(chart) {
         const ctx = chart.ctx;
         ctx.save();
-        ctx.font = '600 10px Inter, sans-serif';
+        ctx.font = '500 10px "DM Sans", sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'bottom';
         chart.data.datasets.forEach((dataset, di) => {
-          const meta = chart.getDatasetMeta(di);
-          meta.data.forEach((point, i) => {
-            const d = dataset.data[i];
+          chart.getDatasetMeta(di).data.forEach((point, i) => {
             ctx.fillStyle = di === 0 ? '#0A4F3E' : '#92400E';
-            ctx.fillText(d.abbr, point.x, point.y - 9);
+            ctx.fillText(dataset.data[i].abbr, point.x, point.y - 9);
           });
         });
         ctx.restore();
@@ -729,7 +856,7 @@
             {
               label: 'Southeast',
               data: seData.map(s => ({ x: s.poverty, y: s.grad, abbr: s.abbr, name: s.name })),
-              backgroundColor: 'rgba(15,110,86,0.78)',
+              backgroundColor: 'rgba(15,110,86,0.80)',
               borderColor: '#0F6E56',
               borderWidth: 2,
               pointRadius: 9,
@@ -738,8 +865,8 @@
             {
               label: 'Southwest / West',
               data: swData.map(s => ({ x: s.poverty, y: s.grad, abbr: s.abbr, name: s.name })),
-              backgroundColor: 'rgba(217,119,6,0.78)',
-              borderColor: '#D97706',
+              backgroundColor: 'rgba(232,168,56,0.85)',
+              borderColor: '#E8A838',
               borderWidth: 2,
               pointRadius: 9,
               pointHoverRadius: 13,
@@ -752,7 +879,7 @@
           plugins: {
             legend: {
               position: 'top',
-              labels: { font: { family: 'Inter', size: 13 }, padding: 18 }
+              labels: { font: { family: 'DM Sans', size: 13 }, padding: 18 }
             },
             tooltip: {
               callbacks: {
@@ -760,26 +887,21 @@
                 label: ctx => {
                   const d = ctx.raw;
                   const s = stateData.find(x => x.abbr === d.abbr);
-                  return [
-                    `${s.name} (${s.abbr})`,
-                    `Child Poverty: ${d.x}%`,
-                    `Grad Rate: ${d.y}%`,
-                    `Per Pupil: $${s.spending}K`
-                  ];
+                  return [`${s.name} (${s.abbr})`, `Child Poverty: ${d.x}%`, `Grad Rate: ${d.y}%`, `Per Pupil: $${s.spending}K`];
                 }
               }
             }
           },
           scales: {
             x: {
-              title: { display: true, text: 'Child Poverty Rate (%)', font: { family: 'Inter', size: 12 } },
+              title: { display: true, text: 'Child Poverty Rate (%)', font: { family: 'DM Sans', size: 12 } },
               min: 5, max: 31,
-              grid: { color: 'rgba(0,0,0,.05)' }
+              grid: { color: 'rgba(0,0,0,0.04)' }
             },
             y: {
-              title: { display: true, text: '4-Year Graduation Rate (%)', font: { family: 'Inter', size: 12 } },
+              title: { display: true, text: '4-Year Graduation Rate (%)', font: { family: 'DM Sans', size: 12 } },
               min: 70, max: 96,
-              grid: { color: 'rgba(0,0,0,.05)' }
+              grid: { color: 'rgba(0,0,0,0.04)' }
             }
           }
         }
@@ -789,10 +911,10 @@
     /* ── Pair cards ─────────────────────────────────────────────────────── */
     function buildPairCards() {
       const container = document.getElementById('pairCards');
+      if (container.children.length) return;
       pairs.forEach(p => {
         const se = stateData.find(s => s.abbr === p.se);
         const sw = stateData.find(s => s.abbr === p.sw);
-        const gap = se.grad - sw.grad;
         container.innerHTML += `
           <div class="pair-card">
             <div class="pair-label">${p.label}</div>
@@ -801,7 +923,7 @@
               <span class="pair-vs">vs</span>
               <span class="pair-abbr sw">${p.sw}</span>
             </div>
-            <div class="pair-gap-num">+${gap} pts</div>
+            <div class="pair-gap-num">+${se.grad - sw.grad} pts</div>
             <div class="pair-gap-note">${p.note}</div>
           </div>`;
       });
@@ -824,7 +946,7 @@
             {
               label: 'Southeast State — Graduation %',
               data: seGrads,
-              backgroundColor: 'rgba(15,110,86,0.87)',
+              backgroundColor: 'rgba(15,110,86,0.88)',
               borderColor: '#0F6E56',
               borderWidth: 1,
               borderRadius: 5,
@@ -832,8 +954,8 @@
             {
               label: 'Southwest/West State — Graduation %',
               data: swGrads,
-              backgroundColor: 'rgba(217,119,6,0.87)',
-              borderColor: '#D97706',
+              backgroundColor: 'rgba(232,168,56,0.88)',
+              borderColor: '#E8A838',
               borderWidth: 1,
               borderRadius: 5,
             }
@@ -843,22 +965,18 @@
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { position: 'top', labels: { font: { family: 'Inter', size: 12 }, padding: 16 } },
+            legend: { position: 'top', labels: { font: { family: 'DM Sans', size: 12 }, padding: 16 } },
             tooltip: {
               callbacks: {
-                afterLabel: (ctx) => {
-                  const idx = ctx.dataIndex;
-                  const pov = ctx.datasetIndex === 0 ? sePov[idx] : swPov[idx];
-                  return `Child Poverty: ${pov}%`;
-                }
+                afterLabel: (ctx) => `Child Poverty: ${ctx.datasetIndex === 0 ? sePov[ctx.dataIndex] : swPov[ctx.dataIndex]}%`
               }
             }
           },
           scales: {
             y: {
               min: 70, max: 96,
-              title: { display: true, text: 'Graduation Rate (%)', font: { family: 'Inter', size: 12 } },
-              grid: { color: 'rgba(0,0,0,.05)' }
+              title: { display: true, text: 'Graduation Rate (%)', font: { family: 'DM Sans', size: 12 } },
+              grid: { color: 'rgba(0,0,0,0.04)' }
             },
             x: { grid: { display: false } }
           }
@@ -869,34 +987,28 @@
     /* ── Policy table ───────────────────────────────────────────────────── */
     function buildPolicyTable() {
       const tbody = document.getElementById('policyTableBody');
+      if (tbody.children.length) return;
       const maxSpend = Math.max(...stateData.map(s => s.spending));
-      const sorted = [...stateData].sort((a, b) => b.grad - a.grad);
-      const voucherClass = { Universal:'tag-universal', Targeted:'tag-targeted', Limited:'tag-limited', None:'tag-none' };
-
-      sorted.forEach(s => {
+      const vMap = { Universal:'tag-universal', Targeted:'tag-targeted', Limited:'tag-limited', None:'tag-none' };
+      [...stateData].sort((a, b) => b.grad - a.grad).forEach(s => {
         const barW = Math.round((s.spending / maxSpend) * 72);
-        const hlClass = (s.abbr === 'AL' || s.abbr === 'AZ') ? 'hl' : '';
+        const hl = (s.abbr === 'AL' || s.abbr === 'AZ') ? 'hl' : '';
         tbody.innerHTML += `
-          <tr class="${hlClass}">
-            <td><strong>${s.name}</strong>${hlClass ? ' ⭐' : ''}</td>
+          <tr class="${hl}">
+            <td><strong>${s.name}</strong>${hl ? ' ⭐' : ''}</td>
             <td><span class="tag tag-${s.region.toLowerCase()}">${s.region}</span></td>
             <td>${s.poverty}%</td>
             <td><strong>${s.grad}%</strong></td>
             <td>Through ${s.attendAge}</td>
-            <td><span class="tag ${voucherClass[s.voucher]}">${s.voucher}</span></td>
+            <td><span class="tag ${vMap[s.voucher]}">${s.voucher}</span></td>
             <td>${s.fundingModel}</td>
             <td>${s.readReform}</td>
-            <td>
-              <div class="sbar">
-                <div class="sbar-fill" style="width:${barW}px"></div>
-                <span>$${s.spending}K</span>
-              </div>
-            </td>
+            <td><div class="sbar"><div class="sbar-fill" style="width:${barW}px"></div><span>$${s.spending}K</span></div></td>
           </tr>`;
       });
     }
 
-    /* ── Initialize first tab ───────────────────────────────────────────── */
+    /* ── Boot ───────────────────────────────────────────────────────────── */
     showTab('scatter');
 
   }); // end DOMContentLoaded
