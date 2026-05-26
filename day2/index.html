@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Day 2 of 10 · Memphis ACT Scores | From Memphis to 50 States</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,11 +28,13 @@
     }
 
     body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background: var(--bg);
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: #FAFAF8;
       color: var(--text);
       line-height: 1.6;
+      border-top: 3px solid #0F6E56;
     }
+    body::after { content: ''; position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.022; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"); background-size: 200px 200px; }
 
     /* HEADER */
     .header {
@@ -73,8 +75,9 @@
       margin-bottom: 18px;
     }
     .header h1 {
+      font-family: 'DM Serif Display', Georgia, serif;
       font-size: clamp(26px, 4.5vw, 48px);
-      font-weight: 900;
+      font-weight: 400;
       line-height: 1.1;
       letter-spacing: -1px;
       margin-bottom: 16px;
@@ -82,6 +85,7 @@
       margin-left: auto;
       margin-right: auto;
     }
+    .hero-accent-line { width: 48px; height: 3px; background: linear-gradient(90deg, #5EEAD4, rgba(94,234,212,.1)); margin: 0 auto 22px; border-radius: 2px; }
     .header h1 .highlight { color: var(--accent); }
     .header-sub {
       font-size: clamp(14px, 2vw, 17px);
@@ -105,12 +109,18 @@
       background: #fff;
       border-radius: 14px;
       padding: 20px 18px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
       text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: transform .2s ease, box-shadow .2s ease;
     }
+    .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%; background: radial-gradient(ellipse at 50% -20%, rgba(15,110,86,0.07) 0%, transparent 80%); pointer-events: none; }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.11); }
     .stat-number {
+      font-family: 'DM Serif Display', Georgia, serif;
       font-size: 36px;
-      font-weight: 900;
+      font-weight: 400;
       line-height: 1;
       margin-bottom: 4px;
     }
@@ -118,6 +128,7 @@
     .stat-number.amber { color: var(--amber); }
     .stat-number.green { color: var(--green); }
     .stat-number.blue { color: var(--blue); }
+    .stat-unit { font-size: 22px; }
     .stat-label {
       font-size: 11px;
       font-weight: 600;
@@ -142,10 +153,12 @@
     }
 
     /* SECTION */
-    .section { margin-bottom: 40px; }
+    .section { margin-bottom: 40px; opacity: 0; transform: translateY(20px); transition: opacity .55s ease, transform .55s ease; }
+    .section.visible { opacity: 1; transform: translateY(0); }
     .section-title {
-      font-size: 20px;
-      font-weight: 800;
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 22px;
+      font-weight: 400;
       margin-bottom: 6px;
       letter-spacing: -0.3px;
     }
@@ -164,8 +177,9 @@
       margin-bottom: 16px;
     }
     .chart-title {
-      font-size: 15px;
-      font-weight: 700;
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 17px;
+      font-weight: 400;
       margin-bottom: 4px;
     }
     .chart-subtitle {
@@ -337,14 +351,17 @@
       margin-top: 20px;
     }
     .quote-card {
-      background: var(--card);
+      background: #F7F9F8;
       border: 1px solid var(--border);
-      border-left: 4px solid #0F6E56;
-      border-radius: 12px;
-      padding: 20px 18px;
+      border-left: 3px solid #0F6E56;
+      border-radius: 0 14px 14px 0;
+      padding: 20px 22px;
       display: flex;
       flex-direction: column;
+      box-shadow: 0 2px 12px rgba(0,0,0,.04);
+      transition: transform .2s ease, box-shadow .2s ease;
     }
+    .quote-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.09); }
     .quote-card .quote-type {
       font-size: 10px;
       font-weight: 700;
@@ -356,8 +373,8 @@
     .quote-card blockquote {
       font-size: 14px;
       font-style: italic;
-      line-height: 1.65;
-      color: var(--text);
+      line-height: 1.75;
+      color: #2D3748;
       margin: 0 0 12px 0;
       flex: 1;
     }
@@ -372,6 +389,9 @@
     }
     .quote-card .attribution {
       font-size: 11px;
+      font-weight: 600;
+      font-variant: small-caps;
+      letter-spacing: .5px;
       color: var(--muted);
       line-height: 1.5;
       margin-bottom: 10px;
@@ -571,6 +591,7 @@
     <a href="../day1/">Day 1: Absenteeism →</a>
   </div>
   <div class="day-badge">Day 2 of 10</div>
+  <div class="hero-accent-line"></div>
   <h1>Memphis ACT Scores Have Fallen<br><span class="highlight">5 Years in a Row.</span></h1>
   <p class="header-sub">
     From 2019 to 2025, the composite score dropped from 17.3 to 16.4 — while 75% of MSCS students still score below the college-readiness threshold. Here's the full 6-year breakdown.
@@ -580,22 +601,22 @@
 <!-- ══════════ STAT CARDS ══════════ -->
 <div class="stats-strip">
   <div class="stat-card">
-    <div class="stat-number down">16.4</div>
+    <div class="stat-number down"><span class="counter" data-target="16.4">0.0</span></div>
     <div class="stat-label">2024–25 Composite<br>ACT Score (MSCS)</div>
     <div class="stat-delta neg">▼ 0.9 pts since 2019–20</div>
   </div>
   <div class="stat-card">
-    <div class="stat-number amber">74.8%</div>
+    <div class="stat-number amber"><span class="counter" data-target="74.8">0.0</span><span class="stat-unit">%</span></div>
     <div class="stat-label">Students Scoring<br>Below ACT 19</div>
     <div class="stat-delta neg">▲ +4.5 pts since 2019–20</div>
   </div>
   <div class="stat-card">
-    <div class="stat-number blue">6,579</div>
+    <div class="stat-number blue"><span class="counter" data-target="6579">0</span></div>
     <div class="stat-label">Students Tested<br>in 2024–25</div>
     <div class="stat-delta pos">▲ +465 vs 2019–20</div>
   </div>
   <div class="stat-card">
-    <div class="stat-number green">15.8%</div>
+    <div class="stat-number green"><span class="counter" data-target="15.8">0.0</span><span class="stat-unit">%</span></div>
     <div class="stat-label">Scoring ≥ 21<br>(College-Ready)</div>
     <div class="stat-delta neg">▼ −3.4 pts since 2019–20</div>
   </div>
@@ -1327,6 +1348,29 @@ DATA.forEach((d, i) => {
       <td>${trendHtml}</td>
     </tr>`;
 });
+
+
+// Counter animation
+function animateCounter(el, target, duration) {
+  const isFloat = !Number.isInteger(target);
+  const start = performance.now();
+  (function tick(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    const val = eased * target;
+    el.textContent = isFloat ? val.toFixed(1) : Math.round(val);
+    if (p < 1) requestAnimationFrame(tick);
+  })(start);
+}
+document.querySelectorAll('.counter[data-target]').forEach(el => {
+  animateCounter(el, parseFloat(el.dataset.target), 1400);
+});
+
+// Section reveals
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.section').forEach(s => revealObserver.observe(s));
 
 }); // end DOMContentLoaded
 </script>

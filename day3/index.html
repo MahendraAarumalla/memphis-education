@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Day 3 of 10 · All 147 TN Districts Ranked | From Memphis to 50 States</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -29,7 +29,8 @@
       --radius:     12px;
     }
     html { scroll-behavior: smooth; }
-    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; font-size: 15px; }
+    body { font-family: 'DM Sans', system-ui, sans-serif; background: #FAFAF8; color: var(--text); line-height: 1.6; font-size: 15px; border-top: 3px solid #0F6E56; }
+    body::after { content: ''; position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.022; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"); background-size: 200px 200px; }
 
     nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 24px; height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 16px; position: sticky; top: 0; z-index: 100; }
     .nav-brand { font-size: 13px; font-weight: 700; color: var(--teal); text-decoration: none; white-space: nowrap; }
@@ -41,20 +42,25 @@
     .hero { background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 100%); color: var(--white); padding: 56px 24px 64px; text-align: center; position: relative; overflow: hidden; }
     .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 0%, rgba(94,234,212,0.1) 0%, transparent 65%); pointer-events: none; }
     .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); border-radius: 20px; padding: 5px 16px; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 20px; }
-    .hero h1 { font-size: clamp(26px, 4.5vw, 50px); font-weight: 900; line-height: 1.1; letter-spacing: -1px; margin-bottom: 14px; max-width: 780px; margin-left: auto; margin-right: auto; }
+    .hero h1 { font-family: 'DM Serif Display', Georgia, serif; font-size: clamp(26px, 4.5vw, 50px); font-weight: 400; line-height: 1.1; letter-spacing: -1px; margin-bottom: 14px; max-width: 780px; margin-left: auto; margin-right: auto; }
+    .hero-accent-line { width: 48px; height: 3px; background: linear-gradient(90deg, #5EEAD4, rgba(94,234,212,.1)); margin: 0 auto 22px; border-radius: 2px; }
     .hero h1 em { color: #5EEAD4; font-style: normal; }
     .hero-sub { font-size: clamp(14px, 2vw, 17px); opacity: .8; max-width: 600px; margin: 0 auto; line-height: 1.65; }
 
     .stat-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; max-width: 900px; margin: -36px auto 0; padding: 0 24px; position: relative; z-index: 10; }
-    .stat-card { background: var(--white); border-radius: 14px; padding: 20px 18px; box-shadow: 0 4px 24px rgba(0,0,0,.10); text-align: center; }
-    .stat-num { font-size: 34px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+    .stat-card { background: var(--white); border-radius: 14px; padding: 20px 18px; box-shadow: 0 2px 12px rgba(0,0,0,.07); text-align: center; position: relative; overflow: hidden; transition: transform .2s ease, box-shadow .2s ease; }
+    .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%; background: radial-gradient(ellipse at 50% -20%, rgba(15,110,86,0.07) 0%, transparent 80%); pointer-events: none; }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.11); }
+    .stat-num { font-family: 'DM Serif Display', Georgia, serif; font-size: 34px; font-weight: 400; line-height: 1; margin-bottom: 4px; }
     .stat-num.teal { color: var(--teal); } .stat-num.amber { color: var(--amber); } .stat-num.green { color: var(--green); }
+    .stat-unit { font-size: 20px; }
     .stat-label { font-size: 11px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; color: var(--muted); line-height: 1.3; }
 
     .container { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
-    .section { margin-bottom: 48px; }
+    .section { margin-bottom: 48px; opacity: 0; transform: translateY(20px); transition: opacity .55s ease, transform .55s ease; }
+    .section.visible { opacity: 1; transform: translateY(0); }
     .section-hd { margin-bottom: 20px; }
-    .section-title { font-size: 20px; font-weight: 800; letter-spacing: -.3px; margin-bottom: 4px; }
+    .section-title { font-family: 'DM Serif Display', Georgia, serif; font-size: 22px; font-weight: 400; letter-spacing: -.3px; margin-bottom: 4px; }
     .section-sub { font-size: 13px; color: var(--muted); }
 
     .ai-box { background: linear-gradient(135deg, var(--teal-dark), var(--teal)); color: var(--white); border-radius: 14px; padding: 28px 28px 24px; margin-bottom: 40px; }
@@ -63,7 +69,7 @@
     .ai-box strong { color: #5EEAD4; }
 
     .chart-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
-    .chart-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .chart-title { font-family: 'DM Serif Display', Georgia, serif; font-size: 16px; font-weight: 400; margin-bottom: 4px; }
     .chart-sub { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
     .chart-wrap { position: relative; }
 
@@ -106,11 +112,12 @@
     .quad-struggling { background: #EDE9FE; color: #5B21B6; }
 
     .quotes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(255px, 1fr)); gap: 16px; margin-top: 20px; }
-    .quote-card { background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--teal); border-radius: var(--radius); padding: 20px 18px 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow); }
-    .quote-card blockquote { font-size: 14px; font-style: italic; line-height: 1.65; color: var(--text); position: relative; }
+    .quote-card { background: #F7F9F8; border: 1px solid var(--border); border-left: 3px solid var(--teal); border-radius: 0 14px 14px 0; padding: 20px 22px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 2px 12px rgba(0,0,0,.04); transition: transform .2s ease, box-shadow .2s ease; }
+    .quote-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.09); }
+    .quote-card blockquote { font-size: 14px; font-style: italic; line-height: 1.75; color: #2D3748; position: relative; }
     .quote-card blockquote::before { content: '\201C'; font-size: 28px; line-height: 0; vertical-align: -0.4em; color: var(--teal); margin-right: 2px; font-style: normal; }
     .quote-card blockquote::after  { content: '\201D'; font-size: 28px; line-height: 0; vertical-align: -0.4em; color: var(--teal); margin-left: 2px; font-style: normal; }
-    .quote-attribution { font-size: 11px; font-weight: 600; color: var(--muted); line-height: 1.4; }
+    .quote-attribution { font-size: 11px; font-weight: 600; font-variant: small-caps; letter-spacing: .5px; color: var(--muted); line-height: 1.4; }
     .quote-source-link { font-size: 11px; color: var(--teal); text-decoration: none; font-weight: 600; margin-top: auto; align-self: flex-start; }
     .quote-source-link:hover { text-decoration: underline; }
 
@@ -167,15 +174,16 @@
 
 <div class="hero">
   <div class="hero-badge">Day 3 of 10 · Tennessee Statewide</div>
+  <div class="hero-accent-line"></div>
   <h1>147 Tennessee Districts.<br><em>Three Data Points Each.</em></h1>
   <p class="hero-sub">AI found the 5 districts that defy every expectation — high absenteeism, strong graduation. Here's what 124 districts look like when you plot absenteeism against outcomes.</p>
 </div>
 
 <div class="stat-strip">
-  <div class="stat-card"><div class="stat-num teal">124</div><div class="stat-label">TN Districts<br>Analyzed</div></div>
-  <div class="stat-card"><div class="stat-num amber">17.0%</div><div class="stat-label">TN Average<br>Absenteeism</div></div>
-  <div class="stat-card"><div class="stat-num green">89.9%</div><div class="stat-label">TN Average<br>Graduation Rate</div></div>
-  <div class="stat-card"><div class="stat-num teal">18.9</div><div class="stat-label">TN Average<br>ACT Composite</div></div>
+  <div class="stat-card"><div class="stat-num teal"><span class="counter" data-target="124">0</span></div><div class="stat-label">TN Districts<br>Analyzed</div></div>
+  <div class="stat-card"><div class="stat-num amber"><span class="counter" data-target="17.0">0.0</span><span class="stat-unit">%</span></div><div class="stat-label">TN Average<br>Absenteeism</div></div>
+  <div class="stat-card"><div class="stat-num green"><span class="counter" data-target="89.9">0.0</span><span class="stat-unit">%</span></div><div class="stat-label">TN Average<br>Graduation Rate</div></div>
+  <div class="stat-card"><div class="stat-num teal"><span class="counter" data-target="18.9">0.0</span></div><div class="stat-label">TN Average<br>ACT Composite</div></div>
 </div>
 
 <div class="container">
@@ -457,6 +465,28 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+
+// Counter animation
+function animateCounter(el, target, duration) {
+  const isFloat = !Number.isInteger(target);
+  const start = performance.now();
+  (function tick(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    const val = eased * target;
+    el.textContent = isFloat ? val.toFixed(1) : Math.round(val);
+    if (p < 1) requestAnimationFrame(tick);
+  })(start);
+}
+document.querySelectorAll('.counter[data-target]').forEach(el => {
+  animateCounter(el, parseFloat(el.dataset.target), 1400);
+});
+
+// Section reveals
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.section').forEach(s => revealObserver.observe(s));
 
 const DISTRICTS = [{"id":10,"name":"Anderson County","abs":14.5,"grad":89.2,"act":18.7,"act21":35.4,"quad":"struggling"},{"id":12,"name":"Oak Ridge","abs":15.0,"grad":91.8,"act":21.3,"act21":52.8,"quad":"strong"},{"id":20,"name":"Bedford County","abs":16.8,"grad":92.4,"act":18.6,"act21":30.2,"quad":"resilient"},{"id":30,"name":"Benton County","abs":15.5,"grad":97.6,"act":18.9,"act21":35.8,"quad":"strong"},{"id":40,"name":"Bledsoe County","abs":19.7,"grad":83.3,"act":16.8,"act21":22.7,"quad":"at-risk"},{"id":50,"name":"Blount County","abs":16.5,"grad":95.8,"act":19.2,"act21":39.4,"quad":"strong"},{"id":51,"name":"Alcoa","abs":6.8,"grad":96.3,"act":20.4,"act21":46.2,"quad":"strong"},{"id":52,"name":"Maryville","abs":8.0,"grad":91.4,"act":23.2,"act21":67.3,"quad":"strong"},{"id":60,"name":"Bradley County","abs":17.2,"grad":92.9,"act":19.2,"act21":39.4,"quad":"resilient"},{"id":61,"name":"Cleveland","abs":24.5,"grad":94.1,"act":19.2,"act21":37.9,"quad":"resilient"},{"id":70,"name":"Campbell County","abs":21.3,"grad":83.0,"act":16.8,"act21":18.2,"quad":"at-risk"},{"id":80,"name":"Cannon County","abs":16.4,"grad":85.6,"act":17.4,"act21":29.8,"quad":"struggling"},{"id":92,"name":"Hollow Rock - Bruceton","abs":9.6,"grad":91.5,"act":17.1,"act21":25.6,"quad":"strong"},{"id":93,"name":"Huntingdon Special School District","abs":7.1,"grad":86.8,"act":18.2,"act21":28.7,"quad":"struggling"},{"id":94,"name":"McKenzie","abs":5.8,"grad":96.8,"act":19.4,"act21":43.6,"quad":"strong"},{"id":97,"name":"West Carroll Sp Dist","abs":16.4,"grad":98.4,"act":17.6,"act21":24.2,"quad":"strong"},{"id":100,"name":"Carter County","abs":20.4,"grad":85.3,"act":18.0,"act21":28.7,"quad":"at-risk"},{"id":101,"name":"Elizabethton","abs":18.8,"grad":95.5,"act":19.7,"act21":42.5,"quad":"resilient"},{"id":110,"name":"Cheatham County","abs":19.4,"grad":87.6,"act":19.3,"act21":35.4,"quad":"at-risk"},{"id":120,"name":"Chester County","abs":16.1,"grad":90.6,"act":19.7,"act21":38.9,"quad":"strong"},{"id":130,"name":"Claiborne County","abs":23.1,"grad":89.5,"act":17.9,"act21":24.2,"quad":"at-risk"},{"id":140,"name":"Clay County","abs":18.2,"grad":95.3,"act":17.9,"act21":23.8,"quad":"resilient"},{"id":150,"name":"Cocke County","abs":24.7,"grad":95.2,"act":17.4,"act21":23.4,"quad":"resilient"},{"id":160,"name":"Coffee County","abs":12.1,"grad":89.3,"act":18.7,"act21":33.6,"quad":"struggling"},{"id":162,"name":"Tullahoma","abs":17.8,"grad":87.8,"act":20.3,"act21":46.2,"quad":"at-risk"},{"id":170,"name":"Crockett County","abs":10.3,"grad":97.2,"act":17.8,"act21":24.6,"quad":"strong"},{"id":180,"name":"Cumberland County","abs":17.5,"grad":90.9,"act":19.2,"act21":38.2,"quad":"resilient"},{"id":190,"name":"Davidson County","abs":24.1,"grad":84.6,"act":17.6,"act21":25.7,"quad":"at-risk"},{"id":200,"name":"Decatur County","abs":20.4,"grad":80.5,"act":19.4,"act21":38.0,"quad":"at-risk"},{"id":210,"name":"DeKalb County","abs":16.7,"grad":85.3,"act":19.7,"act21":37.9,"quad":"at-risk"},{"id":220,"name":"Dickson County","abs":15.4,"grad":94.8,"act":19.0,"act21":34.4,"quad":"strong"},{"id":230,"name":"Dyer County","abs":11.1,"grad":96.3,"act":20.4,"act21":47.6,"quad":"strong"},{"id":231,"name":"Dyersburg","abs":11.2,"grad":93.5,"act":20.0,"act21":46.5,"quad":"strong"},{"id":240,"name":"Fayette County Public Schools","abs":20.1,"grad":87.6,"act":16.5,"act21":16.1,"quad":"at-risk"},{"id":250,"name":"Fentress County","abs":21.1,"grad":96.9,"act":19.2,"act21":33.9,"quad":"resilient"},{"id":260,"name":"Franklin County","abs":17.4,"grad":86.2,"act":18.2,"act21":28.3,"quad":"at-risk"},{"id":271,"name":"Humboldt City Schools","abs":21.7,"grad":85.7,"act":15.7,"act21":7.8,"quad":"at-risk"},{"id":272,"name":"Milan","abs":11.4,"grad":88.7,"act":19.1,"act21":34.2,"quad":"struggling"},{"id":273,"name":"Trenton","abs":7.1,"grad":92.4,"act":18.2,"act21":25.0,"quad":"strong"},{"id":274,"name":"Bradford","abs":1.2,"grad":88.9,"act":20.7,"act21":44.1,"quad":"struggling"},{"id":275,"name":"Gibson Co Sp Dist","abs":7.2,"grad":94.1,"act":21.3,"act21":54.4,"quad":"strong"},{"id":280,"name":"Giles County","abs":17.0,"grad":86.8,"act":18.9,"act21":31.8,"quad":"at-risk"},{"id":290,"name":"Grainger County","abs":20.4,"grad":83.8,"act":17.3,"act21":24.6,"quad":"at-risk"},{"id":300,"name":"Greene County","abs":14.6,"grad":97.7,"act":19.1,"act21":37.5,"quad":"strong"},{"id":301,"name":"Greeneville","abs":11.2,"grad":90.9,"act":20.4,"act21":47.3,"quad":"strong"},{"id":310,"name":"Grundy County","abs":17.4,"grad":86.8,"act":18.1,"act21":23.7,"quad":"at-risk"},{"id":320,"name":"Hamblen County","abs":19.1,"grad":90.1,"act":18.5,"act21":32.5,"quad":"resilient"},{"id":330,"name":"Hamilton County","abs":19.9,"grad":92.2,"act":18.7,"act21":35.3,"quad":"resilient"},{"id":340,"name":"Hancock County","abs":24.8,"grad":75.9,"act":16.9,"act21":22.0,"quad":"at-risk"},{"id":350,"name":"Hardeman County Schools","abs":27.1,"grad":83.1,"act":17.0,"act21":19.5,"quad":"at-risk"},{"id":360,"name":"Hardin County","abs":15.8,"grad":82.8,"act":19.0,"act21":38.6,"quad":"struggling"},{"id":370,"name":"Hawkins County","abs":23.9,"grad":94.8,"act":18.3,"act21":29.7,"quad":"resilient"},{"id":380,"name":"Haywood County","abs":20.7,"grad":87.3,"act":15.5,"act21":9.1,"quad":"at-risk"},{"id":390,"name":"Henderson County","abs":18.5,"grad":90.2,"act":19.7,"act21":42.7,"quad":"resilient"},{"id":400,"name":"Henry County","abs":13.6,"grad":89.7,"act":18.9,"act21":34.5,"quad":"struggling"},{"id":410,"name":"Hickman County","abs":17.1,"grad":86.3,"act":18.2,"act21":30.9,"quad":"at-risk"},{"id":420,"name":"Houston County","abs":22.6,"grad":88.1,"act":19.1,"act21":32.1,"quad":"at-risk"},{"id":430,"name":"Humphreys County","abs":21.2,"grad":87.7,"act":19.5,"act21":40.9,"quad":"at-risk"},{"id":440,"name":"Jackson County","abs":11.4,"grad":87.8,"act":17.1,"act21":22.0,"quad":"struggling"},{"id":450,"name":"Jefferson County","abs":19.1,"grad":92.8,"act":18.8,"act21":35.1,"quad":"resilient"},{"id":460,"name":"Johnson County","abs":16.0,"grad":79.6,"act":17.5,"act21":23.4,"quad":"struggling"},{"id":470,"name":"Knox County","abs":19.6,"grad":90.2,"act":20.5,"act21":46.5,"quad":"resilient"},{"id":480,"name":"Lake County","abs":24.7,"grad":79.2,"act":16.8,"act21":19.1,"quad":"at-risk"},{"id":490,"name":"Lauderdale County","abs":19.8,"grad":83.3,"act":17.3,"act21":19.9,"quad":"at-risk"},{"id":500,"name":"Lawrence County","abs":15.4,"grad":88.7,"act":18.8,"act21":35.4,"quad":"struggling"},{"id":510,"name":"Lewis County","abs":23.0,"grad":73.1,"act":18.4,"act21":27.7,"quad":"at-risk"},{"id":520,"name":"Lincoln County","abs":17.7,"grad":93.8,"act":19.8,"act21":41.8,"quad":"resilient"},{"id":521,"name":"Fayetteville","abs":17.6,"grad":96.7,"act":17.5,"act21":24.1,"quad":"resilient"},{"id":530,"name":"Loudon County","abs":12.7,"grad":94.4,"act":19.3,"act21":40.1,"quad":"strong"},{"id":531,"name":"Lenoir City","abs":15.4,"grad":96.7,"act":19.2,"act21":37.6,"quad":"strong"},{"id":540,"name":"McMinn County","abs":15.1,"grad":90.2,"act":19.3,"act21":36.3,"quad":"strong"},{"id":550,"name":"McNairy County","abs":13.1,"grad":91.3,"act":18.8,"act21":34.7,"quad":"strong"},{"id":560,"name":"Macon County","abs":9.6,"grad":96.4,"act":18.3,"act21":27.6,"quad":"strong"},{"id":570,"name":"Madison County","abs":28.9,"grad":92.2,"act":17.1,"act21":21.7,"quad":"resilient"},{"id":580,"name":"Marion County","abs":23.7,"grad":85.3,"act":18.8,"act21":34.4,"quad":"at-risk"},{"id":590,"name":"Marshall County","abs":18.2,"grad":93.7,"act":19.2,"act21":36.9,"quad":"resilient"},{"id":600,"name":"Maury County","abs":18.8,"grad":85.9,"act":17.4,"act21":24.8,"quad":"at-risk"},{"id":610,"name":"Meigs County","abs":6.4,"grad":94.4,"act":18.8,"act21":31.7,"quad":"strong"},{"id":620,"name":"Monroe County","abs":18.4,"grad":85.6,"act":17.6,"act21":25.1,"quad":"at-risk"},{"id":630,"name":"Montgomery County","abs":15.2,"grad":91.6,"act":19.5,"act21":39.8,"quad":"strong"},{"id":640,"name":"Moore County","abs":14.3,"grad":90.0,"act":18.8,"act21":29.8,"quad":"strong"},{"id":650,"name":"Morgan County","abs":13.5,"grad":93.2,"act":16.5,"act21":14.8,"quad":"strong"},{"id":660,"name":"Obion County","abs":14.0,"grad":88.5,"act":20.1,"act21":45.8,"quad":"struggling"},{"id":661,"name":"Union City","abs":8.9,"grad":83.5,"act":21.4,"act21":50.7,"quad":"struggling"},{"id":670,"name":"Overton County","abs":16.9,"grad":85.5,"act":18.3,"act21":29.3,"quad":"at-risk"},{"id":680,"name":"Perry County","abs":17.2,"grad":97.2,"act":17.2,"act21":24.6,"quad":"resilient"},{"id":690,"name":"Pickett County","abs":17.6,"grad":88.1,"act":18.2,"act21":27.5,"quad":"at-risk"},{"id":700,"name":"Polk County","abs":21.5,"grad":79.4,"act":18.4,"act21":32.4,"quad":"at-risk"},{"id":710,"name":"Putnam County","abs":17.1,"grad":89.4,"act":19.8,"act21":42.3,"quad":"at-risk"},{"id":720,"name":"Rhea County","abs":17.3,"grad":87.4,"act":18.9,"act21":37.9,"quad":"at-risk"},{"id":730,"name":"Roane County","abs":17.1,"grad":89.6,"act":19.4,"act21":39.6,"quad":"at-risk"},{"id":740,"name":"Robertson County","abs":18.4,"grad":77.1,"act":18.1,"act21":28.3,"quad":"at-risk"},{"id":750,"name":"Rutherford County","abs":11.9,"grad":96.1,"act":19.9,"act21":41.4,"quad":"strong"},{"id":760,"name":"Scott County","abs":19.4,"grad":82.4,"act":17.2,"act21":21.1,"quad":"at-risk"},{"id":761,"name":"Oneida","abs":16.7,"grad":97.6,"act":19.3,"act21":43.0,"quad":"resilient"},{"id":770,"name":"Sequatchie County","abs":32.7,"grad":91.4,"act":19.2,"act21":38.8,"quad":"resilient"},{"id":780,"name":"Sevier County","abs":23.3,"grad":90.6,"act":18.9,"act21":34.0,"quad":"resilient"},{"id":792,"name":"Memphis-Shelby County Schools","abs":29.5,"grad":82.8,"act":16.4,"act21":16.5,"quad":"at-risk"},{"id":793,"name":"Arlington","abs":6.9,"grad":95.4,"act":22.2,"act21":63.5,"quad":"strong"},{"id":794,"name":"Bartlett","abs":13.9,"grad":93.1,"act":20.9,"act21":50.2,"quad":"strong"},{"id":795,"name":"Collierville","abs":10.2,"grad":93.7,"act":23.4,"act21":67.1,"quad":"strong"},{"id":796,"name":"Germantown","abs":6.8,"grad":94.1,"act":24.1,"act21":71.8,"quad":"strong"},{"id":798,"name":"Millington Municipal Schools","abs":20.0,"grad":90.8,"act":19.3,"act21":38.6,"quad":"resilient"},{"id":800,"name":"Smith County","abs":11.4,"grad":87.7,"act":19.0,"act21":33.2,"quad":"struggling"},{"id":810,"name":"Stewart County","abs":18.4,"grad":85.7,"act":19.3,"act21":38.4,"quad":"at-risk"},{"id":820,"name":"Sullivan County","abs":21.2,"grad":93.4,"act":18.6,"act21":33.2,"quad":"resilient"},{"id":821,"name":"Bristol","abs":15.4,"grad":96.8,"act":20.5,"act21":45.0,"quad":"strong"},{"id":822,"name":"Kingsport","abs":23.6,"grad":83.5,"act":21.0,"act21":46.5,"quad":"at-risk"},{"id":830,"name":"Sumner County","abs":11.6,"grad":93.5,"act":20.7,"act21":48.6,"quad":"strong"},{"id":840,"name":"Tipton County","abs":14.3,"grad":90.8,"act":20.2,"act21":43.9,"quad":"strong"},{"id":850,"name":"Trousdale County","abs":12.6,"grad":91.0,"act":19.4,"act21":41.7,"quad":"strong"},{"id":860,"name":"Unicoi County","abs":20.9,"grad":95.8,"act":18.1,"act21":28.0,"quad":"resilient"},{"id":870,"name":"Union County","abs":14.6,"grad":84.6,"act":17.0,"act21":23.9,"quad":"struggling"},{"id":880,"name":"Van Buren County","abs":15.4,"grad":98.3,"act":18.7,"act21":34.5,"quad":"strong"},{"id":890,"name":"Warren County","abs":18.0,"grad":88.8,"act":18.7,"act21":34.6,"quad":"at-risk"},{"id":900,"name":"Washington County","abs":15.9,"grad":94.2,"act":19.8,"act21":41.5,"quad":"strong"},{"id":901,"name":"Johnson City","abs":13.1,"grad":94.1,"act":20.8,"act21":46.9,"quad":"strong"},{"id":910,"name":"Wayne County","abs":16.4,"grad":80.3,"act":17.6,"act21":25.6,"quad":"struggling"},{"id":920,"name":"Weakley County","abs":11.4,"grad":92.2,"act":20.0,"act21":42.6,"quad":"strong"},{"id":930,"name":"White County","abs":12.4,"grad":93.1,"act":19.1,"act21":39.1,"quad":"strong"},{"id":940,"name":"Williamson County","abs":7.5,"grad":96.5,"act":25.2,"act21":78.7,"quad":"strong"},{"id":950,"name":"Wilson County","abs":16.3,"grad":98.2,"act":20.7,"act21":47.8,"quad":"strong"},{"id":961,"name":"Alvin C. York Agricultural Institute","abs":19.9,"grad":96.6,"act":20.4,"act21":48.7,"quad":"resilient"},{"id":964,"name":"Tennessee Schools for the Deaf","abs":22.1,"grad":76.9,"act":null,"act21":null,"quad":"at-risk"}];
 
