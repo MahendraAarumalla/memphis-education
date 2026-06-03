@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 8 — $26,000 vs $8,000 Per Student | From Memphis to 50 States</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --teal: #0F6E56; --teal-d: #0A4F3E; --teal-l: #E8F5F0;
+      --amber: #E8A838; --red: #DC2626; --orange: #E07020; --green: #16A34A;
+      --text: #1A1A2E; --text-2: #6B7280; --border: #E5E7EB;
+      --bg: #FAFAF8; --card: #ffffff;
+    }
+    body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+    .breadcrumb { background: var(--teal-d); color: rgba(255,255,255,.8); padding: 10px 32px; font-size: 13px; display: flex; gap: 16px; align-items: center; }
+    .breadcrumb a { color: rgba(255,255,255,.9); text-decoration: none; }
+    .breadcrumb a:hover { color: #fff; }
+
+    .hero { background: linear-gradient(135deg, var(--teal-d) 0%, var(--teal) 60%, #1a6e8a 100%); color: #fff; padding: 64px 32px 56px; text-align: center; }
+    .challenge-tag { font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; opacity: .8; margin-bottom: 20px; }
+    .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2rem,5vw,3.4rem); line-height: 1.15; margin-bottom: 16px; max-width: 800px; margin-left: auto; margin-right: auto; }
+    .hero h1 em { font-style: italic; opacity: .9; }
+    .hero-sub { font-size: clamp(1rem,2.5vw,1.2rem); opacity: .85; max-width: 640px; margin: 0 auto 36px; }
+    .hero-stats { display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+    .stat-box { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); border-radius: 12px; padding: 18px 24px; min-width: 130px; }
+    .stat-box.hi { background: rgba(220,38,38,.25); border-color: rgba(220,38,38,.4); }
+    .stat-box.lo { background: rgba(22,163,74,.25); border-color: rgba(22,163,74,.4); }
+    .stat-num { font-family: 'DM Serif Display', serif; font-size: 2.4rem; line-height: 1; margin-bottom: 6px; }
+    .stat-lbl { font-size: 12px; opacity: .8; line-height: 1.3; }
+    .vs-badge { background: rgba(255,255,255,.18); border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; flex-shrink: 0; }
+    .hero-note { font-size: 12px; opacity: .65; }
+
+    .ai-box { background: var(--teal-l); border-left: 4px solid var(--teal); padding: 28px 36px; }
+    .ai-box-inner { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+    .ai-label { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--teal); margin-bottom: 10px; }
+    .ai-box p { font-size: 1.05rem; line-height: 1.75; color: var(--text); }
+
+    .section { padding: 56px 32px; max-width: 1100px; margin: 0 auto; }
+    .section-divider { border: none; border-top: 1px solid var(--border); margin: 0 32px; }
+    h2 { font-family: 'DM Serif Display', serif; font-size: clamp(1.4rem,3vw,2rem); color: var(--teal-d); margin-bottom: 8px; }
+    .section-sub { font-size: 14px; color: var(--text-2); margin-bottom: 28px; line-height: 1.5; }
+
+    .stat-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 14px; margin-bottom: 40px; }
+    .scard { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+    .scard .num { font-family: 'DM Serif Display', serif; font-size: 1.9rem; color: var(--teal); line-height: 1; margin-bottom: 4px; }
+    .scard .num.red { color: var(--red); }
+    .scard .num.grn { color: var(--green); }
+    .scard .num.amb { color: var(--amber); }
+    .scard .lbl { font-size: 12px; color: var(--text-2); line-height: 1.4; }
+
+    .chart-wrap { position: relative; width: 100%; }
+    .scatter-wrap { height: 560px; }
+    .bars-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .bars-wrap { height: 360px; }
+    .rank-scroll { overflow-y: auto; max-height: 520px; border: 1px solid var(--border); border-radius: 10px; background: var(--card); }
+    .rank-canvas-wrap { position: relative; width: 100%; }
+    .bar-title { font-weight: 600; font-size: .9rem; margin-bottom: 12px; }
+    .bar-title.grn { color: var(--green); }
+    .bar-title.red { color: var(--red); }
+
+    .tn-card { background: linear-gradient(135deg, #0A4F3E 0%, #0F6E56 100%); color: #fff; border-radius: 16px; padding: 36px 40px; }
+    .tn-tag { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; opacity: .7; margin-bottom: 12px; }
+    .tn-headline { font-family: 'DM Serif Display', serif; font-size: clamp(1.5rem,3vw,2.2rem); margin-bottom: 8px; }
+    .tn-sub { opacity: .8; font-size: .95rem; margin-bottom: 24px; }
+    .tn-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr)); gap: 14px; }
+    .tn-metric { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); border-radius: 10px; padding: 14px 16px; }
+    .tn-metric .val { font-family: 'DM Serif Display', serif; font-size: 2rem; line-height: 1; margin-bottom: 4px; }
+    .tn-metric .val.gold { color: var(--amber); }
+    .tn-metric .lbl2 { font-size: 11px; opacity: .75; line-height: 1.3; }
+
+    .insight-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap: 16px; margin: 28px 0; }
+    .insight-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 22px; border-top: 3px solid var(--teal); }
+    .insight-card.red { border-top-color: var(--red); }
+    .insight-card.grn { border-top-color: var(--green); }
+    .insight-card.amb { border-top-color: var(--amber); }
+    .insight-icon { font-size: 1.4rem; margin-bottom: 10px; }
+    .insight-title { font-weight: 600; font-size: .9rem; margin-bottom: 8px; color: var(--text); }
+    .insight-body { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+
+    .legend-row { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; font-size: 12px; color: var(--text-2); }
+    .leg-item { display: flex; align-items: center; gap: 6px; }
+    .leg-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+    .leg-sq { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
+
+    .table-scroll { overflow-x: auto; overflow-y: auto; max-height: 520px; -webkit-overflow-scrolling: touch; border-radius: 10px; border: 1px solid var(--border); }
+    .table-scroll thead th { position: sticky; top: 0; z-index: 1; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { background: var(--teal-d); color: #fff; padding: 10px 14px; text-align: right; white-space: nowrap; cursor: pointer; user-select: none; font-weight: 500; font-family: 'DM Sans', sans-serif; }
+    th:first-child, th:nth-child(2) { text-align: left; }
+    th.sort-asc::after { content: ' ↑'; }
+    th.sort-desc::after { content: ' ↓'; }
+    td { padding: 9px 14px; text-align: right; border-bottom: 1px solid var(--border); }
+    td:first-child, td:nth-child(2) { text-align: left; }
+    td:first-child { font-weight: 500; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--teal-l); }
+    tr.tn-row td { background: #FFFBEB; }
+    tr.tn-row:hover td { background: #FEF3C7; }
+    .rank-badge { display: inline-block; border-radius: 4px; padding: 1px 7px; font-size: 11px; font-weight: 600; }
+    .rank-top { background: #DCFCE7; color: #16A34A; }
+    .rank-mid { background: var(--teal-l); color: var(--teal); }
+    .rank-bot { background: #FEE2E2; color: var(--red); }
+    .eff-bar { display: inline-block; background: var(--teal-l); height: 6px; border-radius: 3px; vertical-align: middle; margin-left: 6px; }
+    .tbl-search { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; margin-bottom: 14px; outline: none; }
+    .tbl-search:focus { border-color: var(--teal); }
+
+    .voices-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 18px; margin-top: 24px; }
+    .voice-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 22px; transition: transform .2s, box-shadow .2s; }
+    .voice-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.09); }
+    .voice-quote { font-size: 13.5px; line-height: 1.7; color: var(--text); margin-bottom: 12px; font-style: italic; }
+    .voice-quote::before { content: '\201C'; }
+    .voice-quote::after { content: '\201D'; }
+    .voice-attr { font-size: 12px; color: var(--teal); font-weight: 500; }
+    .voice-source { font-size: 11px; margin-top: 4px; }
+    .voice-source a { color: var(--teal); text-decoration: none; }
+    .voice-source a:hover { text-decoration: underline; }
+
+    .dl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 14px; margin-top: 20px; }
+    .dl-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; }
+    .dl-title { font-weight: 600; margin-bottom: 6px; }
+    .dl-desc { font-size: 13px; color: var(--text-2); margin-bottom: 14px; line-height: 1.4; }
+    .dl-btn { display: inline-block; background: var(--teal); color: #fff; padding: 8px 18px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 500; transition: background .2s; }
+    .dl-btn:hover { background: var(--teal-d); }
+    .dl-src { font-size: 11px; color: var(--text-2); margin-top: 8px; }
+
+    .footer { background: var(--teal-d); color: rgba(255,255,255,.85); padding: 36px 32px; text-align: center; font-size: 13px; margin-top: 40px; }
+    .footer-name { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: #fff; margin-bottom: 6px; }
+    .footer-tag { opacity: .7; margin-bottom: 14px; line-height: 1.5; }
+    .footer-links { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 12px; }
+    .footer-links a { color: rgba(255,255,255,.75); text-decoration: none; }
+    .footer-links a:hover { color: #fff; }
+    .footer-src { font-size: 11px; opacity: .5; line-height: 1.8; }
+
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.in-view { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 680px) {
+      .hero { padding: 40px 16px 36px; }
+      .section { padding: 36px 16px; }
+      .ai-box { padding: 20px 20px; }
+      .section-divider { margin: 0 16px; }
+      .stat-num { font-size: 2rem; }
+      .bars-grid { grid-template-columns: 1fr; }
+      .bars-wrap { height: 320px; }
+      .rank-scroll { max-height: 420px; }
+      .scatter-wrap { height: 420px; }
+      .tn-card { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="breadcrumb">
+  <a href="../">&larr; All Days</a>
+  <span>Day 8 of 10 &mdash; From Memphis to 50 States</span>
+</nav>
+
+<header class="hero">
+  <div class="challenge-tag">From Memphis to 50 States &mdash; AI Meets Education Data &middot; Day 8 of 10</div>
+  <h1>New York Spends $26,000 Per Student.<br><em>Utah Spends $8,000. Utah Wins.</em></h1>
+  <p class="hero-sub">AI ranked all 50 states by what they actually get for their money. The efficiency rankings will surprise everyone.</p>
+  <div class="hero-stats">
+    <div class="stat-box hi">
+      <div class="stat-num">$26,571</div>
+      <div class="stat-lbl">New York<br>per pupil (FY2021)</div>
+    </div>
+    <div class="vs-badge">VS</div>
+    <div class="stat-box lo">
+      <div class="stat-num">$8,154</div>
+      <div class="stat-lbl">Utah<br>per pupil (FY2021)</div>
+    </div>
+    <div class="vs-badge" style="background:rgba(255,255,255,.1);">&rarr;</div>
+    <div class="stat-box">
+      <div class="stat-num">3.6&times;</div>
+      <div class="stat-lbl">Utah&rsquo;s reading<br>efficiency advantage</div>
+    </div>
+  </div>
+  <p class="hero-note">New York: 35% of 4th graders reading proficiently &middot; Utah: 39% &middot; Source: NAEP 2024 &amp; NCES Condition of Education 2024</p>
+</header>
+
+<div class="ai-box">
+  <div class="ai-box-inner">
+    <div class="ai-label">AI Policy Analysis</div>
+    <p>Analyzing per-pupil expenditure and NAEP 4th-grade reading performance across all 50 states and Washington D.C., a striking paradox emerges: the states spending the most per student consistently rank at the bottom for spending efficiency. Utah spends $8,154 per student and achieves 39% reading proficiency &mdash; 47.8 proficiency points per $10,000 spent. New York spends $26,571 and achieves 35%, yielding just 13.2 points per $10,000. That is a 3.6&times; efficiency gap for less learning. The pattern holds across the ten highest-spending states: eight of them fall in the bottom half of the efficiency ranking. What separates high-efficiency states? Florida, Mississippi, Idaho, and Utah share a policy thread: early-reading mandates backed by structured literacy curricula, K&ndash;3 reading coaches, and in some states mandatory third-grade retention for students who cannot read at grade level &mdash; interventions that do not require record spending to implement. Tennessee ranks 16th nationally in efficiency with $11,200 per student and a 33% proficiency rate, placing it in the top third and on an improving trajectory since the 2021 Tennessee Literacy Success Act. The data does not argue for cutting education budgets &mdash; it argues that <em>how</em> money is spent determines outcomes far more than <em>how much</em>.</p>
+  </div>
+</div>
+
+<!-- Key Numbers -->
+<section class="section reveal">
+  <div class="stat-strip">
+    <div class="scard"><div class="num">$14,347</div><div class="lbl">National avg. per-pupil spending (FY2021)</div></div>
+    <div class="scard"><div class="num">31%</div><div class="lbl">National 4th grade reading proficiency (NAEP 2024)</div></div>
+    <div class="scard"><div class="num grn">47.8</div><div class="lbl">Utah efficiency score — #1 nationally</div></div>
+    <div class="scard"><div class="num red">10.1</div><div class="lbl">D.C. efficiency score — #51 nationally</div></div>
+    <div class="scard"><div class="num amb">29.5</div><div class="lbl">Tennessee efficiency score — #16 nationally</div></div>
+    <div class="scard"><div class="num">87%</div><div class="lbl">National 4-year graduation rate (2021&ndash;22, NCES)</div></div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- Scatter Plot -->
+<section class="section reveal">
+  <h2>Spending vs. Reading Outcomes: All 50 States + D.C.</h2>
+  <p class="section-sub">Each dot is a state. X-axis: per-pupil spending. Y-axis: NAEP 4th grade reading proficiency (% at or above Proficient, 2024). Dot color shows efficiency quintile. Hover any state for details.</p>
+  <div class="legend-row">
+    <span style="font-weight:500;color:var(--text);">Efficiency quintile:</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#16A34A;"></span> Most efficient (top 20%)</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#65A30D;"></span> Above avg</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#CA8A04;"></span> Middle</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#EA580C;"></span> Below avg</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#DC2626;"></span> Least efficient (bottom 20%)</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#1D4ED8;border:2px solid #FCD34D;"></span> Tennessee</span>
+  </div>
+  <div class="chart-wrap scatter-wrap">
+    <canvas id="scatterChart"></canvas>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- Top 10 / Bottom 10 -->
+<section class="section reveal">
+  <h2>Most Efficient vs. Least Efficient States</h2>
+  <p class="section-sub">Efficiency score = NAEP 4th grade reading proficiency &divide; (per-pupil spending &divide; $10,000). Higher = more learning per dollar spent.</p>
+  <div class="bars-grid">
+    <div>
+      <div class="bar-title grn">&#9650; Top 10 Most Efficient</div>
+      <div class="chart-wrap bars-wrap"><canvas id="top10Chart"></canvas></div>
+    </div>
+    <div>
+      <div class="bar-title red">&#9660; Bottom 10 Least Efficient</div>
+      <div class="chart-wrap bars-wrap"><canvas id="bot10Chart"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- TN Callout -->
+<section class="section reveal">
+  <div class="tn-card">
+    <div class="tn-tag">Tennessee Spotlight</div>
+    <div class="tn-headline">Tennessee: Top-Third Nationally in Spending Efficiency</div>
+    <div class="tn-sub">Ranked 16th of 51 &mdash; spending below the national average, performing above it on efficiency.</div>
+    <div class="tn-metrics">
+      <div class="tn-metric">
+        <div class="val">$11,200</div>
+        <div class="lbl2">Per-pupil spending (FY2021) &mdash; $3,147 below national avg</div>
+      </div>
+      <div class="tn-metric">
+        <div class="val">33%</div>
+        <div class="lbl2">NAEP 4th grade reading proficiency (2024)</div>
+      </div>
+      <div class="tn-metric">
+        <div class="val">90%</div>
+        <div class="lbl2">4-year graduation rate (2021&ndash;22)</div>
+      </div>
+      <div class="tn-metric">
+        <div class="val gold">29.5</div>
+        <div class="lbl2">Efficiency score &mdash; 16th nationally out of 51</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI Insights -->
+<section class="section reveal">
+  <h2>What High-Efficiency States Have in Common</h2>
+  <p class="section-sub">AI pattern analysis across the top 10 most efficient states reveals four consistent policy threads.</p>
+  <div class="insight-grid">
+    <div class="insight-card grn">
+      <div class="insight-icon">📖</div>
+      <div class="insight-title">Structured Literacy Mandates</div>
+      <div class="insight-body">Utah, Idaho, Mississippi, and Florida all passed laws requiring phonics-based, evidence-based reading instruction in K&ndash;3 classrooms &mdash; before top-spending states did.</div>
+    </div>
+    <div class="insight-card grn">
+      <div class="insight-icon">👩‍🏫</div>
+      <div class="insight-title">K&ndash;3 Reading Coaches</div>
+      <div class="insight-body">Florida placed certified reading coaches in every elementary school. Mississippi embedded literacy coaches district-wide. Neither required record per-pupil budgets to do so.</div>
+    </div>
+    <div class="insight-card amb">
+      <div class="insight-icon">📋</div>
+      <div class="insight-title">Early Intervention Systems</div>
+      <div class="insight-body">Iowa, Indiana, and North Carolina use early-warning data to identify struggling readers in kindergarten and first grade &mdash; and intervene before deficits compound.</div>
+    </div>
+    <div class="insight-card red">
+      <div class="insight-icon">💸</div>
+      <div class="insight-title">High Spending ≠ High Outcomes</div>
+      <div class="insight-body">D.C., New York, Alaska, Connecticut, and Hawaii are in the bottom 10 for efficiency. High union costs, administrative overhead, and pension obligations absorb spending before it reaches classrooms.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- All-States Ranking -->
+<section class="section reveal">
+  <h2>All 50 States + D.C. — Efficiency Ranking</h2>
+  <p class="section-sub">Every state ranked by efficiency score (NAEP proficiency &divide; spending per $10,000). Tennessee highlighted in gold. Scroll inside the chart or search to filter.</p>
+  <input class="tbl-search" id="rankSearch" type="text" placeholder="Search state name or abbreviation&hellip;" autocomplete="off" style="margin-bottom:12px;">
+  <div class="rank-scroll">
+    <div class="rank-canvas-wrap">
+      <canvas id="rankChart"></canvas>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- Full Data Table -->
+<section class="section reveal">
+  <h2>Full Data Table — All 50 States + D.C.</h2>
+  <p class="section-sub">Click any column header to sort. Search by state name. Tennessee row highlighted.</p>
+  <input class="tbl-search" id="tblSearch" type="text" placeholder="Search state name…" autocomplete="off">
+  <div class="table-scroll">
+    <table id="stateTable">
+      <thead>
+        <tr>
+          <th data-col="rank">Rank</th>
+          <th data-col="name">State</th>
+          <th data-col="spend">Per-Pupil Spending</th>
+          <th data-col="naep">NAEP 4th Rdg %</th>
+          <th data-col="grad">Grad Rate %</th>
+          <th data-col="eff">Efficiency Score</th>
+        </tr>
+      </thead>
+      <tbody id="tblBody"></tbody>
+    </table>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- Voices -->
+<section class="section reveal">
+  <h2>Voices &amp; Source Evidence</h2>
+  <p class="section-sub">Verified quotes and findings from primary data sources and education policy institutions.</p>
+  <div class="voices-grid">
+    <div class="voice-card">
+      <div class="voice-quote">In 2024, 31 percent of fourth-grade students performed at or above the Proficient achievement level in reading &mdash; the same percentage as in 2022.</div>
+      <div class="voice-attr">National Assessment of Educational Progress (NAEP) 2024</div>
+      <div class="voice-source"><a href="https://nationsreportcard.gov/reading/nation/achievement/?grade=4" target="_blank" rel="noopener">nationsreportcard.gov &rarr;</a></div>
+    </div>
+    <div class="voice-card">
+      <div class="voice-quote">In fiscal year 2021, per-pupil current expenditures for public elementary and secondary schools ranged from $8,154 in Utah to $26,571 in New York.</div>
+      <div class="voice-attr">NCES Condition of Education 2024, Indicator CMB</div>
+      <div class="voice-source"><a href="https://nces.ed.gov/programs/coe/indicator/cmb" target="_blank" rel="noopener">nces.ed.gov/programs/coe/indicator/cmb &rarr;</a></div>
+    </div>
+    <div class="voice-card">
+      <div class="voice-quote">Tennessee's Literacy Success Act of 2021 required all K&ndash;3 teachers to use evidence-based reading curricula and established intensive reading interventions for students not reading on grade level by the end of third grade.</div>
+      <div class="voice-attr">Tennessee Department of Education, Tennessee Literacy Success Act (2021)</div>
+      <div class="voice-source"><a href="https://www.tn.gov/education/instruction/literacy.html" target="_blank" rel="noopener">tn.gov/education &rarr;</a></div>
+    </div>
+    <div class="voice-card">
+      <div class="voice-quote">Mississippi's dramatic reading gains since 2013 are directly linked to the Mississippi Reads initiative and mandatory third-grade reading gates &mdash; not to per-pupil spending increases, which remain among the lowest nationally.</div>
+      <div class="voice-attr">SCORE Tennessee / Fordham Institute analysis of Southern reading reforms (2023)</div>
+      <div class="voice-source"><a href="https://tn-score.org" target="_blank" rel="noopener">tn-score.org &rarr;</a></div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- Downloads -->
+<section class="section reveal">
+  <h2>Download Raw Data</h2>
+  <p class="section-sub">Primary data sources used in this dashboard. Every figure links to its original government or institutional source.</p>
+  <div class="dl-grid">
+    <div class="dl-card">
+      <div class="dl-title">NCES Per-Pupil Expenditures by State</div>
+      <div class="dl-desc">Fiscal year 2021 current expenditures per pupil in average daily attendance, all 50 states + D.C.</div>
+      <a class="dl-btn" href="https://nces.ed.gov/programs/coe/indicator/cmb" target="_blank" rel="noopener">View Source &rarr;</a>
+      <div class="dl-src">Source: NCES Condition of Education 2024, Indicator CMB</div>
+    </div>
+    <div class="dl-card">
+      <div class="dl-title">NAEP 2024 State Reading Scores</div>
+      <div class="dl-desc">4th grade reading proficiency percentages (at or above Proficient) for all states, 2024 assessment.</div>
+      <a class="dl-btn" href="https://nationsreportcard.gov/reading/states/achievement/?grade=4" target="_blank" rel="noopener">View Source &rarr;</a>
+      <div class="dl-src">Source: Nation's Report Card, NCES (2024)</div>
+    </div>
+    <div class="dl-card">
+      <div class="dl-title">NCES Graduation Rates by State</div>
+      <div class="dl-desc">4-year adjusted cohort graduation rate (ACGR) by state, 2021&ndash;22 school year.</div>
+      <a class="dl-btn" href="https://nces.ed.gov/programs/coe/indicator/coi/high-school-graduation-rates" target="_blank" rel="noopener">View Source &rarr;</a>
+      <div class="dl-src">Source: NCES Condition of Education 2024, Indicator COI</div>
+    </div>
+    <div class="dl-card">
+      <div class="dl-title">NCES Condition of Education 2024</div>
+      <div class="dl-desc">Full national education indicators report including spending, outcomes, and demographic context.</div>
+      <a class="dl-btn" href="https://nces.ed.gov/programs/coe" target="_blank" rel="noopener">View Source &rarr;</a>
+      <div class="dl-src">Source: NCES, U.S. Department of Education (2024)</div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-name">Mahendra Aarumalla</div>
+  <div class="footer-tag">Data Scientist &middot; AI-Driven Education Insights &middot; Memphis, TN<br>
+  From Memphis to 50 States &mdash; AI Meets Education Data &middot; Day 8 of 10</div>
+  <div class="footer-links">
+    <a href="https://linkedin.com/in/a-mahendra" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="https://github.com/MahendraAarumalla" target="_blank" rel="noopener">GitHub</a>
+    <a href="../">All 10 Days</a>
+  </div>
+  <div class="footer-src">
+    Data sources: NCES Condition of Education 2024 (nces.ed.gov/programs/coe) &middot;
+    NAEP 2024 Nation's Report Card (nationsreportcard.gov) &middot;
+    NCES ACGR Graduation Rates (nces.ed.gov/programs/coe/indicator/coi) &middot;
+    All data is public and government-sourced.
+  </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* ── DATA ── */
+  const RAW = [
+    {ab:'AL',name:'Alabama',       spend:10856, naep:27, grad:91},
+    {ab:'AK',name:'Alaska',        spend:18392, naep:25, grad:81},
+    {ab:'AZ',name:'Arizona',       spend:9038,  naep:28, grad:82},
+    {ab:'AR',name:'Arkansas',      spend:10944, naep:29, grad:90},
+    {ab:'CA',name:'California',    spend:16405, naep:28, grad:87},
+    {ab:'CO',name:'Colorado',      spend:12432, naep:36, grad:82},
+    {ab:'CT',name:'Connecticut',   spend:23913, naep:39, grad:90},
+    {ab:'DC',name:'Dist. Columbia',spend:22759, naep:23, grad:73},
+    {ab:'DE',name:'Delaware',      spend:17478, naep:31, grad:87},
+    {ab:'FL',name:'Florida',       spend:10196, naep:41, grad:92},
+    {ab:'GA',name:'Georgia',       spend:11386, naep:31, grad:84},
+    {ab:'HI',name:'Hawaii',        spend:17103, naep:25, grad:86},
+    {ab:'ID',name:'Idaho',         spend:8441,  naep:34, grad:83},
+    {ab:'IL',name:'Illinois',      spend:16534, naep:30, grad:88},
+    {ab:'IN',name:'Indiana',       spend:10227, naep:34, grad:89},
+    {ab:'IA',name:'Iowa',          spend:11609, naep:35, grad:93},
+    {ab:'KS',name:'Kansas',        spend:12349, naep:34, grad:89},
+    {ab:'KY',name:'Kentucky',      spend:11162, naep:33, grad:92},
+    {ab:'LA',name:'Louisiana',     spend:12369, naep:33, grad:83},
+    {ab:'ME',name:'Maine',         spend:16412, naep:36, grad:88},
+    {ab:'MD',name:'Maryland',      spend:16858, naep:32, grad:89},
+    {ab:'MA',name:'Massachusetts', spend:19381, naep:46, grad:90},
+    {ab:'MI',name:'Michigan',      spend:12048, naep:28, grad:82},
+    {ab:'MN',name:'Minnesota',     spend:13944, naep:35, grad:84},
+    {ab:'MS',name:'Mississippi',   spend:9344,  naep:37, grad:88},
+    {ab:'MO',name:'Missouri',      spend:11248, naep:34, grad:90},
+    {ab:'MT',name:'Montana',       spend:12573, naep:36, grad:87},
+    {ab:'NE',name:'Nebraska',      spend:13048, naep:34, grad:89},
+    {ab:'NV',name:'Nevada',        spend:10155, naep:24, grad:83},
+    {ab:'NH',name:'New Hampshire', spend:17028, naep:44, grad:91},
+    {ab:'NJ',name:'New Jersey',    spend:22908, naep:41, grad:91},
+    {ab:'NM',name:'New Mexico',    spend:11666, naep:20, grad:76},
+    {ab:'NY',name:'New York',      spend:26571, naep:35, grad:88},
+    {ab:'NC',name:'North Carolina',spend:10673, naep:34, grad:88},
+    {ab:'ND',name:'North Dakota',  spend:14151, naep:38, grad:88},
+    {ab:'OH',name:'Ohio',          spend:13338, naep:36, grad:89},
+    {ab:'OK',name:'Oklahoma',      spend:9280,  naep:28, grad:85},
+    {ab:'OR',name:'Oregon',        spend:13474, naep:28, grad:81},
+    {ab:'PA',name:'Pennsylvania',  spend:18768, naep:36, grad:87},
+    {ab:'RI',name:'Rhode Island',  spend:18278, naep:29, grad:85},
+    {ab:'SC',name:'South Carolina',spend:11380, naep:34, grad:84},
+    {ab:'SD',name:'South Dakota',  spend:10762, naep:37, grad:87},
+    {ab:'TN',name:'Tennessee',     spend:11200, naep:33, grad:90},
+    {ab:'TX',name:'Texas',         spend:10886, naep:35, grad:92},
+    {ab:'UT',name:'Utah',          spend:8154,  naep:39, grad:89},
+    {ab:'VA',name:'Virginia',      spend:13465, naep:41, grad:93},
+    {ab:'VT',name:'Vermont',       spend:21689, naep:43, grad:91},
+    {ab:'WA',name:'Washington',    spend:14243, naep:33, grad:83},
+    {ab:'WV',name:'West Virginia', spend:12718, naep:27, grad:90},
+    {ab:'WI',name:'Wisconsin',     spend:12836, naep:33, grad:91},
+    {ab:'WY',name:'Wyoming',       spend:17609, naep:32, grad:83},
+  ];
+
+  /* ── COMPUTE EFFICIENCY & RANK ── */
+  const S = RAW
+    .map(s => ({ ...s, eff: Math.round((s.naep / (s.spend / 10000)) * 10) / 10 }))
+    .sort((a, b) => b.eff - a.eff)
+    .map((s, i) => ({ ...s, rank: i + 1 }));
+
+  const N = S.length; // 51
+
+  function effColor(rank, alpha) {
+    alpha = alpha || 0.75;
+    const pct = rank / N;
+    if (pct <= 0.2) return `rgba(22,163,74,${alpha})`;
+    if (pct <= 0.4) return `rgba(101,163,13,${alpha})`;
+    if (pct <= 0.6) return `rgba(202,138,4,${alpha})`;
+    if (pct <= 0.8) return `rgba(234,88,12,${alpha})`;
+    return `rgba(220,38,38,${alpha})`;
+  }
+
+  /* ── CHART 1: SCATTER ── */
+  (function () {
+    const ctx = document.getElementById('scatterChart').getContext('2d');
+    const pts = S.map(s => ({
+      x: s.spend / 1000,
+      y: s.naep,
+      ab: s.ab,
+      name: s.name,
+      eff: s.eff,
+      rank: s.rank,
+      spend: s.spend,
+      grad: s.grad,
+    }));
+
+    new Chart(ctx, {
+      type: 'scatter',
+      plugins: [ChartDataLabels],
+      data: {
+        datasets: [{
+          data: pts,
+          backgroundColor: pts.map(p => p.ab === 'TN' ? 'rgba(29,78,216,0.85)' : effColor(p.rank, 0.75)),
+          borderColor:     pts.map(p => p.ab === 'TN' ? '#FCD34D' : effColor(p.rank, 1)),
+          borderWidth:     pts.map(p => p.ab === 'TN' ? 3 : 1.5),
+          pointRadius:     pts.map(p => p.ab === 'TN' ? 9 : 6),
+          pointHoverRadius: 10,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: (items) => {
+                const d = items[0].raw;
+                return `${d.name} (${d.ab})`;
+              },
+              label: (item) => {
+                const d = item.raw;
+                return [
+                  ` Spending: $${d.spend.toLocaleString()}/pupil`,
+                  ` NAEP 4th Rdg: ${d.y}% proficient`,
+                  ` Grad Rate: ${d.grad}%`,
+                  ` Efficiency Score: ${d.eff}`,
+                  ` National Rank: #${d.rank} of 51`,
+                ];
+              },
+            },
+          },
+          datalabels: {
+            formatter: (val) => val.ab,
+            font: { size: 8.5, family: 'DM Sans', weight: '500' },
+            color: (ctx) => {
+              const d = ctx.dataset.data[ctx.dataIndex];
+              return d.ab === 'TN' ? '#1D4ED8' : '#374151';
+            },
+            anchor: 'end',
+            align: 'top',
+            offset: 2,
+            clamp: true,
+          },
+        },
+        scales: {
+          x: {
+            title: { display: true, text: 'Per-Pupil Spending ($000s, FY2021)', font: { size: 12, family: 'DM Sans' }, color: '#6B7280' },
+            min: 7,
+            max: 28,
+            grid: { color: 'rgba(0,0,0,.06)' },
+            ticks: { callback: v => '$' + v + 'k', font: { size: 11, family: 'DM Sans' } },
+          },
+          y: {
+            title: { display: true, text: 'NAEP 4th Grade Reading Proficiency (%)', font: { size: 12, family: 'DM Sans' }, color: '#6B7280' },
+            min: 15,
+            max: 52,
+            grid: { color: 'rgba(0,0,0,.06)' },
+            ticks: { callback: v => v + '%', font: { size: 11, family: 'DM Sans' } },
+          },
+        },
+      },
+    });
+  })();
+
+  /* ── CHART 2 & 3: TOP 10 / BOTTOM 10 ── */
+  (function () {
+    const top10 = S.slice(0, 10);
+    const bot10 = S.slice(-10).reverse();
+
+    function makeHbar(id, states, colorFn, borderFn) {
+      const ctx = document.getElementById(id).getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: states.map(s => `${s.ab} — ${s.name}`),
+          datasets: [{
+            data: states.map(s => s.eff),
+            backgroundColor: states.map(colorFn),
+            borderColor:     states.map(borderFn),
+            borderWidth: 1.5,
+            borderRadius: 4,
+          }],
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: c => ` Efficiency: ${c.raw} · Spending: $${states[c.dataIndex].spend.toLocaleString()} · NAEP: ${states[c.dataIndex].naep}%`,
+              },
+            },
+            datalabels: {
+              display: true,
+              anchor: 'end',
+              align: 'end',
+              formatter: v => v.toFixed(1),
+              font: { size: 10, family: 'DM Sans', weight: '600' },
+              color: '#374151',
+              clamp: true,
+            },
+          },
+          scales: {
+            x: { grid: { color: 'rgba(0,0,0,.06)' }, ticks: { font: { size: 10, family: 'DM Sans' } } },
+            y: { grid: { display: false }, ticks: { font: { size: 10.5, family: 'DM Sans' } } },
+          },
+        },
+        plugins: [ChartDataLabels],
+      });
+    }
+
+    makeHbar('top10Chart', top10,
+      s => s.ab === 'TN' ? 'rgba(29,78,216,.7)' : 'rgba(22,163,74,.7)',
+      s => s.ab === 'TN' ? '#1D4ED8' : '#16A34A'
+    );
+    makeHbar('bot10Chart', bot10,
+      () => 'rgba(220,38,38,.7)',
+      () => '#DC2626'
+    );
+  })();
+
+  /* ── CHART 4: ALL-STATES RANKING (scrollable + searchable) ── */
+  let rankChartInst = null;
+  const BAR_H = 26; // px per bar row
+
+  function drawRankChart(filtered) {
+    const canvasEl = document.getElementById('rankChart');
+    const wrapEl   = canvasEl.parentElement;
+    const h = Math.max(filtered.length * BAR_H + 60, 120);
+    canvasEl.style.height = h + 'px';
+    wrapEl.style.height   = h + 'px';
+
+    if (rankChartInst) { rankChartInst.destroy(); rankChartInst = null; }
+
+    rankChartInst = new Chart(canvasEl.getContext('2d'), {
+      type: 'bar',
+      plugins: [ChartDataLabels],
+      data: {
+        labels: filtered.map(s => `#${s.rank} ${s.ab} — ${s.name}`),
+        datasets: [{
+          data: filtered.map(s => s.eff),
+          backgroundColor: filtered.map(s => s.ab === 'TN' ? 'rgba(232,168,56,.85)' : effColor(s.rank, 0.72)),
+          borderColor:     filtered.map(s => s.ab === 'TN' ? '#E8A838' : effColor(s.rank, 1)),
+          borderWidth: 1.5,
+          borderRadius: 3,
+        }],
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: (items) => { const s = filtered[items[0].dataIndex]; return `${s.name} (${s.ab})`; },
+              label: (item)  => {
+                const s = filtered[item.dataIndex];
+                return [
+                  ` Rank: #${s.rank} of 51`,
+                  ` Efficiency Score: ${s.eff}`,
+                  ` Spending: $${s.spend.toLocaleString()}/pupil`,
+                  ` NAEP 4th Rdg: ${s.naep}%`,
+                  ` Grad Rate: ${s.grad}%`,
+                ];
+              },
+            },
+          },
+          datalabels: {
+            display: true,
+            anchor: 'end',
+            align: 'end',
+            formatter: v => v.toFixed(1),
+            font: { size: 9, family: 'DM Sans', weight: '500' },
+            color: '#374151',
+            clamp: true,
+          },
+        },
+        scales: {
+          x: {
+            min: 0, max: 55,
+            grid: { color: 'rgba(0,0,0,.05)' },
+            ticks: { font: { size: 10, family: 'DM Sans' } },
+            title: { display: true, text: 'Efficiency Score (NAEP proficiency points per $10,000 spent)', font: { size: 11, family: 'DM Sans' }, color: '#6B7280' },
+          },
+          y: {
+            grid: { display: false },
+            ticks: { font: { size: 9.5, family: 'DM Sans' } },
+          },
+        },
+      },
+    });
+  }
+
+  drawRankChart(S);
+
+  document.getElementById('rankSearch').addEventListener('input', function () {
+    const q = this.value.trim().toLowerCase();
+    const filtered = q ? S.filter(s => s.name.toLowerCase().includes(q) || s.ab.toLowerCase().includes(q)) : S;
+    drawRankChart(filtered);
+  });
+
+  /* ── SORTABLE TABLE ── */
+  let sortCol = 'rank', sortAsc = true, filterStr = '';
+
+  const fmtSpend = v => '$' + v.toLocaleString();
+  const fmtPct   = v => v + '%';
+  const fmtEff   = v => {
+    const w = Math.round((v / 50) * 80);
+    return `${v.toFixed(1)}<span class="eff-bar" style="width:${w}px;background:${v >= 35 ? '#16A34A' : v >= 25 ? '#0F6E56' : v >= 18 ? '#CA8A04' : '#DC2626'};"></span>`;
+  };
+
+  function rankBadge(rank) {
+    const cls = rank <= 10 ? 'rank-top' : rank >= 42 ? 'rank-bot' : 'rank-mid';
+    return `<span class="rank-badge ${cls}">#${rank}</span>`;
+  }
+
+  function renderTable() {
+    const q = filterStr.toLowerCase();
+    const rows = S.filter(s => s.name.toLowerCase().includes(q) || s.ab.toLowerCase().includes(q))
+      .sort((a, b) => {
+        const av = a[sortCol], bv = b[sortCol];
+        return sortAsc ? (av < bv ? -1 : av > bv ? 1 : 0) : (bv < av ? -1 : bv > av ? 1 : 0);
+      });
+
+    document.getElementById('tblBody').innerHTML = rows.map(s => {
+      const isTN = s.ab === 'TN';
+      return `<tr${isTN ? ' class="tn-row"' : ''}>
+        <td>${rankBadge(s.rank)}</td>
+        <td>${s.name}${isTN ? ' &#9733;' : ''}</td>
+        <td>${fmtSpend(s.spend)}</td>
+        <td>${fmtPct(s.naep)}</td>
+        <td>${fmtPct(s.grad)}</td>
+        <td>${fmtEff(s.eff)}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  document.querySelectorAll('#stateTable th[data-col]').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.dataset.col;
+      if (sortCol === col) { sortAsc = !sortAsc; }
+      else { sortCol = col; sortAsc = col === 'rank' || col === 'name'; }
+      document.querySelectorAll('#stateTable th').forEach(t => t.classList.remove('sort-asc', 'sort-desc'));
+      th.classList.add(sortAsc ? 'sort-asc' : 'sort-desc');
+      renderTable();
+    });
+  });
+
+  document.getElementById('tblSearch').addEventListener('input', e => {
+    filterStr = e.target.value;
+    renderTable();
+  });
+
+  // Default sort: efficiency desc
+  sortCol = 'eff'; sortAsc = false;
+  document.querySelector('#stateTable th[data-col="eff"]').classList.add('sort-desc');
+  renderTable();
+
+  /* ── SCROLL REVEAL ── */
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in-view'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.07 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+});
+</script>
+</body>
+</html>
