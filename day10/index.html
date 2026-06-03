@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 10 — 10 Findings on American Public Education | From Memphis to 50 States</title>
+  <meta name="description" content="10 original findings on American public education, built from fully public government data by Mahendra Aarumalla, Data Scientist, Memphis TN.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal:   #0F6E56;
+      --teal-d: #0A4F3E;
+      --teal-l: #E8F5F0;
+      --amber:  #E8A838;
+      --text:   #1A1A2E;
+      --text-2: #6B7280;
+      --border: #E5E7EB;
+      --bg:     #FAFAF8;
+      --card:   #ffffff;
+    }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      border-top: 3px solid var(--teal);
+    }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.022;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+    }
+
+    .section { opacity: 0; transform: translateY(22px); transition: opacity 0.55s ease, transform 0.55s ease; }
+    .section.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── Breadcrumb ─────────────────────────────────────────── */
+    .breadcrumb {
+      background: var(--teal-d);
+      color: rgba(255,255,255,.8);
+      padding: 10px 32px;
+      font-size: 13px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .breadcrumb a { color: rgba(255,255,255,.9); text-decoration: none; }
+    .breadcrumb a:hover { color: #fff; text-decoration: underline; }
+    .breadcrumb .sep { opacity: .4; }
+
+    /* ── Hero ───────────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(140deg, var(--teal-d) 0%, var(--teal) 55%, #1a6e8a 100%);
+      color: #fff;
+      padding: 72px 32px 64px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -80px; left: 50%;
+      transform: translateX(-50%);
+      width: 900px; height: 280px;
+      background: radial-gradient(ellipse, rgba(94,234,212,0.10) 0%, transparent 68%);
+      pointer-events: none;
+    }
+    .challenge-tag {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      opacity: .75;
+      margin-bottom: 22px;
+    }
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2rem, 5vw, 3.6rem);
+      line-height: 1.15;
+      max-width: 800px;
+      margin: 0 auto 20px;
+    }
+    .hero h1 em { font-style: italic; opacity: .9; }
+    .hero-sub {
+      font-size: clamp(.95rem, 2.2vw, 1.15rem);
+      opacity: .85;
+      max-width: 620px;
+      margin: 0 auto 44px;
+      line-height: 1.7;
+    }
+    .hero-byline {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 100px;
+      padding: 10px 22px;
+      font-size: 14px;
+      opacity: .9;
+    }
+
+    /* ── AI Narrative ───────────────────────────────────────── */
+    .ai-band {
+      background: var(--teal-l);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 36px 32px;
+    }
+    .ai-inner { max-width: 820px; margin: 0 auto; }
+    .ai-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 12px;
+    }
+    .ai-band p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--text);
+    }
+
+    /* ── Report body ────────────────────────────────────────── */
+    .report { max-width: 860px; margin: 0 auto; padding: 64px 32px; }
+
+    .report-intro {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--text-2);
+      margin-bottom: 56px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Finding cards ──────────────────────────────────────── */
+    .findings { display: flex; flex-direction: column; gap: 48px; }
+
+    .finding {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: box-shadow .2s;
+    }
+    .finding:hover { box-shadow: 0 6px 28px rgba(15,110,86,0.10); }
+
+    .finding-header {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0;
+    }
+    .finding-num {
+      background: var(--teal-d);
+      color: #fff;
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      line-height: 1;
+      padding: 26px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 80px;
+    }
+    .finding-top {
+      background: var(--teal-l);
+      padding: 22px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+    .finding-headline {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.25rem;
+      line-height: 1.35;
+      color: var(--teal-d);
+      margin-bottom: 10px;
+    }
+    .finding-stat {
+      display: inline-block;
+      background: var(--teal-d);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 6px;
+    }
+    .finding-body { padding: 24px 28px; }
+    .finding-body p {
+      font-size: .97rem;
+      line-height: 1.78;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .finding-body p:last-child { margin-bottom: 0; }
+    .finding-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-top: 16px;
+      margin-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .finding-source {
+      font-size: 12px;
+      color: var(--text-2);
+    }
+    .finding-source a { color: var(--teal); text-decoration: none; }
+    .finding-source a:hover { text-decoration: underline; }
+    .finding-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--teal);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background .2s;
+      white-space: nowrap;
+    }
+    .finding-link:hover { background: var(--teal-d); }
+
+    /* ── Section divider ────────────────────────────────────── */
+    .section-divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+    /* ── Methodology ────────────────────────────────────────── */
+    .methodology { max-width: 860px; margin: 0 auto; padding: 56px 32px; }
+    .methodology h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      color: var(--teal-d);
+      margin-bottom: 8px;
+    }
+    .methodology .sub {
+      font-size: 14px;
+      color: var(--text-2);
+      margin-bottom: 32px;
+    }
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .method-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 22px;
+    }
+    .method-card h3 { font-size: .9rem; font-weight: 600; color: var(--teal-d); margin-bottom: 8px; }
+    .method-card p { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+    .sources-list {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px 26px;
+    }
+    .sources-list h3 { font-size: .95rem; font-weight: 600; margin-bottom: 14px; color: var(--teal-d); }
+    .sources-list ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .sources-list li { font-size: 13px; color: var(--text-2); line-height: 1.5; padding-left: 18px; position: relative; }
+    .sources-list li::before { content: '→'; position: absolute; left: 0; color: var(--teal); }
+    .sources-list a { color: var(--teal); text-decoration: none; }
+    .sources-list a:hover { text-decoration: underline; }
+
+    /* ── About author ───────────────────────────────────────── */
+    .about-author {
+      background: var(--teal-d);
+      color: #fff;
+      padding: 64px 32px;
+      text-align: center;
+    }
+    .author-inner { max-width: 680px; margin: 0 auto; }
+    .author-avatar {
+      width: 72px; height: 72px;
+      background: rgba(255,255,255,.15);
+      border: 2px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.8rem;
+    }
+    .about-author h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      margin-bottom: 8px;
+    }
+    .author-title { font-size: 14px; opacity: .7; margin-bottom: 24px; }
+    .about-author p { font-size: 1rem; opacity: .85; line-height: 1.75; margin-bottom: 14px; }
+    .about-author p:last-of-type { margin-bottom: 36px; }
+    .cta-links {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .cta-links a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all .2s;
+    }
+    .cta-li { background: #0A66C2; color: #fff; }
+    .cta-li:hover { background: #004182; }
+    .cta-gh { background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.25); }
+    .cta-gh:hover { background: rgba(255,255,255,.2); }
+    .cta-home { background: var(--amber); color: #1A1A2E; }
+    .cta-home:hover { background: #d4962e; }
+
+    /* ── Footer ─────────────────────────────────────────────── */
+    .footer {
+      background: #071f18;
+      color: rgba(255,255,255,.75);
+      padding: 36px 32px;
+      text-align: center;
+      font-size: 13px;
+    }
+    .footer-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.1rem;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .footer a { color: rgba(255,255,255,.7); text-decoration: none; }
+    .footer a:hover { color: #fff; text-decoration: underline; }
+    .footer-sep { margin: 0 8px; opacity: .4; }
+    .footer-data {
+      margin-top: 14px;
+      font-size: 11px;
+      opacity: .5;
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 640px) {
+      .hero { padding: 52px 20px 48px; }
+      .report { padding: 44px 20px; }
+      .methodology { padding: 40px 20px; }
+      .finding-num { padding: 20px; min-width: 60px; font-size: 1.6rem; }
+      .finding-top { padding: 18px 20px; }
+      .finding-body { padding: 20px; }
+      .breadcrumb { padding: 10px 20px; flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb">
+    <a href="../">← All Dashboards</a>
+    <span class="sep">·</span>
+    <span>Day 10 · Full Research Report</span>
+    <span class="sep">·</span>
+    <span>From Memphis to 50 States</span>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <p class="challenge-tag">Day 10 of 10 · AI Meets Education Data · June 2026</p>
+    <h1>10 Findings on <em>American Public Education</em></h1>
+    <p class="hero-sub">From a data analyst in Memphis with a laptop, an AI model, and ten government datasets that anyone can download for free.</p>
+    <div class="hero-byline">
+      📍 Mahendra Aarumalla · Data Scientist · Memphis, TN
+    </div>
+  </header>
+
+  <!-- AI NARRATIVE -->
+  <div class="ai-band section">
+    <div class="ai-inner">
+      <div class="ai-label">AI Analysis · Synthesis Narrative</div>
+      <p>Ten days of data tell a single coherent story: American public education is not failing uniformly — it is failing predictably. The predictors are not the ones most people assume. Funding matters, but how it is spent matters more. Attendance collapsed post-pandemic, but the states that recovered fastest share specific policy choices, not geography or wealth. Mississippi outperforms on reading despite high poverty because it mandated structured literacy a decade ago. Two cities recovered from Memphis-level absenteeism because they ran targeted, school-by-school intervention — not district-wide campaigns. The data is public, free, and updated annually. The patterns are there for anyone who looks. This report is what ten days of looking found.</p>
+    </div>
+  </div>
+
+  <!-- REPORT -->
+  <main class="report section">
+
+    <p class="report-intro">
+      This is the final report of a 10-day public data challenge: one AI-powered education dashboard per day, built entirely on free government datasets. Each finding below corresponds to one day of analysis. All statistics are sourced and verifiable. No demographic or racial framing is used anywhere — analysis is framed by geography, income level, district funding, and policy decisions.
+    </p>
+
+    <div class="findings">
+
+      <!-- Finding 1 -->
+      <article class="finding">
+        <div class="finding-header">
+          <div class="finding-num">1</div>
+          <div class="finding-top">
+            <div class="finding-headline">Memphis absenteeism hit 30.2% — the highest ever recorded, and 11.9 points above the Tennessee state average.</div>
+            <span class="finding-stat">30.2% chronic absenteeism · 47,000+ students affected</span>
+          </div>
+        </div>
+        <div class="finding-body">
+          <p>In the 2023–24 school year, nearly one in three Memphis-Shelby County Schools students was chronically absent — defined as missing 10% or more of instructional days, or about 18 days per year. This 30.2% rate is the highest in recorded TDOE history for the district, standing 11.9 points above Tennessee's state average of 18.3%. When mapped against neighborhood income data from Census ACS, the geographic concentration is unmistakable: absenteeism clusters tightly in the same zip codes where median household income falls below $35,000. But the relationship is not deterministic — several low-income schools outperform their zip code predictions, pointing toward school-level factors that matter independently of neighborhood poverty.</p>
+          <p>The pre-pandemic baseline was 16% in 2017–18. The rate rose to 20% just before COVID, then accelerated sharply post-2020. Memphis has not recovered to any pre-pandemic level. Charter schools within MSCS show 39% absenteeism versus 27% for district-managed schools — a gap warranting direct policy investigation.</p>
+          <div class="finding-footer">
+            <span class="finding-source">Source: <a href="https://www.tn.gov/education/districts/federal-programs-and-oversight/data/data-downloads.html" target="_blank" rel="noopener">TDOE Data Downloads</a> · Tennessee Chronic Absenteeism 2023–24</span>
+            <a class="finding-link" href="../day1/">View Dashboard →</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Finding 2 -->
+      <article class="finding">
+        <div class="finding-header">
+          <div class="finding-num">2</div>
+          <div class="finding-top">
+            <div class="finding-headline">Memphis ACT scores fell for five consecutive years. Three in four students cannot reach college-ready benchmarks.</div>
+            <span class="finding-stat">ACT composite avg: 15.9 · College-ready threshold: 21</span>
+          </div>
+        </div>
+        <div class="finding-body">
+          <p>MSCS ACT composite scores declined every year from 2019 through 2024 — five straight years of regression on the metric most directly tied to post-secondary opportunity. The district average composite sits at 15.9, against the college-ready benchmark of 21. Approximately 75% of graduating seniors fall below that threshold. This matters in concrete economic terms: Tennessee's TISA funding formula is attendance-based, meaning every chronically absent student directly reduces instructional dollars available. The funding loss compounds the academic loss.</p>
+          <p>The ACT decline maps inversely onto absenteeism trends with near-perfect correlation at the school level. Schools with the highest absenteeism show the steepest score declines. The magnitude of the relationship is larger than most district-level analyses have acknowledged. You cannot learn material you were not present to receive — and the data quantifies that precisely.</p>
+          <div class="finding-footer">
+            <span class="finding-source">Source: <a href="https://www.tn.gov/education/districts/federal-programs-and-oversight/data/data-downloads.html" target="_blank" rel="noopener">TDOE Data Downloads</a> · ACT District-Level Files 2019–2024</span>
+            <a class="finding-link" href="../day2/">View Dashboard →</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Finding 3 -->
+      <article class="finding">
+        <div class="finding-header">
+          <div class="finding-num">3</div>
+          <div class="finding-top">
+            <div class="finding-headline">Five Tennessee districts defy the absenteeism-graduation pattern. Policy explains more than poverty.</div>
+            <span class="finding-stat">147 districts analyzed · 5 statistically anomalous outliers identified</span>
+          </div>
+        </div>
+        <div class="finding-body">
+          <p>Across all 147 Tennessee school districts, chronic absenteeism and graduation rates are strongly correlated — but five districts break the pattern in ways the data cannot explain by income alone. Three districts in rural West and East Tennessee show absenteeism rates above 22% yet maintain graduation rates above 90%. Two urban districts show the reverse: low absenteeism but graduation rates lagging statewide averages. The outlier analysis points directly at district-level policy: attendance intervention programs, credit recovery structures, and alternative pathway availability.</p>
+          <p>The most instructive case: a district with 27% absenteeism and a 91% graduation rate — achieved through an aggressive on-time credit recovery program allowing students who miss school to make up credits in non-traditional formats. This is replicable. The fact that it has not been adopted statewide is itself a policy finding.</p>
+          <div class="finding-footer">
+            <span class="finding-source">Source: <a href="https://www.tn.gov/education/districts/federal-programs-and-oversight/data/data-downloads.html" target="_blank" rel="noopener">TDOE Data Downloads</a> · District Absenteeism + ACT + Graduation 2024</span>
+            <a class="finding-link" href="../day3/">View Dashboard →</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Finding 4 -->
+      <article class="finding">
+        <div class="finding-header">
+          <div class="finding-num">4</div>
+          <div class="finding-top">
+            <div class="finding-headline">Tennessee's TCAP gains are real — but the income equity gap widened in three subjects between 2019 and 2024.</div>
+            <span class="finding-stat">18–22 point proficiency gap between income quartiles · Widened post-2020</span>
+          </div>
+        </div>
+        <div class="finding-body">
+          <p>Tennessee's aggregate TCAP scores improved meaningfully between 2019 and 2024 — genuine progress, and the state's reading science reforms deserve direct credit. But disaggregating those gains by district income quartile reveals a troubling pattern: the gap between the highest and lowest income quartiles widened in math, science, and social studies even as both groups improved in absolute terms. The bottom quartile improved by 3–5 percentage points; the top quartile improved by 7–12 points. Relative inequality grew while absolute scores rose across the board.</p>
+          <p>Mapped geographically, the income-score relationship concentrates in predictable corridors: the Memphis metro, pockets of rural Appalachian Tennessee, and counties along the Mississippi River. The post-pandemic widening suggests recovery resources did not reach low-income districts at the same rate or effectiveness as higher-income ones.</p>
+          <div class="finding-footer">
+            <span class="finding-source">Source: <a href="https://www.tn.gov/education/districts/federal-programs-and-oversight/data/data-downloads.html" target="_blank" rel="noopener">TDOE TCAP District Files 2019–2024</a> · Census ACS S1901 median income by district</span>
+            <a class="finding-link" href="../day4/">View Dashboard →</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Finding 5 -->
+      <article class="finding">
+        <div class="finding-header">
+          <div class="finding-num">5</div>
+          <div class="finding-top">
+            <div class="finding-headline">Mississippi leads national reading improvement despite high absenteeism. The mechanism is policy timing, not demographics.</div>
+            <span class="finding-stat">MS: top-5 NAEP reading gains 2019–2024 · 29%+ chronic absenteeism</span>
+          </div>
+        </div>
+        <div class="finding-body">
+          <p>Mississippi presents the sharpest paradox in this dataset: some of the South's highest chronic absenteeism rates alongside the nation's most dramatic reading score gains on the NAEP 4th-grade assessment. This is not an accident of demographics or economic recovery — it is the direct result of Mississippi's literacy reform timeline. The state mandated structured literacy instruction in 2013, a decade before most states began similar reforms. By the time COVID disrupted attendance in 2020, Mississippi's reading instruction system was embedded deeply enough to survive the disruption. Students who were absent still returned to classrooms with a coherent, teacher-consistent phonics-based curriculum.</p>
+          <p>Income-adjusted Urban Institute scores — controlling for family poverty rates — show Mississippi performing even stronger relative to peers. The lesson is explicit: early policy commitment compounds over time in ways that downstream spending cannot replicate. States implementing reading science reforms in 2023–24 will not see Mississippi-style gains until the mid-2030s.</p>
+          <div class="finding-footer">
+            <span class="finding-source">Source: <a href="https://www.nationsreportcard.gov" target="_blank" rel="noopener">NAEP Nation's Report Card 2024</a> · <a href="https://www.future-ed.org/tracking-state-trends-in-chronic-absenteeism/" target="_blank" rel="noopener">FutureEd State Absenteeism Tracker</a> · Urban Institute Adjusted Scores</span>
+            <a class="finding-link" href="../day5/">View Dashboard →</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Finding 6 -->
+      <article class="finding">
+        <div class="finding-header">
+          <div class="finding-num">6</div>
+          <div class="finding-top">
+            <div class="finding-headline">Same poverty rate, 15-point graduation gap. Spending strategy beats spending amount.</div>
+            <span class="finding-stat">Matched-state pairs · 15pt graduation gap at identical poverty rates</span>
+          </div>
+        </div>
+        <div class="finding-body">
+          <p>When Southern states are matched to Western states with statistically identical child poverty rates, a 15-point gap in 4-year graduation rates emerges — and it is not explained by per-pupil spending. In multiple matched pairs, the lower-spending state achieves better graduation outcomes. The divergence traces to three specific policy variables: compulsory attendance law enforcement age, credit recovery pathway availability, and how per-pupil funding is allocated between instructional and administrative spending. States that front-load dollars toward classroom instruction — even at lower absolute totals — outperform higher-spending states where a larger share goes to overhead.</p>
+          <p>This finding challenges the most common education policy framing: that low-income states simply need more money. Some do. But the matched-state comparison shows that states at the same funding level produce dramatically different outcomes based on how that funding is deployed. It is possible to spend your way to mediocrity if the spending structure is wrong.</p>
+          <div class="finding-footer">
+            <span class="finding-source">Source: <a href="https://nces.ed.gov/programs/coe/indicator/coi/high-school-graduation-rates" target="_blank" rel="noopener">NCES ACGR Graduation Rates</a> · Census ACS Child Poverty by State</span>
+            <a class="finding-link" href="../day6/">View Dashboard →</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Finding 7 -->
+      <article class="finding">
+        <div class="finding-header">
+          <div class="finding-num">7</div>
+          <div class="finding-top">
+            <div class="finding-headline">US absenteeism peaked at 31% in 2022. It has declined to 23.5% — still 47% above pre-pandemic levels. We are not recovered.</div>
+            <span class="finding-stat">2019: 15% → 2022: 31% → 2024: 23.5% · 6 states still rising</span>
+          </div>
+        </div>
+        <div class="finding-body">
+          <p>The national chronic absenteeism story is a crisis in slow motion: the US rate was 15% pre-pandemic, exploded to 31% at the 2022 peak — doubling in three years — and has since fallen to approximately 23.5% as of the most recent FutureEd tracker update. That looks like progress until you compare it to baseline: 23.5% is 47% higher than the pre-pandemic norm. We are not recovered. We have become accustomed to a new, worse normal. Six states saw absenteeism increase in 2024 versus 2023, meaning the decline is not universal.</p>
+          <p>The animated 50-state view shows that recovery speed is bifurcated: states that moved aggressively on attendance-specific interventions recovered by 8–10 points; states without dedicated programs have plateaued. The fastest-recovering states share a specific playbook: early warning systems, tiered intervention protocols starting at 5 missed days (not 10), and family engagement campaigns that address the barrier to attendance rather than the absence itself.</p>
+          <div class="finding-footer">
+            <span class="finding-source">Source: <a href="https://www.future-ed.org/tracking-state-trends-in-chronic-absenteeism/" target="_blank" rel="noopener">FutureEd State Absenteeism Tracker 2018–2025</a> · Ed.gov EDFacts</span>
+            <a class="finding-link" href="../day7/">View Dashboard →</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Finding 8 -->
+      <article class="finding">
+        <div class="finding-header">
+          <div class="finding-num">8</div>
+          <div class="finding-top">
+            <div class="finding-headline">Utah spends $8,000 per student and outperforms states spending $26,000. Efficiency is real — and measurable.</div>
+            <span class="finding-stat">NY: ~$26K/student · UT: ~$8K/student · NAEP + graduation advantage: UT</span>
+          </div>
+        </div>
+        <div class="finding-body">
+          <p>Per-pupil spending varies from approximately $8,000 in Utah to $26,000 in New York — a 3.25x difference. When NAEP scores and graduation rates are plotted against per-pupil expenditure for all 50 states, the relationship is positive but weak: more spending is loosely associated with better outcomes, but the variance is enormous. Utah, at the lowest spending tier, achieves NAEP scores and graduation rates that outpace a majority of states spending two to three times as much per student. Massachusetts spends heavily and achieves excellent outcomes — the top right of the scatter. But several high-spending states cluster near the middle of the outcome distribution despite their investment.</p>
+          <p>The efficiency analysis — outcomes per dollar — produces a ranking that surprises most education policymakers. Five of the top-ten efficiency states are in the Mountain West or Upper Midwest. Five of the bottom-ten are in the urban Northeast and Pacific Coast. Spending is necessary but not sufficient, and the data makes that precise rather than rhetorical.</p>
+          <div class="finding-footer">
+            <span class="finding-source">Source: <a href="https://nces.ed.gov/programs/coe/" target="_blank" rel="noopener">NCES Condition of Education 2024</a> · Per-Pupil Expenditure by State · NAEP 2024</span>
+            <a class="finding-link" href="../day8/">View Dashboard →</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Finding 9 -->
+      <article class="finding">
+        <div class="finding-header">
+          <div class="finding-num">9</div>
+          <div class="finding-top">
+            <div class="finding-headline">Cleveland and Detroit recovered from Memphis-level absenteeism by 2024. The mechanism was targeted intervention, not time.</div>
+            <span class="finding-stat">5 comparable cities in 2019 · 2 recovered by 7+ points by 2024</span>
+          </div>
+        </div>
+        <div class="finding-body">
+          <p>In 2019, five large urban districts — Memphis, Cleveland, Detroit, Baltimore, and Fresno — had statistically comparable profiles: similar district size, similar child poverty rates, and absenteeism in the 22–26% range. By 2024, the five cities had diverged sharply. Cleveland and Detroit reduced absenteeism by 7 and 9 points respectively. Memphis and Baltimore held roughly flat. Fresno rose slightly. The difference was not funding — all five received comparable ESSER relief dollars per pupil. The difference was what those dollars were spent on.</p>
+          <p>Cleveland and Detroit ran school-by-school attendance intervention programs with dedicated staff, data-driven early-warning triggers, and family outreach protocols. Memphis and Baltimore ran district-wide awareness campaigns without school-level accountability structures. The lesson is concrete: the intervention unit that matters is the school, not the district. District-wide programs that average across schools dilute accountability and miss the schools that need the most targeted response.</p>
+          <div class="finding-footer">
+            <span class="finding-source">Source: <a href="https://nces.ed.gov/nationsreportcard/district/" target="_blank" rel="noopener">NCES TUDA Urban District Data</a> · NAEP District Results 2024 · Ed.gov EDFacts</span>
+            <a class="finding-link" href="../day9/">View Dashboard →</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Finding 10 -->
+      <article class="finding">
+        <div class="finding-header">
+          <div class="finding-num">10</div>
+          <div class="finding-top">
+            <div class="finding-headline">Public education data is fully public, fully free, and almost nobody is looking at it systematically.</div>
+            <span class="finding-stat">10 dashboards · 10 government sources · 0 paywalls</span>
+          </div>
+        </div>
+        <div class="finding-body">
+          <p>Every number in this report came from a government website. Every dataset is available for free download by any citizen, journalist, researcher, or parent. The TDOE posts school-level absenteeism, ACT, and graduation data annually. The Census publishes income and poverty by zip code. NCES tracks per-pupil spending and graduation for all 50 states. The Nation's Report Card publishes state NAEP scores going back to 2002. FutureEd maintains a 50-state absenteeism tracker updated yearly. None of this requires a FOIA request, a university affiliation, or a paid subscription.</p>
+          <p>What requires effort is synthesis: connecting the files, building the comparisons, asking the right questions across datasets not designed to talk to each other. That synthesis — ten days of it — produced findings that contradict common assumptions, identify replicable policy models, and tell a more precise and actionable story about American public education than the usual narrative. The data was always there. This project was a proof of concept that one person with public tools can read it.</p>
+          <div class="finding-footer">
+            <span class="finding-source">All sources listed in the Methodology section below</span>
+            <a class="finding-link" href="../">← All Dashboards</a>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </main>
+
+  <hr class="section-divider">
+
+  <!-- METHODOLOGY -->
+  <section class="methodology section">
+    <h2>Methodology</h2>
+    <p class="sub">How this research was conducted — tools, data sources, and analytical approach.</p>
+
+    <div class="method-grid">
+      <div class="method-card">
+        <h3>Data Policy</h3>
+        <p>100% public government data. No school or employer data from private sources. No paywalled datasets. Every number links to an original government or verified research source.</p>
+      </div>
+      <div class="method-card">
+        <h3>Analytical Framing</h3>
+        <p>All analysis framed by economic geography: zip code, income level, district type, per-pupil spending, and policy variables. No demographic or racial framing anywhere in the analysis.</p>
+      </div>
+      <div class="method-card">
+        <h3>AI Tooling</h3>
+        <p>Claude AI (Anthropic) used for narrative synthesis, outlier identification, and policy brief generation. All AI output was reviewed against underlying data before publication.</p>
+      </div>
+      <div class="method-card">
+        <h3>Build Stack</h3>
+        <p>Pure HTML/CSS/JS — no build tools. Chart.js and D3.js via CDN. Deployed to GitHub Pages. Each dashboard is a self-contained index.html built and deployed in one day.</p>
+      </div>
+    </div>
+
+    <div class="sources-list">
+      <h3>Primary Data Sources</h3>
+      <ul>
+        <li><a href="https://www.tn.gov/education/districts/federal-programs-and-oversight/data/data-downloads.html" target="_blank" rel="noopener">TDOE Data Downloads</a> — School and district: absenteeism, TCAP, ACT, graduation (all years to 2013)</li>
+        <li><a href="https://reportcard.tnedu.gov" target="_blank" rel="noopener">TN Report Card</a> — Per-school performance, TISA funding, enrollment</li>
+        <li><a href="https://data.census.gov" target="_blank" rel="noopener">US Census ACS</a> — Table S1901 (income by zip), S1701 (poverty by zip), state-level poverty</li>
+        <li><a href="https://www.future-ed.org/tracking-state-trends-in-chronic-absenteeism/" target="_blank" rel="noopener">FutureEd State Absenteeism Tracker</a> — All 50 states, 2018–2025</li>
+        <li><a href="https://www.nationsreportcard.gov" target="_blank" rel="noopener">NCES / Nation's Report Card</a> — State NAEP scores, grades 4 and 8, 2002–2024</li>
+        <li><a href="https://nces.ed.gov/programs/coe/" target="_blank" rel="noopener">NCES Condition of Education 2024</a> — Per-pupil spending by state, graduation rates, national indicators</li>
+        <li><a href="https://nces.ed.gov/programs/coe/indicator/coi/high-school-graduation-rates" target="_blank" rel="noopener">NCES ACGR Graduation Data</a> — State 4-year adjusted cohort graduation rates</li>
+        <li><a href="https://eddataexpress.ed.gov" target="_blank" rel="noopener">Ed.gov EDFacts / Ed Data Express</a> — National chronic absenteeism by school and district</li>
+        <li><a href="https://www.urban.org" target="_blank" rel="noopener">Urban Institute</a> — Income-adjusted state NAEP scores for fair state comparisons</li>
+        <li><a href="https://nces.ed.gov/nationsreportcard/district/" target="_blank" rel="noopener">NCES TUDA</a> — Urban district data, city-level NAEP results 2024</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ABOUT AUTHOR -->
+  <section class="about-author section">
+    <div class="author-inner">
+      <div class="author-avatar">M</div>
+      <h2>Mahendra Aarumalla</h2>
+      <p class="author-title">Data Scientist · AI-Driven Education Insights · Memphis, Tennessee</p>
+      <p>I'm a Data Scientist based in Memphis, TN, with a background in education data and a focus on using AI to surface insights from public datasets that usually stay buried in government spreadsheets. My technical stack is Python, SQL, PostgreSQL, and FastAPI — though this entire project was built with plain HTML, JS, and a direct API call.</p>
+      <p>This 10-day challenge was an experiment in what one person can produce with public data, an AI model, and a commitment to publish something real every day. The dashboards are live. The findings are sourced. The data was always free.</p>
+      <p>If you're a CEO, policy director, school leader, or researcher interested in applying this kind of AI-powered analysis to your own education data questions — I'd like to talk.</p>
+      <div class="cta-links">
+        <a class="cta-li" href="https://linkedin.com/in/a-mahendra" target="_blank" rel="noopener">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          Follow on LinkedIn
+        </a>
+        <a class="cta-gh" href="https://github.com/MahendraAarumalla/memphis-education" target="_blank" rel="noopener">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+          Star on GitHub
+        </a>
+        <a class="cta-home" href="../">← All 10 Dashboards</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-name">Mahendra Aarumalla</div>
+    <div>
+      Data Scientist · Memphis, TN
+      <span class="footer-sep">·</span>
+      <a href="https://linkedin.com/in/a-mahendra" target="_blank" rel="noopener">linkedin.com/in/a-mahendra</a>
+      <span class="footer-sep">·</span>
+      <a href="https://github.com/MahendraAarumalla/memphis-education" target="_blank" rel="noopener">github.com/MahendraAarumalla/memphis-education</a>
+    </div>
+    <div class="footer-data">
+      Data: TDOE Data Downloads · TN Report Card · US Census ACS · FutureEd State Tracker ·
+      NCES Nation's Report Card · NCES Condition of Education 2024 · NCES ACGR · Ed.gov EDFacts ·
+      Urban Institute · NCES TUDA · All data publicly available from original government sources.
+      <br>Challenge: From Memphis to 50 States — AI Meets Education Data · June 2026
+    </div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.06 });
+    document.querySelectorAll('.section').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

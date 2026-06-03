@@ -4,91 +4,572 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>From Memphis to 50 States — AI Meets Education Data</title>
+  <meta name="description" content="10 AI-powered public education dashboards built on real government data. From Memphis to all 50 states, by Mahendra Aarumalla.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal:   #0F6E56;
+      --teal-d: #0A4F3E;
+      --teal-l: #E8F5F0;
+      --amber:  #E8A838;
+      --text:   #1A1A2E;
+      --text-2: #6B7280;
+      --border: #E5E7EB;
+      --bg:     #FAFAF8;
+      --card:   #ffffff;
+    }
+
     body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background: #0A4D3C;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      border-top: 3px solid var(--teal);
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.022;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+    }
+
+    .section {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+    .section.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── Hero ──────────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(140deg, var(--teal-d) 0%, var(--teal) 55%, #1a6e8a 100%);
       color: #fff;
-      min-height: 100vh;
+      padding: 72px 32px 64px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -80px; left: 50%;
+      transform: translateX(-50%);
+      width: 900px; height: 280px;
+      background: radial-gradient(ellipse, rgba(94,234,212,0.10) 0%, transparent 68%);
+      pointer-events: none;
+    }
+    .challenge-tag {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      opacity: .75;
+      margin-bottom: 22px;
+    }
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.1rem, 5.5vw, 4rem);
+      line-height: 1.12;
+      max-width: 760px;
+      margin: 0 auto 20px;
+    }
+    .hero h1 em { font-style: italic; opacity: .9; }
+    .hero-sub {
+      font-size: clamp(1rem, 2.2vw, 1.2rem);
+      opacity: .85;
+      max-width: 600px;
+      margin: 0 auto 44px;
+      line-height: 1.65;
+    }
+    .hero-meta {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 28px;
+      flex-wrap: wrap;
+      font-size: 14px;
+      opacity: .75;
+    }
+    .hero-meta span { display: flex; align-items: center; gap: 7px; }
+    .dot-sep { opacity: .4; }
+
+    /* ── Day Cards Grid ───────────────────────────────────── */
+    .grid-section { padding: 64px 32px; max-width: 1160px; margin: 0 auto; }
+    .grid-section h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.5rem, 3vw, 2.1rem);
+      color: var(--teal-d);
+      margin-bottom: 6px;
+    }
+    .grid-section .sub {
+      font-size: 15px;
+      color: var(--text-2);
+      margin-bottom: 36px;
+    }
+
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .day-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px 26px;
+      text-decoration: none;
+      color: var(--text);
+      transition: transform .2s, box-shadow .2s, border-color .2s;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 24px;
-      text-align: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
     }
-    .eyebrow {
+    .day-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--teal);
+    }
+    .day-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 28px rgba(15,110,86,0.12);
+      border-color: rgba(15,110,86,0.25);
+    }
+    .day-card.day10 { border-color: var(--teal); background: var(--teal-l); }
+    .day-card.day10::before { background: linear-gradient(90deg, var(--teal), var(--amber)); }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .day-label {
       font-size: 11px;
       font-weight: 600;
-      letter-spacing: 2px;
+      letter-spacing: .1em;
       text-transform: uppercase;
+      color: var(--teal);
+    }
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #DCFCE7;
+      color: #15803D;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
+    .live-badge::before {
+      content: '';
+      display: block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #16A34A;
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .35; }
+    }
+
+    .card-headline {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.1rem;
+      line-height: 1.35;
+      color: var(--text);
+    }
+    .card-stat {
+      font-size: 13px;
+      color: var(--teal-d);
+      font-weight: 500;
+      background: var(--teal-l);
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      align-self: flex-start;
+    }
+    .day-card.day10 .card-stat {
+      background: rgba(15,110,86,0.12);
+    }
+    .card-arrow {
+      font-size: 18px;
+      color: var(--teal);
+      align-self: flex-end;
+      margin-top: auto;
       opacity: .6;
+      transition: opacity .2s, transform .2s;
+    }
+    .day-card:hover .card-arrow { opacity: 1; transform: translateX(4px); }
+
+    /* ── About ─────────────────────────────────────────────── */
+    .about-section {
+      background: var(--teal-d);
+      color: #fff;
+      padding: 64px 32px;
+      text-align: center;
+    }
+    .about-inner { max-width: 720px; margin: 0 auto; }
+    .about-section h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
       margin-bottom: 20px;
     }
-    h1 { font-size: clamp(28px, 5vw, 52px); font-weight: 900; line-height: 1.1; letter-spacing: -1px; margin-bottom: 16px; }
-    h1 span { color: #5EEAD4; }
-    .sub { font-size: clamp(14px, 2vw, 18px); opacity: .75; max-width: 520px; line-height: 1.6; margin-bottom: 48px; }
-    .days-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; max-width: 800px; width: 100%; margin-bottom: 48px; }
-    .day-card { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 10px; padding: 16px 12px; text-decoration: none; color: #fff; transition: background .15s, border-color .15s; }
-    .day-card.live:hover { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.35); }
-    .day-card.coming { opacity: .4; cursor: default; pointer-events: none; }
-    .day-num { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; opacity: .6; margin-bottom: 6px; }
-    .day-title { font-size: 12px; font-weight: 600; line-height: 1.4; }
-    .live-badge { display: inline-block; background: #10B981; color: #fff; font-size: 9px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; padding: 2px 7px; border-radius: 20px; margin-bottom: 6px; }
-    .sig { opacity: .55; font-size: 13px; line-height: 1.8; }
-    .sig a { color: #5EEAD4; text-decoration: none; }
-    .sig a:hover { text-decoration: underline; }
+    .about-section p {
+      font-size: 1rem;
+      opacity: .85;
+      line-height: 1.75;
+      margin-bottom: 16px;
+    }
+    .about-section p:last-of-type { margin-bottom: 36px; }
+    .about-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .about-links a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 22px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all .2s;
+    }
+    .link-linkedin { background: #0A66C2; color: #fff; }
+    .link-linkedin:hover { background: #004182; }
+    .link-github { background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.25); }
+    .link-github:hover { background: rgba(255,255,255,.2); }
+    .link-report { background: var(--amber); color: #1A1A2E; }
+    .link-report:hover { background: #d4962e; }
+
+    /* ── Principles ────────────────────────────────────────── */
+    .principles { padding: 56px 32px; max-width: 1100px; margin: 0 auto; }
+    .principles h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.4rem, 2.8vw, 2rem);
+      color: var(--teal-d);
+      margin-bottom: 28px;
+      text-align: center;
+    }
+    .principles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+    .principle-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px 24px;
+    }
+    .principle-icon { font-size: 1.6rem; margin-bottom: 10px; }
+    .principle-card h3 { font-size: .95rem; font-weight: 600; margin-bottom: 6px; color: var(--teal-d); }
+    .principle-card p { font-size: 13px; color: var(--text-2); line-height: 1.55; }
+
+    /* ── Stats bar ─────────────────────────────────────────── */
+    .stats-bar {
+      background: var(--teal-l);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 32px;
+    }
+    .stats-bar-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 24px;
+      text-align: center;
+    }
+    .sb-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.4rem;
+      color: var(--teal);
+      line-height: 1;
+      margin-bottom: 5px;
+    }
+    .sb-lbl { font-size: 12px; color: var(--text-2); line-height: 1.4; }
+
+    /* ── Footer ────────────────────────────────────────────── */
+    .footer {
+      background: var(--teal-d);
+      color: rgba(255,255,255,.8);
+      padding: 36px 32px;
+      text-align: center;
+      font-size: 13px;
+    }
+    .footer-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.1rem;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .footer a { color: rgba(255,255,255,.75); text-decoration: none; }
+    .footer a:hover { color: #fff; text-decoration: underline; }
+    .footer-sep { margin: 0 8px; opacity: .4; }
+    .footer-data {
+      margin-top: 14px;
+      font-size: 11px;
+      opacity: .55;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 640px) {
+      .hero { padding: 52px 20px 48px; }
+      .grid-section { padding: 44px 20px; }
+      .about-section { padding: 48px 20px; }
+      .principles { padding: 40px 20px; }
+    }
   </style>
 </head>
 <body>
-  <p class="eyebrow">10-Day Challenge · AI Meets Education Data</p>
-  <h1>From Memphis to <span>50 States</span></h1>
-  <p class="sub">From Memphis to 50 States — AI Meets Education Data. 10 AI-powered public education dashboards built on real government data.</p>
 
-  <div class="days-grid">
-    <a class="day-card live" href="day1/">
-      <div class="live-badge">● Live</div>
-      <div class="day-num">Day 1</div>
-      <div class="day-title">Memphis Absenteeism — 9 Years of Data</div>
-    </a>
-    <a class="day-card live" href="day2/">
-      <div class="live-badge">● Live</div>
-      <div class="day-num">Day 2</div>
-      <div class="day-title">Memphis ACT Scores — 6-Year Decline</div>
-    </a>
-    <a class="day-card live" href="day3/">
-      <div class="live-badge">● Live</div>
-      <div class="day-num">Day 3</div>
-      <div class="day-title">All 147 Tennessee Districts Ranked</div>
-    </a>
-    <a class="day-card live" href="day4/">
-      <div class="live-badge">● Live</div>
-      <div class="day-num">Day 4</div>
-      <div class="day-title">Which ZIP Codes Got Left Behind?</div>
-    </a>
-    <a class="day-card live" href="day5/">
-      <div class="live-badge">● Live</div>
-      <div class="day-num">Day 5</div>
-      <div class="day-title">The South's Reading Paradox — 8 States</div>
-    </a>
-    <a class="day-card live" href="day6/">
-      <div class="live-badge">● Live</div>
-      <div class="day-num">Day 6</div>
-      <div class="day-title">Same Poverty, 15-Point Graduation Gap</div>
-    </a>
-    <div class="day-card coming"><div class="day-num">Day 7</div><div class="day-title">50 States · 7 Years · Animated</div></div>
-    <div class="day-card coming"><div class="day-num">Day 8</div><div class="day-title">$26K vs $8K Per Student — Who Wins?</div></div>
-    <div class="day-card coming"><div class="day-num">Day 9</div><div class="day-title">Which City Looked Like Memphis in 2019?</div></div>
-    <div class="day-card coming"><div class="day-num">Day 10</div><div class="day-title">10 Findings · Full National Report</div></div>
+  <!-- HERO -->
+  <header class="hero">
+    <p class="challenge-tag">10-Day LinkedIn Challenge · AI Meets Education Data · June 2026</p>
+    <h1>From Memphis to <em>50 States</em></h1>
+    <p class="hero-sub">10 AI-powered public education dashboards. Real government data. One data analyst in Memphis, TN.</p>
+    <div class="hero-meta">
+      <span>📍 Memphis, Tennessee</span>
+      <span class="dot-sep">·</span>
+      <span>📊 10 dashboards</span>
+      <span class="dot-sep">·</span>
+      <span>🗂 Public data only</span>
+      <span class="dot-sep">·</span>
+      <span>🤖 AI-generated insights</span>
+    </div>
+  </header>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar section">
+    <div class="stats-bar-inner">
+      <div>
+        <div class="sb-num">10</div>
+        <div class="sb-lbl">Interactive dashboards built</div>
+      </div>
+      <div>
+        <div class="sb-num">50</div>
+        <div class="sb-lbl">States analyzed</div>
+      </div>
+      <div>
+        <div class="sb-num">10</div>
+        <div class="sb-lbl">Original findings published</div>
+      </div>
+      <div>
+        <div class="sb-num">100%</div>
+        <div class="sb-lbl">Public government data</div>
+      </div>
+      <div>
+        <div class="sb-num">10</div>
+        <div class="sb-lbl">Days, start to finish</div>
+      </div>
+    </div>
   </div>
 
-  <p class="sig">
-    Mahendra Aarumalla · Data Scientist · Memphis, TN<br>
-    <a href="https://linkedin.com/in/a-mahendra" target="_blank" rel="noopener">linkedin.com/in/a-mahendra</a>
-    &nbsp;·&nbsp; Public data only · Built with AI
-  </p>
+  <!-- DAY CARDS -->
+  <section class="grid-section section">
+    <h2>All 10 Dashboards</h2>
+    <p class="sub">From Memphis neighborhoods to all 50 states — each day a new lens, all built on verified public data.</p>
+
+    <div class="days-grid">
+
+      <a class="day-card" href="day1/">
+        <div class="card-top">
+          <span class="day-label">Day 1 · Memphis</span>
+          <span class="live-badge">Live</span>
+        </div>
+        <div class="card-headline">Memphis students miss 1 in 3 school days. Here's every school, mapped by neighborhood.</div>
+        <div class="card-stat">30.2% chronic absenteeism — highest ever</div>
+        <div class="card-arrow">→</div>
+      </a>
+
+      <a class="day-card" href="day2/">
+        <div class="card-top">
+          <span class="day-label">Day 2 · Memphis</span>
+          <span class="live-badge">Live</span>
+        </div>
+        <div class="card-headline">Empty seats cost Memphis schools millions. Here's the exact number.</div>
+        <div class="card-stat">3 in 4 students below college-ready ACT</div>
+        <div class="card-arrow">→</div>
+      </a>
+
+      <a class="day-card" href="day3/">
+        <div class="card-top">
+          <span class="day-label">Day 3 · Tennessee</span>
+          <span class="live-badge">Live</span>
+        </div>
+        <div class="card-headline">Every Tennessee school district ranked — absenteeism, test scores, graduation in one view.</div>
+        <div class="card-stat">147 districts · 5 defy every expectation</div>
+        <div class="card-arrow">→</div>
+      </a>
+
+      <a class="day-card" href="day4/">
+        <div class="card-top">
+          <span class="day-label">Day 4 · Tennessee</span>
+          <span class="live-badge">Live</span>
+        </div>
+        <div class="card-headline">Tennessee raised test scores. But which ZIP codes got left behind?</div>
+        <div class="card-stat">18–22 point gap · Income predicts scores</div>
+        <div class="card-arrow">→</div>
+      </a>
+
+      <a class="day-card" href="day5/">
+        <div class="card-top">
+          <span class="day-label">Day 5 · The South</span>
+          <span class="live-badge">Live</span>
+        </div>
+        <div class="card-headline">The South has America's worst absenteeism AND its most improved test scores. The paradox, explained.</div>
+        <div class="card-stat">Mississippi leads reading · Worst attendance</div>
+        <div class="card-arrow">→</div>
+      </a>
+
+      <a class="day-card" href="day6/">
+        <div class="card-top">
+          <span class="day-label">Day 6 · SE vs SW</span>
+          <span class="live-badge">Live</span>
+        </div>
+        <div class="card-headline">Same poverty rate. 15-point graduation gap. What explains the difference?</div>
+        <div class="card-stat">Spending strategy beats spending amount</div>
+        <div class="card-arrow">→</div>
+      </a>
+
+      <a class="day-card" href="day7/">
+        <div class="card-top">
+          <span class="day-label">Day 7 · All 50 States</span>
+          <span class="live-badge">Live</span>
+        </div>
+        <div class="card-headline">America's post-COVID school attendance collapse — 50 states, 7 years, one animated map.</div>
+        <div class="card-stat">15% → 31% → 23.5% · Not fully recovered</div>
+        <div class="card-arrow">→</div>
+      </a>
+
+      <a class="day-card" href="day8/">
+        <div class="card-top">
+          <span class="day-label">Day 8 · All 50 States</span>
+          <span class="live-badge">Live</span>
+        </div>
+        <div class="card-headline">New York spends $26,000 per student. Utah spends $8,000. Who gets better outcomes?</div>
+        <div class="card-stat">$26K vs $8K · Efficiency is real</div>
+        <div class="card-arrow">→</div>
+      </a>
+
+      <a class="day-card" href="day9/">
+        <div class="card-top">
+          <span class="day-label">Day 9 · City Comparison</span>
+          <span class="live-badge">Live</span>
+        </div>
+        <div class="card-headline">Which US city looked just like Memphis in 2019 — and what did they do differently by 2024?</div>
+        <div class="card-stat">Memphis vs 4 cities · What recovered ones did differently</div>
+        <div class="card-arrow">→</div>
+      </a>
+
+      <a class="day-card day10" href="day10/">
+        <div class="card-top">
+          <span class="day-label">Day 10 · Full Report</span>
+          <span class="live-badge">Live</span>
+        </div>
+        <div class="card-headline">10 findings on American public education — from a data analyst in Memphis.</div>
+        <div class="card-stat">Complete research report · All sources cited</div>
+        <div class="card-arrow">→</div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- PRINCIPLES -->
+  <section class="principles section">
+    <h2>How This Was Built</h2>
+    <div class="principles-grid">
+      <div class="principle-card">
+        <div class="principle-icon">🗂</div>
+        <h3>Public Data Only</h3>
+        <p>Every data point links to its original government source — NCES, TDOE, Census ACS, FutureEd. No proprietary or employer data.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-icon">📍</div>
+        <h3>Economic Lens</h3>
+        <p>Analysis framed by zip code, income level, district funding, and policy decisions. No demographic or racial framing.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-icon">🤖</div>
+        <h3>AI-Generated Narrative</h3>
+        <p>Each dashboard opens with an AI insight paragraph identifying the key finding and its policy implications.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-icon">⚡</div>
+        <h3>One Day, One Dashboard</h3>
+        <p>Pure HTML/CSS/JS — no build tools. Chart.js and D3.js via CDN. Deployable to GitHub Pages in under 60 seconds.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about-section section">
+    <div class="about-inner">
+      <h2>About This Project</h2>
+      <p>This is a 10-day LinkedIn challenge built by Mahendra Aarumalla, a Data Scientist based in Memphis, TN. The goal: demonstrate that AI-powered data storytelling — applied to fully public government datasets — can surface insights that would take traditional analysts weeks to find.</p>
+      <p>The challenge started in Memphis neighborhoods and zoomed out to all 50 states, building one interactive dashboard per day using only data that any citizen can download for free. Every finding is sourced, every number is cited, and every dashboard is live.</p>
+      <p>Background: Python, SQL, PostgreSQL, FastAPI — and a genuine belief that public education data tells a story most people haven't read yet.</p>
+      <div class="about-links">
+        <a class="link-linkedin" href="https://linkedin.com/in/a-mahendra" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </a>
+        <a class="link-github" href="https://github.com/MahendraAarumalla/memphis-education" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+          GitHub
+        </a>
+        <a class="link-report" href="day10/">
+          Read the Full Report →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-name">Mahendra Aarumalla</div>
+    <div>
+      Data Scientist · AI-Driven Education Insights · Memphis, TN
+      <span class="footer-sep">·</span>
+      <a href="https://linkedin.com/in/a-mahendra" target="_blank" rel="noopener">linkedin.com/in/a-mahendra</a>
+      <span class="footer-sep">·</span>
+      <a href="https://github.com/MahendraAarumalla/memphis-education" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <div class="footer-data">
+      Data sources: TDOE Data Downloads · TN Report Card · US Census ACS · FutureEd State Absenteeism Tracker ·
+      NCES / Nation's Report Card · NCES Condition of Education 2024 · Urban Institute ·
+      All data is publicly available from original government and research sources.
+    </div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.section').forEach(el => observer.observe(el));
+  </script>
 </body>
 </html>

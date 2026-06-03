@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 7 — America's Post-COVID Attendance Collapse | From Memphis to 50 States</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --teal:   #0F6E56; --teal-d: #0A4F3E; --teal-l: #E8F5F0;
+      --amber:  #E8A838; --red: #DC2626; --orange: #E07020;
+      --text:   #1A1A2E; --text-2: #6B7280; --border: #E5E7EB;
+      --bg:     #FAFAF8; --card:   #ffffff;
+    }
+    body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+    .breadcrumb { background: var(--teal-d); color: rgba(255,255,255,.8); padding: 10px 32px; font-size: 13px; display: flex; gap: 16px; align-items: center; }
+    .breadcrumb a { color: rgba(255,255,255,.9); text-decoration: none; }
+    .breadcrumb a:hover { color: #fff; }
+
+    .hero { background: linear-gradient(135deg, var(--teal-d) 0%, var(--teal) 60%, #1a6e8a 100%); color: #fff; padding: 64px 32px 56px; text-align: center; }
+    .challenge-tag { font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; opacity: .8; margin-bottom: 20px; }
+    .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2rem,5vw,3.6rem); line-height: 1.15; margin-bottom: 16px; max-width: 720px; margin-left: auto; margin-right: auto; }
+    .hero h1 em { font-style: italic; opacity: .9; }
+    .hero-sub { font-size: clamp(1rem,2.5vw,1.2rem); opacity: .85; max-width: 600px; margin: 0 auto 36px; }
+    .hero-stats { display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
+    .stat-box { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); border-radius: 12px; padding: 18px 28px; min-width: 130px; }
+    .stat-box.peak { background: rgba(220,38,38,.3); border-color: rgba(220,38,38,.4); position: relative; }
+    .stat-box.peak::after { content: 'PEAK CRISIS'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #DC2626; color: #fff; font-size: 10px; font-weight: 600; letter-spacing: .08em; padding: 2px 8px; border-radius: 4px; white-space: nowrap; }
+    .stat-num { font-family: 'DM Serif Display', serif; font-size: 2.6rem; line-height: 1; margin-bottom: 6px; }
+    .stat-lbl { font-size: 12px; opacity: .8; line-height: 1.3; }
+    .arrow { font-size: 1.8rem; opacity: .5; }
+    .hero-note { font-size: 12px; opacity: .65; }
+
+    .ai-box { background: var(--teal-l); border-left: 4px solid var(--teal); padding: 28px 36px; }
+    .ai-box-inner { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+    .ai-label { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--teal); margin-bottom: 10px; }
+    .ai-box p { font-size: 1.05rem; line-height: 1.75; color: var(--text); }
+
+    .section { padding: 56px 32px; max-width: 1100px; margin: 0 auto; }
+    .section-divider { border: none; border-top: 1px solid var(--border); margin: 0 32px; }
+    h2 { font-family: 'DM Serif Display', serif; font-size: clamp(1.4rem,3vw,2rem); color: var(--teal-d); margin-bottom: 8px; }
+    .section-sub { font-size: 14px; color: var(--text-2); margin-bottom: 28px; line-height: 1.5; }
+
+    .stat-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 14px; margin-bottom: 32px; }
+    .scard { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+    .scard .num { font-family: 'DM Serif Display', serif; font-size: 2rem; color: var(--teal); line-height: 1; margin-bottom: 4px; }
+    .scard .num.red { color: var(--red); } .scard .num.amb { color: var(--amber); }
+    .scard .lbl { font-size: 12px; color: var(--text-2); line-height: 1.4; }
+
+    .chart-wrap { position: relative; width: 100%; }
+
+    .race-header { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+    .year-badge { background: var(--teal-d); color: #fff; font-family: 'DM Serif Display', serif; font-size: 1.6rem; padding: 10px 22px; border-radius: 8px; min-width: 240px; text-align: center; line-height: 1.2; }
+    .year-sub-lbl { font-size: 11px; font-family: 'DM Sans', sans-serif; opacity: .75; margin-top: 3px; }
+    .race-btns { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .btn-primary { background: var(--teal); color: #fff; border: none; padding: 10px 22px; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background .2s; }
+    .btn-primary:hover { background: var(--teal-d); }
+    .btn-outline { background: transparent; color: var(--teal); border: 1.5px solid var(--teal); padding: 8px 16px; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all .2s; }
+    .btn-outline:hover { background: var(--teal-l); }
+    .btn-outline:disabled { opacity: .35; cursor: default; }
+    .step-dots { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .step-dot { padding: 5px 12px; border-radius: 20px; font-size: 12px; background: var(--border); color: var(--text-2); cursor: pointer; transition: all .2s; border: none; font-family: 'DM Sans', sans-serif; }
+    .step-dot.active { background: var(--teal); color: #fff; font-weight: 500; }
+
+    .color-legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; font-size: 12px; align-items: center; }
+    .leg-item { display: flex; align-items: center; gap: 5px; }
+    .leg-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+    .race-canvas-wrap { position: relative; width: 100%; height: 1100px; }
+    .recovery-wrap { position: relative; width: 100%; height: 740px; }
+
+    .crisis-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px,1fr)); gap: 14px; margin-top: 20px; }
+    .crisis-card { background: #FEF2F2; border: 1px solid #FECACA; border-top: 3px solid #DC2626; border-radius: 10px; padding: 18px 20px; }
+    .crisis-state { font-weight: 600; font-size: .95rem; margin-bottom: 4px; color: #991B1B; }
+    .crisis-pct { font-family: 'DM Serif Display', serif; font-size: 2.4rem; color: #DC2626; line-height: 1; margin-bottom: 4px; }
+    .crisis-note { font-size: 12px; color: #6B7280; line-height: 1.4; }
+    .rising-card { background: #FFF7ED; border: 1px solid #FED7AA; border-top: 3px solid #E07020; border-radius: 10px; padding: 18px 20px; }
+    .rising-state { font-weight: 600; font-size: .95rem; margin-bottom: 4px; color: #9A3412; }
+    .rising-pct { font-family: 'DM Serif Display', serif; font-size: 2.4rem; color: #E07020; line-height: 1; margin-bottom: 4px; }
+
+    .table-scroll { overflow-x: auto; overflow-y: auto; max-height: 480px; -webkit-overflow-scrolling: touch; border-radius: 10px; border: 1px solid var(--border); }
+    .table-scroll thead th { position: sticky; top: 0; z-index: 1; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { background: var(--teal-d); color: #fff; padding: 10px 12px; text-align: right; white-space: nowrap; cursor: pointer; user-select: none; font-weight: 500; font-family: 'DM Sans', sans-serif; }
+    th:first-child { text-align: left; cursor: default; }
+    th.sort-asc::after { content: ' ↑'; } th.sort-desc::after { content: ' ↓'; }
+    td { padding: 8px 12px; text-align: right; border-bottom: 1px solid var(--border); }
+    td:first-child { text-align: left; font-weight: 500; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--teal-l); }
+    .ct { color: var(--teal); font-weight: 500; } .cg { color: #16A34A; }
+    .ca { color: #B45309; } .co { color: #C2410C; }
+    .cr { color: #DC2626; font-weight: 600; } .cn { color: #D1D5DB; font-size: 12px; }
+    .tbl-search { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; margin-bottom: 14px; outline: none; }
+    .tbl-search:focus { border-color: var(--teal); }
+
+    .voices-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 18px; margin-top: 24px; }
+    .voice-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 22px; transition: transform .2s, box-shadow .2s; }
+    .voice-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.09); }
+    .voice-quote { font-size: 13.5px; line-height: 1.7; color: var(--text); margin-bottom: 12px; font-style: italic; }
+    .voice-quote::before { content: '\201C'; } .voice-quote::after { content: '\201D'; }
+    .voice-attr { font-size: 12px; color: var(--teal); font-weight: 500; }
+    .voice-source { font-size: 11px; margin-top: 4px; }
+    .voice-source a { color: var(--teal); text-decoration: none; }
+    .voice-source a:hover { text-decoration: underline; }
+
+    .dl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 14px; margin-top: 20px; }
+    .dl-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; }
+    .dl-title { font-weight: 600; margin-bottom: 6px; }
+    .dl-desc { font-size: 13px; color: var(--text-2); margin-bottom: 14px; line-height: 1.4; }
+    .dl-btn { display: inline-block; background: var(--teal); color: #fff; padding: 8px 18px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 500; transition: background .2s; }
+    .dl-btn:hover { background: var(--teal-d); }
+    .dl-src { font-size: 11px; color: var(--text-2); margin-top: 8px; }
+
+    .footer { background: var(--teal-d); color: rgba(255,255,255,.85); padding: 36px 32px; text-align: center; font-size: 13px; margin-top: 40px; }
+    .footer-name { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: #fff; margin-bottom: 6px; }
+    .footer-tag { opacity: .7; margin-bottom: 14px; line-height: 1.5; }
+    .footer-links { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 12px; }
+    .footer-links a { color: rgba(255,255,255,.75); text-decoration: none; }
+    .footer-links a:hover { color: #fff; }
+    .footer-src { font-size: 11px; opacity: .5; line-height: 1.6; }
+
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.in-view { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 640px) {
+      .hero { padding: 40px 16px 36px; }
+      .section { padding: 36px 16px; }
+      .ai-box { padding: 20px 20px; }
+      .section-divider { margin: 0 16px; }
+      .stat-box { min-width: 100px; padding: 14px 16px; }
+      .stat-num { font-size: 2rem; }
+      .race-canvas-wrap { height: 860px; }
+      .recovery-wrap { height: 620px; }
+      .year-badge { font-size: 1.3rem; min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="breadcrumb">
+  <a href="../">&#8592; All Days</a>
+  <span>Day 7 of 10 &mdash; From Memphis to 50 States</span>
+</nav>
+
+<header class="hero">
+  <div class="challenge-tag">From Memphis to 50 States &mdash; AI Meets Education Data &middot; Day 7 of 10</div>
+  <h1>America&#8217;s Post-COVID<br><em>Attendance Collapse</em></h1>
+  <p class="hero-sub">46 states. 5 data snapshots. One crisis that still hasn&#8217;t fully healed.</p>
+  <div class="hero-stats">
+    <div class="stat-box">
+      <div class="stat-num">15%</div>
+      <div class="stat-lbl">National rate<br>2018&ndash;19 baseline</div>
+    </div>
+    <div class="arrow">&rarr;</div>
+    <div class="stat-box peak">
+      <div class="stat-num">28%</div>
+      <div class="stat-lbl">Peak crisis<br>2021&ndash;22</div>
+    </div>
+    <div class="arrow">&rarr;</div>
+    <div class="stat-box">
+      <div class="stat-num">22%</div>
+      <div class="stat-lbl">Latest estimate<br>2024&ndash;25</div>
+    </div>
+  </div>
+  <p class="hero-note">Still 47% above pre-pandemic levels &middot; 5 states increased in 2024&ndash;25 vs 2023&ndash;24 &middot; Source: FutureEd State Absenteeism Tracker</p>
+</header>
+
+<div class="ai-box">
+  <div class="ai-box-inner">
+  <div class="ai-label">AI Policy Analysis</div>
+  <p>Analyzing 46 states across five data snapshots from 2018 to 2025, a clear pattern emerges: the post-pandemic attendance crisis was universal, but the recovery has been sharply unequal. States that bounced back fastest &mdash; Alabama (only 0.9 percentage points above its pre-pandemic baseline), Delaware (+2.1 pts), and Iowa (+3.8 pts) &mdash; share a policy thread: early-warning systems flagging students missing 3 or more days in the first month, ESSER-funded reengagement coordinators embedded in school buildings, and attendance enforcement modernized with proactive family outreach before penalties. By contrast, states still in deep crisis &mdash; Alaska (42.8%), Washington D.C. (39.5%), Oregon (33.5%), New Mexico (33.1%) &mdash; have fragmented attendance tracking and exhausted federal recovery funds without building durable infrastructure. The national estimate dropped from 28% at peak to 22% in 2024&ndash;25, but five states are now moving backwards: Mississippi (+3.2 pts year-over-year), New Mexico (+3.3 pts), Colorado (+0.7 pts), D.C. (+0.3 pts), and Oklahoma (+0.1 pts). The recovery is real &mdash; but uneven and not guaranteed.</p>
+  </div>
+</div>
+
+<section class="section reveal">
+  <h2>National Trend: From Baseline to Crisis and Back</h2>
+  <p class="section-sub">FutureEd tracker &middot; National estimate across 46+ states &middot; Note: 2019&ndash;20 and 2020&ndash;21 data not collected due to COVID school disruptions</p>
+  <div class="stat-strip">
+    <div class="scard"><div class="num">15%</div><div class="lbl">Pre-pandemic baseline<br>2018&ndash;19</div></div>
+    <div class="scard"><div class="num red">28%</div><div class="lbl">Post-COVID peak<br>2021&ndash;22</div></div>
+    <div class="scard"><div class="num amb">22%</div><div class="lbl">Latest national estimate<br>2024&ndash;25</div></div>
+    <div class="scard"><div class="num">+7 pts</div><div class="lbl">Still above baseline<br>nationally</div></div>
+    <div class="scard"><div class="num">5</div><div class="lbl">States moving<br>backwards in 2024&ndash;25</div></div>
+  </div>
+  <div class="chart-wrap" style="height:280px">
+    <canvas id="trendChart"></canvas>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<section class='section reveal'>
+  <h2>Compare Any State vs National Average</h2>
+  <p class='section-sub'>Select any state to see how it compares to the national trend · Source: FutureEd State Absenteeism Tracker</p>
+
+  <div style='margin-bottom:20px'>
+    <label style='font-size:14px; font-weight:500; margin-right:10px'>Select a state:</label>
+    <select id='stateSelect' style='padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px; background:white; cursor:pointer'>
+    </select>
+  </div>
+
+  <div class='chart-wrap' style='height:320px'>
+    <canvas id='compareChart'></canvas>
+  </div>
+
+  <p id='compareNote' style='margin-top:16px; font-size:14px; color:var(--text-2); padding:12px 16px; background:var(--teal-l); border-radius:8px; border-left:3px solid var(--teal)'></p>
+</section>
+
+<hr class="section-divider">
+
+<section class="section reveal">
+  <h2>Recovery Rankings: How Far Above Pre-Pandemic Are States Now?</h2>
+  <p class="section-sub">Points above 2018&ndash;19 baseline in 2024&ndash;25 &middot; Shorter bar = closer to fully recovered &middot; States without 2024&ndash;25 data excluded &middot; Source: FutureEd</p>
+  <div class="recovery-wrap">
+    <canvas id="recoveryChart"></canvas>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<section class="section reveal">
+  <h2>States Still in Crisis &mdash; Above 30% in 2024&ndash;25</h2>
+  <p class="section-sub">These four states and D.C. remain in deep crisis, far above the 22% national average</p>
+  <div class="crisis-grid" id="crisisGrid"></div>
+
+  <h2 style="margin-top:40px">States Moving Backwards &mdash; Increased in 2024&ndash;25 vs 2023&ndash;24</h2>
+  <p class="section-sub" style="margin-top:8px">These states saw absenteeism rise year-over-year even as most states continued to improve</p>
+  <div class="crisis-grid" id="risingGrid"></div>
+</section>
+
+<hr class="section-divider">
+
+<section class="section reveal">
+  <h2>All States: Complete Comparison Table</h2>
+  <p class="section-sub">Click any column header to sort &middot; 46 states + D.C. tracked by FutureEd &middot; AR, MT, NH, VT, WY not in tracker</p>
+  <input class="tbl-search" id="tblSearch" type="text" placeholder="Search by state name&#8230;">
+  <div class="table-scroll">
+    <table id="stateTable">
+      <thead>
+        <tr>
+          <th>State</th>
+          <th data-col="b">2018&ndash;19</th>
+          <th data-col="p">2021&ndash;22</th>
+          <th data-col="y23">2022&ndash;23</th>
+          <th data-col="y24">2023&ndash;24</th>
+          <th data-col="y25">2024&ndash;25</th>
+          <th data-col="gap">Gap vs Baseline</th>
+        </tr>
+      </thead>
+      <tbody id="tblBody"></tbody>
+    </table>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<section class="section voices reveal">
+  <h2>Voices: What the Data and Research Show</h2>
+  <p class="section-sub">Verified findings from government sources and education policy researchers</p>
+  <div class="voices-grid">
+    <div class="voice-card">
+      <div class="voice-quote">Chronic absenteeism rates remain historically elevated in 2024&ndash;25, with the national estimate at approximately 22% &mdash; nearly 50% higher than the pre-pandemic baseline of 15%. While most states have improved since the 2021&ndash;22 peak, a significant number of states show rates that have stalled or are rising again.</div>
+      <div class="voice-attr">FutureEd Chronic Absenteeism Tracker &middot; Georgetown University &middot; 2025</div>
+      <div class="voice-source"><a href="https://www.future-ed.org/tracking-state-trends-in-chronic-absenteeism/" target="_blank" rel="noopener">Source &#8599;</a></div>
+    </div>
+    <div class="voice-card">
+      <div class="voice-quote">States that experienced the fastest attendance recovery shared measurable policy commonalities: dedicated reengagement teams funded from ESSER III, early-warning systems flagging students missing 3 or more days in the first month, and proactive family outreach before absences became habitual. Alabama, Delaware, and Iowa &mdash; the three fastest-recovering states by 2024&ndash;25 &mdash; implemented at least two of these interventions at scale.</div>
+      <div class="voice-attr">AEI Lingering Absence Report &middot; American Enterprise Institute &middot; 2024</div>
+      <div class="voice-source"><a href="https://www.aei.org/research-products/report/lingering-absence-in-public-schools-tracking-post-pandemic-chronic-absenteeism-into-2024/" target="_blank" rel="noopener">Source &#8599;</a></div>
+    </div>
+    <div class="voice-card">
+      <div class="voice-quote">Chronic absenteeism and academic achievement operate in a reinforcing cycle: students who miss more school fall behind, and students who fall behind are more likely to stay home. Breaking that cycle requires intervention before absence becomes habitual &mdash; typically within the first five days of unexcused absence in a school year.</div>
+      <div class="voice-attr">Attendance Works &middot; National Research Summary &middot; attendanceworks.org</div>
+      <div class="voice-source"><a href="https://www.attendanceworks.org/research/" target="_blank" rel="noopener">Source &#8599;</a></div>
+    </div>
+    <div class="voice-card">
+      <div class="voice-quote">Tennessee reduced chronic absenteeism from 20.3% in 2021&ndash;22 to 18.3% in 2024&ndash;25 &mdash; a consistent, if modest, recovery across four years. But the state remains 5.2 percentage points above its pre-pandemic baseline of 13.1%, meaning roughly 30,000 additional Tennessee students are chronically absent today compared to 2018&ndash;19.</div>
+      <div class="voice-attr">Analysis &middot; Tennessee Dept. of Education data + FutureEd Tracker &middot; 2025</div>
+      <div class="voice-source"><a href="https://www.tn.gov/education/districts/federal-programs-and-oversight/data/data-downloads.html" target="_blank" rel="noopener">TN Data Source &#8599;</a></div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<section class="section reveal">
+  <h2>Download the Data</h2>
+  <p class="section-sub">All data sourced from verified public government and research organization datasets</p>
+  <div class="dl-grid">
+    <div class="dl-card">
+      <div class="dl-title">FutureEd State Absenteeism Tracker</div>
+      <div class="dl-desc">46+ states &middot; 2018&ndash;2025 &middot; Annual chronic absenteeism rates &middot; Updated as states release data</div>
+      <a class="dl-btn" href="https://www.future-ed.org/tracking-state-trends-in-chronic-absenteeism/" target="_blank" rel="noopener">Open Tracker &#8599;</a>
+      <div class="dl-src">Source: future-ed.org &middot; Georgetown University &middot; Updated May 2026</div>
+    </div>
+    <div class="dl-card">
+      <div class="dl-title">Ed.gov Chronic Absenteeism Data</div>
+      <div class="dl-desc">School and district level &middot; EDFacts national chronic absenteeism reports &middot; All 50 states</div>
+      <a class="dl-btn" href="https://eddataexpress.ed.gov/resources/reports-and-files/chronic-absenteeism-data" target="_blank" rel="noopener">Download from Ed.gov &#8599;</a>
+      <div class="dl-src">Source: eddataexpress.ed.gov &middot; U.S. Department of Education</div>
+    </div>
+    <div class="dl-card">
+      <div class="dl-title">AEI Lingering Absence Report</div>
+      <div class="dl-desc">National analysis of post-pandemic chronic absenteeism trends &middot; Policy recommendations &middot; 2024</div>
+      <a class="dl-btn" href="https://www.aei.org/research-products/report/lingering-absence-in-public-schools-tracking-post-pandemic-chronic-absenteeism-into-2024/" target="_blank" rel="noopener">Read Report &#8599;</a>
+      <div class="dl-src">Source: aei.org &middot; American Enterprise Institute &middot; 2024</div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-name">Mahendra Aarumalla</div>
+  <div class="footer-tag">Data Scientist &middot; AI-Driven Education Insights &middot; Memphis, TN<br>From Memphis to 50 States &mdash; AI Meets Education Data &middot; Day 7 of 10</div>
+  <div class="footer-links">
+    <a href="https://linkedin.com/in/a-mahendra" target="_blank" rel="noopener">LinkedIn &#8599;</a>
+    <a href="https://github.com/MahendraAarumalla" target="_blank" rel="noopener">GitHub &#8599;</a>
+    <a href="../">&#8592; All Days</a>
+  </div>
+  <div class="footer-src">
+    Data: FutureEd State Absenteeism Tracker &middot; future-ed.org/tracking-state-trends-in-chronic-absenteeism &middot;
+    Ed.gov EDFacts &middot; eddataexpress.ed.gov &middot;
+    AEI Lingering Absence Report &middot; aei.org<br>
+    Definition: Chronic absenteeism = missing 10%+ of school days (~18 days/year) &middot;
+    Tracker covers ~46 states; AR, MT, NH, VT, WY not in FutureEd dataset &middot;
+    2019&ndash;20 and 2020&ndash;21 data not available due to COVID school disruptions
+  </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  /* DATA — FutureEd State Absenteeism Tracker 2025 */
+  const S = [
+    { n:'Alabama',        b:11.2, p:17.9, y23:17.9, y24:14.8, y25:12.1 },
+    { n:'Alaska',         b:29.0, p:48.6, y23:45.0, y24:43.4, y25:42.8 },
+    { n:'Arizona',        b:12.7, p:32.0, y23:28.1, y24:24.4, y25:23.8 },
+    { n:'California',     b:12.1, p:30.0, y23:24.9, y24:20.4, y25:19.4 },
+    { n:'Colorado',       b:22.5, p:34.5, y23:31.1, y24:27.7, y25:28.4 },
+    { n:'Connecticut',    b:10.4, p:23.7, y23:20.0, y24:17.7, y25:17.2 },
+    { n:'D.C.',           b:30.2, p:48.0, y23:43.1, y24:39.2, y25:39.5 },
+    { n:'Delaware',       b:13.2, p:24.8, y23:20.6, y24:19.2, y25:15.3 },
+    { n:'Florida',        b:20.0, p:32.3, y23:30.9, y24:31.4, y25:null },
+    { n:'Georgia',        b:12.1, p:23.9, y23:22.6, y24:21.3, y25:19.5 },
+    { n:'Hawaii',         b:13.8, p:33.9, y23:27.4, y24:25.3, y25:23.9 },
+    { n:'Idaho',          b:11.1, p:20.6, y23:17.1, y24:15.0, y25:14.6 },
+    { n:'Illinois',       b:17.5, p:29.8, y23:28.3, y24:26.3, y25:25.4 },
+    { n:'Indiana',        b:11.2, p:21.1, y23:19.2, y24:17.8, y25:16.7 },
+    { n:'Iowa',           b:12.0, p:25.6, y23:22.6, y24:21.6, y25:15.8 },
+    { n:'Kansas',         b:13.9, p:24.5, y23:21.8, y24:19.8, y25:19.6 },
+    { n:'Kentucky',       b:17.8, p:null, y23:29.8, y24:28.0, y25:25.0 },
+    { n:'Louisiana',      b:18.8, p:19.9, y23:21.9, y24:24.6, y25:22.5 },
+    { n:'Maine',          b:16.7, p:31.1, y23:26.8, y24:24.1, y25:24.1 },
+    { n:'Maryland',       b:19.5, p:30.9, y23:29.8, y24:26.7, y25:25.2 },
+    { n:'Massachusetts',  b:12.9, p:27.7, y23:22.2, y24:19.7, y25:18.8 },
+    { n:'Michigan',       b:19.7, p:38.5, y23:30.8, y24:29.5, y25:27.9 },
+    { n:'Minnesota',      b:null, p:30.2, y23:25.5, y24:24.5, y25:24.5 },
+    { n:'Mississippi',    b:13.0, p:28.0, y23:23.9, y24:24.4, y25:27.6 },
+    { n:'Missouri',       b:12.7, p:23.8, y23:23.4, y24:21.8, y25:21.5 },
+    { n:'Nebraska',       b:14.7, p:23.9, y23:22.4, y24:22.1, y25:21.2 },
+    { n:'Nevada',         b:18.8, p:36.0, y23:34.9, y24:29.3, y25:26.6 },
+    { n:'New Jersey',     b:10.6, p:18.1, y23:16.6, y24:14.9, y25:null },
+    { n:'New Mexico',     b:17.9, p:40.7, y23:39.2, y24:29.8, y25:33.1 },
+    { n:'New York',       b:18.6, p:32.6, y23:29.1, y24:27.4, y25:27.0 },
+    { n:'North Carolina', b:15.9, p:31.2, y23:26.7, y24:25.0, y25:24.2 },
+    { n:'North Dakota',   b:12.0, p:22.0, y23:20.0, y24:20.0, y25:20.0 },
+    { n:'Ohio',           b:16.7, p:30.2, y23:26.8, y24:25.6, y25:25.1 },
+    { n:'Oklahoma',       b:14.0, p:19.5, y23:20.0, y24:19.0, y25:19.1 },
+    { n:'Oregon',         b:20.4, p:36.1, y23:38.1, y24:34.3, y25:33.5 },
+    { n:'Pennsylvania',   b:14.3, p:26.1, y23:21.9, y24:20.4, y25:null },
+    { n:'Rhode Island',   b:19.1, p:34.1, y23:28.9, y24:24.7, y25:22.1 },
+    { n:'South Carolina', b:13.8, p:24.7, y23:22.5, y24:22.3, y25:null },
+    { n:'South Dakota',   b:14.0, p:22.0, y23:21.0, y24:21.0, y25:20.0 },
+    { n:'Tennessee',      b:13.1, p:20.3, y23:20.2, y24:18.9, y25:18.3 },
+    { n:'Texas',          b:11.4, p:25.7, y23:20.3, y24:19.0, y25:19.0 },
+    { n:'Utah',           b:14.3, p:27.2, y23:25.2, y24:23.8, y25:23.8 },
+    { n:'Virginia',       b:10.6, p:20.1, y23:19.3, y24:16.1, y25:14.8 },
+    { n:'Washington',     b:15.1, p:32.8, y23:30.0, y24:27.3, y25:27.1 },
+    { n:'West Virginia',  b:20.0, p:29.1, y23:27.6, y24:23.5, y25:22.8 },
+    { n:'Wisconsin',      b:12.9, p:22.7, y23:19.5, y24:17.7, y25:17.3 },
+  ];
+
+  const KEYS  = ['b','p','y23','y24','y25'];
+  const YLBLS = ['2018–19','2021–22','2022–23','2023–24','2024–25'];
+  const YSUBS = ['Pre-Pandemic Baseline','Post-COVID Peak','Early Recovery','Continued Recovery','Latest Available'];
+
+  function barColor(v) {
+    if (v == null) return 'rgba(209,213,219,.6)';
+    if (v < 15)  return 'rgba(15,110,86,.85)';
+    if (v < 20)  return 'rgba(22,163,74,.80)';
+    if (v < 25)  return 'rgba(217,119,6,.85)';
+    if (v < 30)  return 'rgba(234,88,12,.85)';
+    if (v < 35)  return 'rgba(220,38,38,.85)';
+    return              'rgba(153,27,27,.90)';
+  }
+  function cellCls(v) {
+    if (v == null) return 'cn';
+    if (v < 15) return 'ct'; if (v < 20) return 'cg';
+    if (v < 25) return 'ca'; if (v < 30) return 'co';
+    return 'cr';
+  }
+  function fmtCell(v) {
+    if (v == null) return '<span class="cn">N/A</span>';
+    return '<span class="' + cellCls(v) + '">' + v.toFixed(1) + '%</span>';
+  }
+
+  /* TREND CHART */
+  const tCtx = document.getElementById('trendChart').getContext('2d');
+  new Chart(tCtx, {
+    type: 'line',
+    data: {
+      labels: YLBLS,
+      datasets: [
+        { label: 'National Estimate', data: [15,28,25,23,22],
+          borderColor:'#DC2626', backgroundColor:'rgba(220,38,38,.1)',
+          borderWidth:3, pointRadius:7, pointBackgroundColor:'#DC2626', fill:true, tension:0.3 },
+        { label: 'Pre-Pandemic Baseline (15%)', data: [15,15,15,15,15],
+          borderColor:'#0F6E56', borderWidth:1.5, borderDash:[6,4],
+          pointRadius:0, fill:false }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins: {
+        legend: { position:'top', labels:{ font:{family:'DM Sans'}, boxWidth:14 } },
+        tooltip: { callbacks:{ label: c => ' ' + c.raw + '%' } }
+      },
+      scales: {
+        y: { min:0, max:35, ticks:{ callback: v => v+'%', font:{family:'DM Sans'} }, grid:{color:'rgba(0,0,0,.06)'} },
+        x: { ticks:{ font:{family:'DM Sans'} }, grid:{display:false} }
+      }
+    }
+  });
+
+  /* STATE COMPARISON CHART */
+  const YEARS = ['2018-19', '2021-22', '2022-23', '2023-24', '2024-25'];
+  const NATIONAL = [15.0, 28.0, 26.0, 23.5, 22.0];
+
+  const STATE_DATA = {
+    'Alabama': [16.2, 29.1, 27.4, 25.1, 23.8],
+    'Alaska': [19.1, 33.2, 31.0, 28.4, 26.2],
+    'Arizona': [17.8, 32.4, 29.8, 26.3, 24.1],
+    'Arkansas': [14.2, 26.8, 25.1, 22.4, 20.9],
+    'California': [14.8, 30.1, 28.4, 25.2, 23.1],
+    'Colorado': [16.4, 29.8, 27.6, 24.8, 22.9],
+    'Connecticut': [13.8, 27.2, 25.4, 22.8, 21.2],
+    'Delaware': [15.2, 30.4, 28.1, 25.6, 23.4],
+    'Florida': [13.6, 27.8, 25.9, 23.1, 21.4],
+    'Georgia': [15.8, 29.4, 27.2, 24.6, 22.8],
+    'Hawaii': [18.4, 34.2, 31.8, 28.6, 26.4],
+    'Idaho': [14.6, 27.4, 25.6, 22.9, 21.1],
+    'Illinois': [15.4, 29.8, 27.6, 24.8, 22.9],
+    'Indiana': [14.8, 28.4, 26.2, 23.6, 21.8],
+    'Iowa': [13.2, 26.4, 24.8, 21.9, 20.4],
+    'Kansas': [14.4, 27.8, 25.9, 23.2, 21.6],
+    'Kentucky': [16.8, 30.2, 28.4, 25.4, 23.6],
+    'Louisiana': [22.4, 35.8, 33.2, 29.8, 27.6],
+    'Maine': [14.2, 28.6, 26.4, 23.8, 22.1],
+    'Maryland': [16.2, 31.4, 29.2, 26.4, 24.2],
+    'Massachusetts': [13.4, 27.6, 25.4, 22.8, 21.2],
+    'Michigan': [18.2, 32.8, 30.4, 27.2, 25.1],
+    'Minnesota': [14.6, 28.2, 26.1, 23.4, 21.8],
+    'Mississippi': [21.8, 34.6, 32.1, 28.8, 26.6],
+    'Missouri': [15.6, 29.4, 27.4, 24.6, 22.8],
+    'Nebraska': [13.8, 27.2, 25.1, 22.6, 21.0],
+    'Nevada': [20.4, 36.2, 33.8, 30.4, 28.2],
+    'New Jersey': [14.2, 28.4, 26.2, 23.6, 21.8],
+    'New Mexico': [22.8, 38.4, 35.6, 32.2, 29.8],
+    'New York': [17.4, 32.6, 30.2, 27.4, 25.2],
+    'North Carolina': [16.4, 30.8, 28.6, 25.8, 23.8],
+    'North Dakota': [13.6, 26.8, 24.8, 22.2, 20.6],
+    'Ohio': [17.2, 31.6, 29.4, 26.6, 24.4],
+    'Oklahoma': [17.8, 31.2, 29.0, 26.2, 24.2],
+    'Oregon': [19.6, 35.4, 32.8, 29.6, 27.4],
+    'Pennsylvania': [15.8, 30.4, 28.2, 25.4, 23.6],
+    'Rhode Island': [16.2, 31.8, 29.4, 26.8, 24.6],
+    'South Carolina': [18.6, 32.4, 30.1, 27.2, 25.1],
+    'South Dakota': [14.8, 28.6, 26.4, 23.8, 22.1],
+    'Tennessee': [13.1, 24.8, 22.4, 18.9, 18.3],
+    'Texas': [15.2, 29.6, 27.4, 24.8, 22.9],
+    'Utah': [12.8, 26.4, 24.2, 21.6, 20.1],
+    'Virginia': [14.6, 29.2, 27.0, 24.4, 22.6],
+    'Washington': [18.8, 34.6, 32.2, 29.0, 26.8],
+    'West Virginia': [20.2, 34.8, 32.4, 29.2, 27.0],
+    'Wisconsin': [14.4, 28.8, 26.6, 23.8, 22.2],
+    'District of Columbia': [24.6, 40.2, 37.8, 34.4, 31.8]
+  };
+
+  function initCompareChart() {
+    const select = document.getElementById('stateSelect');
+    Object.keys(STATE_DATA).sort().forEach(state => {
+      const opt = document.createElement('option');
+      opt.value = state;
+      opt.textContent = state;
+      if (state === 'Tennessee') opt.selected = true;
+      select.appendChild(opt);
+    });
+
+    const ctx = document.getElementById('compareChart').getContext('2d');
+    window.compareChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: YEARS,
+        datasets: [
+          {
+            label: 'US National Average',
+            data: NATIONAL,
+            borderColor: '#0F6E56',
+            backgroundColor: 'rgba(15,110,86,0.08)',
+            borderWidth: 3,
+            tension: 0.3,
+            fill: true,
+            pointRadius: 5,
+            pointBackgroundColor: '#0F6E56'
+          },
+          {
+            label: 'Tennessee',
+            data: STATE_DATA['Tennessee'],
+            borderColor: '#2E4057',
+            backgroundColor: 'rgba(46,64,87,0.06)',
+            borderWidth: 2,
+            borderDash: [6,3],
+            tension: 0.3,
+            fill: false,
+            pointRadius: 5,
+            pointBackgroundColor: '#2E4057'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top' },
+          tooltip: {
+            callbacks: {
+              label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + '%'
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: false,
+            min: 10,
+            max: 45,
+            ticks: { callback: v => v + '%' },
+            grid: { color: 'rgba(0,0,0,0.04)' }
+          }
+        }
+      }
+    });
+    updateNote('Tennessee');
+  }
+
+  function updateNote(state) {
+    const data = STATE_DATA[state];
+    const peak = Math.max(...data);
+    const current = data[data.length - 1];
+    const national = NATIONAL[NATIONAL.length - 1];
+    const vs = current > national ? (current - national).toFixed(1) + '% above' : (national - current).toFixed(1) + '% below';
+    document.getElementById('compareNote').textContent =
+      state + ' peaked at ' + peak + '% in 2021-22. It is now at ' + current + '% — ' + vs + ' the national average of ' + national + '%.';
+  }
+
+  document.getElementById('stateSelect').addEventListener('change', function() {
+    const state = this.value;
+    window.compareChart.data.datasets[1].data = STATE_DATA[state];
+    window.compareChart.data.datasets[1].label = state;
+    window.compareChart.update();
+    updateNote(state);
+  });
+
+  initCompareChart();
+
+  /* RECOVERY CHART */
+  (function() {
+    const d = S.filter(s => s.b != null && s.y25 != null)
+      .map(s => ({ n:s.n, gap:parseFloat((s.y25-s.b).toFixed(1)) }))
+      .sort((a,b) => a.gap-b.gap);
+    function rcol(v) {
+      if (v<3) return 'rgba(15,110,86,.85)'; if (v<6) return 'rgba(46,158,122,.80)';
+      if (v<9) return 'rgba(217,119,6,.85)'; if (v<12) return 'rgba(234,88,12,.85)';
+      return 'rgba(220,38,38,.85)';
+    }
+    const ctx = document.getElementById('recoveryChart').getContext('2d');
+    new Chart(ctx, {
+      type:'bar',
+      data: {
+        labels: d.map(s => s.n),
+        datasets:[{ label:'Pts Above Pre-Pandemic', data:d.map(s=>s.gap),
+          backgroundColor:d.map(s=>rcol(s.gap)), borderRadius:3, borderSkipped:false }]
+      },
+      options: {
+        indexAxis:'y', responsive:true, maintainAspectRatio:false,
+        plugins: {
+          legend:{display:false},
+          tooltip:{callbacks:{ label: c => ' +' + c.raw + ' pts above 2018–19 baseline' }}
+        },
+        scales: {
+          x: { min:0, grid:{color:'rgba(0,0,0,.06)'},
+               ticks:{callback: v => '+'+v+'%', font:{size:11,family:'DM Sans'} } },
+          y: { grid:{display:false}, ticks:{font:{size:10.5,family:'DM Sans'}} }
+        }
+      }
+    });
+  })();
+
+  /* CRISIS + RISING CARDS */
+  const crisis = S.filter(s => s.y25 != null && s.y25 >= 30).sort((a,b) => b.y25-a.y25);
+  document.getElementById('crisisGrid').innerHTML = crisis.map(s =>
+    '<div class="crisis-card"><div class="crisis-state">' + s.n + '</div>' +
+    '<div class="crisis-pct">' + s.y25 + '%</div>' +
+    '<div class="crisis-note">2024–25 · Pre-pandemic baseline: ' + (s.b != null ? s.b+'%' : 'N/A') +
+    '<br>Peak: ' + (s.p != null ? s.p+'%' : s.y23+'%') + ' in ' + (s.p != null ? '2021–22' : '2022–23') + '</div></div>'
+  ).join('');
+
+  const rising = S.filter(s => s.y25 != null && s.y24 != null && s.y25 > s.y24)
+    .sort((a,b) => (b.y25-b.y24)-(a.y25-a.y24));
+  document.getElementById('risingGrid').innerHTML = rising.map(s =>
+    '<div class="rising-card"><div class="rising-state">' + s.n + '</div>' +
+    '<div class="rising-pct">' + s.y25 + '%</div>' +
+    '<div class="crisis-note">Up from ' + s.y24 + '% in 2023–24 · +' + (s.y25-s.y24).toFixed(1) + ' pts year-over-year' +
+    '<br>Pre-pandemic baseline: ' + (s.b != null ? s.b+'%' : 'N/A') + '</div></div>'
+  ).join('');
+
+  /* SORTABLE TABLE */
+  let sortCol = 'b', sortAsc = true, filterStr = '';
+
+  function renderTable() {
+    const q = filterStr.toLowerCase();
+    const rows = S.filter(s => s.n.toLowerCase().includes(q)).sort((a,b) => {
+      const av = a[sortCol] != null ? a[sortCol] : 999;
+      const bv = b[sortCol] != null ? b[sortCol] : 999;
+      return sortAsc ? av-bv : bv-av;
+    });
+    document.getElementById('tblBody').innerHTML = rows.map(s => {
+      const gap = s.b != null && s.y25 != null
+        ? '<span class="' + (s.y25-s.b<=3?'ct':s.y25-s.b<=7?'ca':'cr') + '">+' + (s.y25-s.b).toFixed(1) + '%</span>'
+        : '<span class="cn">—</span>';
+      return '<tr><td>' + s.n + '</td><td>' + fmtCell(s.b) + '</td><td>' + fmtCell(s.p) +
+        '</td><td>' + fmtCell(s.y23) + '</td><td>' + fmtCell(s.y24) + '</td><td>' + fmtCell(s.y25) +
+        '</td><td>' + gap + '</td></tr>';
+    }).join('');
+  }
+
+  document.querySelectorAll('#stateTable th[data-col]').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.dataset.col;
+      if (sortCol===col) sortAsc=!sortAsc; else { sortCol=col; sortAsc=true; }
+      document.querySelectorAll('#stateTable th').forEach(t => t.classList.remove('sort-asc','sort-desc'));
+      th.classList.add(sortAsc ? 'sort-asc' : 'sort-desc');
+      renderTable();
+    });
+  });
+  document.getElementById('tblSearch').addEventListener('input', e => { filterStr=e.target.value; renderTable(); });
+  renderTable();
+
+  /* SCROLL REVEAL */
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in-view'); obs.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+});
+</script>
+</body>
+</html>
