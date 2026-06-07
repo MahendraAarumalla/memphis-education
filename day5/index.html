@@ -19,15 +19,21 @@
       --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.06);--r:12px
     }
     html{scroll-behavior:smooth}
-    body{font-family:'DM Sans',system-ui,sans-serif;background:#FAFAF8;color:var(--text);line-height:1.6;font-size:15px;border-top:3px solid #0F6E56}
-    body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:0.022;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px 200px}
-    nav{background:var(--white);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:200}
+    body{font-family:'DM Sans',system-ui,sans-serif;background:#FAFAF8;color:var(--text);line-height:1.6;font-size:15px}
+    body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:0.022;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px 200px}
+    #scroll-progress{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,#5EEAD4,#0F6E56);z-index:10001;transition:width .1s linear}
+    nav{background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:10000}
     .nav-brand{font-size:13px;font-weight:700;color:var(--teal);text-decoration:none;white-space:nowrap}
-    .nav-links{display:flex;gap:4px;flex-wrap:wrap}
-    .nav-links a{padding:5px 10px;border-radius:6px;font-size:12px;font-weight:600;color:var(--muted);text-decoration:none;transition:background .15s,color .15s}
-    .nav-links a:hover{background:var(--slate-l);color:var(--text)}
-    .nav-links a.active{background:var(--teal-l);color:var(--teal)}
-    .hero{background:linear-gradient(135deg,var(--teal-d) 0%,var(--teal) 100%);color:var(--white);padding:52px 24px 56px;text-align:center;position:relative;overflow:hidden}
+    .nav-day-dots{display:flex;gap:5px;align-items:center}
+    .day-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;text-decoration:none;transition:all .15s ease;color:var(--muted);background:var(--slate-l)}
+    .day-dot:hover{background:var(--teal-l);color:var(--teal)}
+    .day-dot.active{background:var(--teal);color:var(--white)}
+    @keyframes heroShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    .hero{background:linear-gradient(135deg,#072e23 0%,var(--teal-d) 30%,var(--teal) 65%,#1a7a5e 100%);background-size:300% 300%;animation:heroShift 12s ease infinite;color:var(--white);padding:52px 24px 56px;text-align:center;position:relative;overflow:hidden}
+    .hero-orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(60px)}
+    .hero-orb-1{width:320px;height:320px;background:radial-gradient(circle,rgba(94,234,212,.13) 0%,transparent 70%);top:-80px;right:-80px}
+    .hero-orb-2{width:200px;height:200px;background:radial-gradient(circle,rgba(15,110,86,.2) 0%,transparent 70%);bottom:-40px;left:-40px}
+    .hero-orb-3{width:150px;height:150px;background:radial-gradient(circle,rgba(94,234,212,.08) 0%,transparent 70%);top:50%;left:40%}
     .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 0%,rgba(94,234,212,.1) 0%,transparent 65%);pointer-events:none}
     .hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:5px 16px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:20px}
     .hero h1{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(22px,4vw,46px);font-weight:400;line-height:1.1;letter-spacing:-1px;margin-bottom:14px;max-width:820px;margin-left:auto;margin-right:auto}
@@ -37,7 +43,7 @@
     .stat-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:16px;max-width:960px;margin:36px auto 0;padding:0 24px}
     .stat-card{background:var(--white);border-radius:14px;padding:18px 16px;box-shadow:0 2px 12px rgba(0,0,0,.07);text-align:center;position:relative;overflow:hidden;transition:transform .2s ease,box-shadow .2s ease}
     .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:radial-gradient(ellipse at 50% -20%,rgba(15,110,86,0.07) 0%,transparent 80%);pointer-events:none}
-    .stat-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.11)}
+    .stat-card:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 8px 32px rgba(15,110,86,.18)}
     .stat-num{font-family:'DM Serif Display',Georgia,serif;font-size:28px;font-weight:400;line-height:1;margin-bottom:4px}
     .stat-num.red{color:var(--red)}.stat-num.amber{color:var(--amber)}.stat-num.teal{color:var(--teal)}.stat-num.green{color:var(--green)}
     .stat-unit{font-size:17px}
@@ -167,19 +173,28 @@
   </style>
 </head>
 <body>
+<div id="scroll-progress"></div>
 
 <nav>
-  <a class="nav-brand" href="../">Memphis → 50 States</a>
-  <div class="nav-links">
-    <a href="../day1/">Day 1</a>
-    <a href="../day2/">Day 2</a>
-    <a href="../day3/">Day 3</a>
-    <a href="../day4/">Day 4</a>
-    <a href="../day5/" class="active">Day 5</a>
+  <a class="nav-brand" href="../">From Memphis to 50 States</a>
+  <div class="nav-day-dots">
+    <a class="day-dot" href="../day1/" title="Day 1">1</a>
+    <a class="day-dot" href="../day2/" title="Day 2">2</a>
+    <a class="day-dot" href="../day3/" title="Day 3">3</a>
+    <a class="day-dot" href="../day4/" title="Day 4">4</a>
+    <a class="day-dot active" href="../day5/" title="Day 5">5</a>
+    <a class="day-dot" href="../day6/" title="Day 6">6</a>
+    <a class="day-dot" href="../day7/" title="Day 7">7</a>
+    <a class="day-dot" href="../day8/" title="Day 8">8</a>
+    <a class="day-dot" href="../day9/" title="Day 9">9</a>
+    <a class="day-dot" href="../day10/" title="Day 10">10</a>
   </div>
 </nav>
 
 <div class="hero">
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  <div class="hero-orb hero-orb-3"></div>
   <div class="hero-badge">Day 5 of 10 · The South · 8 States</div>
   <div class="hero-accent-line"></div>
   <h1>The South Has America's Worst Attendance<br>AND Its <em>Most Improved</em> Test Scores</h1>
@@ -827,6 +842,12 @@ const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.1 });
 document.querySelectorAll('.section').forEach(s => revealObserver.observe(s));
+
+// Scroll progress
+const scrollBar = document.getElementById('scroll-progress');
+window.addEventListener('scroll', () => {
+  scrollBar.style.width = Math.min(window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100, 100) + '%';
+}, { passive: true });
 
 }); // end DOMContentLoaded
 </script>

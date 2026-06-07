@@ -17,12 +17,20 @@
       --bg: #FAFAF8; --card: #ffffff;
     }
     body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
-
-    .breadcrumb { background: var(--teal-d); color: rgba(255,255,255,.8); padding: 10px 32px; font-size: 13px; display: flex; gap: 16px; align-items: center; }
-    .breadcrumb a { color: rgba(255,255,255,.9); text-decoration: none; }
-    .breadcrumb a:hover { color: #fff; }
-
-    .hero { background: linear-gradient(135deg, var(--teal-d) 0%, var(--teal) 60%, #1a6e8a 100%); color: #fff; padding: 64px 32px 56px; text-align: center; }
+    body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:0.022;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px 200px}
+    #scroll-progress{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,#5EEAD4,#0F6E56);z-index:10001;transition:width .1s linear}
+    .breadcrumb{background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:10000}
+    .nav-brand{font-size:13px;font-weight:700;color:var(--teal);text-decoration:none;white-space:nowrap}
+    .nav-day-dots{display:flex;gap:5px;align-items:center}
+    .day-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;text-decoration:none;transition:all .15s ease;color:var(--text-2);background:#F1F5F9}
+    .day-dot:hover{background:var(--teal-l);color:var(--teal)}
+    .day-dot.active{background:var(--teal);color:#fff}
+    @keyframes heroShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    .hero-orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(60px)}
+    .hero-orb-1{width:320px;height:320px;background:radial-gradient(circle,rgba(94,234,212,.13) 0%,transparent 70%);top:-80px;right:-80px}
+    .hero-orb-2{width:200px;height:200px;background:radial-gradient(circle,rgba(15,110,86,.2) 0%,transparent 70%);bottom:-40px;left:-40px}
+    .hero-orb-3{width:150px;height:150px;background:radial-gradient(circle,rgba(94,234,212,.08) 0%,transparent 70%);top:50%;left:40%}
+    .hero { background: linear-gradient(135deg,#072e23 0%,var(--teal-d) 30%,var(--teal) 65%,#1a6e8a 100%); background-size:300% 300%; animation:heroShift 12s ease infinite; color: #fff; padding: 64px 32px 56px; text-align: center; position:relative; overflow:hidden; }
     .challenge-tag { font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; opacity: .8; margin-bottom: 20px; }
     .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(1.9rem,4.5vw,3.2rem); line-height: 1.18; margin-bottom: 16px; max-width: 820px; margin-left: auto; margin-right: auto; }
     .hero h1 em { font-style: italic; opacity: .9; }
@@ -177,14 +185,28 @@
   </style>
 </head>
 <body>
+<div id="scroll-progress"></div>
 
-<div class="breadcrumb">
-  <a href="../index.html">&#8592; Home</a>
-  <span>&#183;</span>
-  <span>Day 9 of 10 &#8212; City-to-City Comparison</span>
-</div>
+<nav class="breadcrumb">
+  <a class="nav-brand" href="../">From Memphis to 50 States</a>
+  <div class="nav-day-dots">
+    <a class="day-dot" href="../day1/" title="Day 1">1</a>
+    <a class="day-dot" href="../day2/" title="Day 2">2</a>
+    <a class="day-dot" href="../day3/" title="Day 3">3</a>
+    <a class="day-dot" href="../day4/" title="Day 4">4</a>
+    <a class="day-dot" href="../day5/" title="Day 5">5</a>
+    <a class="day-dot" href="../day6/" title="Day 6">6</a>
+    <a class="day-dot" href="../day7/" title="Day 7">7</a>
+    <a class="day-dot" href="../day8/" title="Day 8">8</a>
+    <a class="day-dot active" href="../day9/" title="Day 9">9</a>
+    <a class="day-dot" href="../day10/" title="Day 10">10</a>
+  </div>
+</nav>
 
 <div class="hero">
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  <div class="hero-orb hero-orb-3"></div>
   <div class="challenge-tag">From Memphis to 50 States &#8212; AI Meets Education Data &#183; Day 9 of 10</div>
   <h1>In 2019, Memphis, Cleveland, Detroit, Baltimore, and Fresno had<br>
   <em>nearly identical absenteeism rates.</em><br>
@@ -728,6 +750,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }, { threshold: 0.07 });
   document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
+
+  // Scroll progress
+  var scrollBar = document.getElementById('scroll-progress');
+  window.addEventListener('scroll', function() {
+    scrollBar.style.width = Math.min(window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100, 100) + '%';
+  }, { passive: true });
 
 });
 </script>

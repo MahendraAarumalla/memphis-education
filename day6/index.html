@@ -28,7 +28,6 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      border-top: 3px solid var(--teal);
     }
 
     /* Noise texture overlay */
@@ -36,7 +35,7 @@
       content: '';
       position: fixed;
       inset: 0;
-      z-index: 9999;
+      z-index: 9998;
       pointer-events: none;
       opacity: 0.022;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -54,9 +53,25 @@
       transform: translateY(0);
     }
 
+    /* ── Scroll progress + sticky nav ───────────────────────────────────── */
+    #scroll-progress{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,#5EEAD4,#0F6E56);z-index:10001;transition:width .1s linear}
+    .top-nav{background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:10000}
+    .nav-brand{font-size:13px;font-weight:700;color:var(--teal);text-decoration:none;white-space:nowrap}
+    .nav-day-dots{display:flex;gap:5px;align-items:center}
+    .day-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;text-decoration:none;transition:all .15s ease;color:var(--text-2);background:#F1F5F9}
+    .day-dot:hover{background:var(--teal-l);color:var(--teal)}
+    .day-dot.active{background:var(--teal);color:#fff}
+
     /* ── Hero ────────────────────────────────────────────────────────────── */
+    @keyframes heroShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    .hero-orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(60px)}
+    .hero-orb-1{width:320px;height:320px;background:radial-gradient(circle,rgba(94,234,212,.13) 0%,transparent 70%);top:-80px;right:-80px}
+    .hero-orb-2{width:200px;height:200px;background:radial-gradient(circle,rgba(15,110,86,.2) 0%,transparent 70%);bottom:-40px;left:-40px}
+    .hero-orb-3{width:150px;height:150px;background:radial-gradient(circle,rgba(94,234,212,.08) 0%,transparent 70%);top:50%;left:40%}
     .hero {
-      background: var(--teal-d);
+      background: linear-gradient(135deg,#072e23 0%,var(--teal-d) 30%,var(--teal) 65%,#1a7a5e 100%);
+      background-size: 300% 300%;
+      animation: heroShift 12s ease infinite;
       color: #fff;
       padding: 56px 24px 52px;
       text-align: center;
@@ -158,8 +173,8 @@
       pointer-events: none;
     }
     .stat-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.11);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 8px 32px rgba(15,110,86,0.18);
     }
     .stat-num {
       font-family: 'DM Serif Display', Georgia, serif;
@@ -522,8 +537,28 @@
   </style>
 </head>
 <body>
+<div id="scroll-progress"></div>
+
+<nav class="top-nav">
+  <a class="nav-brand" href="../">From Memphis to 50 States</a>
+  <div class="nav-day-dots">
+    <a class="day-dot" href="../day1/" title="Day 1">1</a>
+    <a class="day-dot" href="../day2/" title="Day 2">2</a>
+    <a class="day-dot" href="../day3/" title="Day 3">3</a>
+    <a class="day-dot" href="../day4/" title="Day 4">4</a>
+    <a class="day-dot" href="../day5/" title="Day 5">5</a>
+    <a class="day-dot active" href="../day6/" title="Day 6">6</a>
+    <a class="day-dot" href="../day7/" title="Day 7">7</a>
+    <a class="day-dot" href="../day8/" title="Day 8">8</a>
+    <a class="day-dot" href="../day9/" title="Day 9">9</a>
+    <a class="day-dot" href="../day10/" title="Day 10">10</a>
+  </div>
+</nav>
 
   <div class="hero">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
     <p class="eyebrow">Day 6 of 10 · Southeast vs Southwest · Education Policy Analysis</p>
     <div class="hero-accent-line"></div>
     <h1>Same Poverty Rate.<br><em>15-Point Graduation Gap.</em></h1>
@@ -1010,6 +1045,12 @@
 
     /* ── Boot ───────────────────────────────────────────────────────────── */
     showTab('scatter');
+
+    // Scroll progress
+    const scrollBar = document.getElementById('scroll-progress');
+    window.addEventListener('scroll', () => {
+      scrollBar.style.width = Math.min(window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100, 100) + '%';
+    }, { passive: true });
 
   }); // end DOMContentLoaded
   </script>
