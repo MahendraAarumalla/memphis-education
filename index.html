@@ -47,7 +47,7 @@
     body::after {
       content: '';
       position: fixed; inset: 0;
-      z-index: 9999;
+      z-index: 9998;
       pointer-events: none;
       opacity: 0.018;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -61,9 +61,17 @@
       width: 0%;
       height: 3px;
       background: linear-gradient(90deg, var(--teal-m), #5EEAD4);
-      z-index: 10000;
+      z-index: 10001;
       transition: width 0.1s linear;
     }
+
+    /* ── Sticky nav ───────────────────────────────────────── */
+    nav { background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); padding: 0 24px; height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 16px; position: sticky; top: 0; z-index: 10000; }
+    .nav-brand { font-size: 13px; font-weight: 700; color: var(--teal); text-decoration: none; white-space: nowrap; }
+    .nav-day-dots { display: flex; gap: 5px; align-items: center; }
+    .day-dot { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; text-decoration: none; transition: all .15s ease; color: var(--text-2); background: #F1F5F9; }
+    .day-dot:hover { background: var(--teal-l); color: var(--teal); }
+    .day-dot.active { background: var(--teal); color: #fff; }
 
     /* ── Section reveals ──────────────────────────────────── */
     .reveal {
@@ -598,6 +606,22 @@
 <body>
 
   <div id="scroll-progress"></div>
+
+  <nav>
+    <a class="nav-brand" href="./">From Memphis to 50 States</a>
+    <div class="nav-day-dots">
+      <a class="day-dot" href="./day1/" title="Day 1">1</a>
+      <a class="day-dot" href="./day2/" title="Day 2">2</a>
+      <a class="day-dot" href="./day3/" title="Day 3">3</a>
+      <a class="day-dot" href="./day4/" title="Day 4">4</a>
+      <a class="day-dot" href="./day5/" title="Day 5">5</a>
+      <a class="day-dot" href="./day6/" title="Day 6">6</a>
+      <a class="day-dot" href="./day7/" title="Day 7">7</a>
+      <a class="day-dot" href="./day8/" title="Day 8">8</a>
+      <a class="day-dot" href="./day9/" title="Day 9">9</a>
+      <a class="day-dot" href="./day10/" title="Day 10">10</a>
+    </div>
+  </nav>
 
   <!-- ── HERO ─────────────────────────────────────────────── -->
   <header class="hero">

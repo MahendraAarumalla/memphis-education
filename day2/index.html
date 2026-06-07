@@ -37,29 +37,14 @@
 
     #scroll-progress { position: fixed; top: 0; left: 0; width: 0%; height: 3px; background: linear-gradient(90deg, #1a6b55, #5EEAD4); z-index: 10000; transition: width 0.1s linear; }
 
-    /* sticky top nav */
-    .top-nav {
-      background: rgba(255,255,255,0.97);
-      border-bottom: 1px solid #E2E8F0;
-      padding: 0 24px;
-      height: 54px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(8px);
-      gap: 16px;
-    }
-    .top-nav-brand { font-size: 14px; font-weight: 700; color: var(--teal); text-decoration: none; white-space: nowrap; }
-    .top-nav-badge { font-size: 11px; font-weight: 600; background: #E8F4F1; color: var(--teal); padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
-    .top-nav-dots { display: flex; align-items: center; gap: 5px; }
-    .top-nav-dots a { width: 22px; height: 22px; border-radius: 50%; background: #F1F5F9; border: 1.5px solid #E2E8F0; font-size: 9px; font-weight: 700; color: #64748B; text-decoration: none; display: flex; align-items: center; justify-content: center; transition: all .15s; }
-    .top-nav-dots a:hover { background: #E8F4F1; color: var(--teal); border-color: var(--teal); }
-    .top-nav-dots a.active { background: var(--teal); color: #fff; border-color: var(--teal); }
-    @keyframes navpulse { 0%,100%{opacity:1;} 50%{opacity:.35;} }
-    @media (max-width: 640px) { .top-nav-dots { display: none; } }
+    /* sticky nav */
+    nav { background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid #E2E8F0; padding: 0 24px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10000; gap: 16px; }
+    .nav-brand { font-size: 13px; font-weight: 700; color: var(--teal); text-decoration: none; white-space: nowrap; }
+    .nav-day-dots { display: flex; align-items: center; gap: 5px; }
+    .day-dot { width: 22px; height: 22px; border-radius: 50%; background: #F1F5F9; font-size: 9px; font-weight: 700; color: #64748B; text-decoration: none; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+    .day-dot:hover { background: #E8F4F1; color: var(--teal); }
+    .day-dot.active { background: var(--teal); color: #fff; }
+    @media (max-width: 640px) { .nav-day-dots { display: none; } }
 
     /* HEADER */
     .header {
@@ -612,21 +597,20 @@
 <div id="scroll-progress"></div>
 
 <!-- sticky nav -->
-<nav class="top-nav">
-  <a class="top-nav-brand" href="../">Memphis to 50 States</a>
-  <div class="top-nav-dots">
-    <a href="../day1/" title="Day 1">1</a>
-    <a href="../day2/" class="active" title="Day 2">2</a>
-    <a href="../day3/" title="Day 3">3</a>
-    <a href="../day4/" title="Day 4">4</a>
-    <a href="../day5/" title="Day 5">5</a>
-    <a href="../day6/" title="Day 6">6</a>
-    <a href="../day7/" title="Day 7">7</a>
-    <a href="../day8/" title="Day 8">8</a>
-    <a href="../day9/" title="Day 9">9</a>
-    <a href="../day10/" title="Day 10">10</a>
+<nav>
+  <a class="nav-brand" href="../">From Memphis to 50 States</a>
+  <div class="nav-day-dots">
+    <a class="day-dot" href="../day1/" title="Day 1">1</a>
+    <a class="day-dot active" href="../day2/" title="Day 2">2</a>
+    <a class="day-dot" href="../day3/" title="Day 3">3</a>
+    <a class="day-dot" href="../day4/" title="Day 4">4</a>
+    <a class="day-dot" href="../day5/" title="Day 5">5</a>
+    <a class="day-dot" href="../day6/" title="Day 6">6</a>
+    <a class="day-dot" href="../day7/" title="Day 7">7</a>
+    <a class="day-dot" href="../day8/" title="Day 8">8</a>
+    <a class="day-dot" href="../day9/" title="Day 9">9</a>
+    <a class="day-dot" href="../day10/" title="Day 10">10</a>
   </div>
-  <span class="top-nav-badge">Day 2 of 10 · Memphis</span>
 </nav>
 
 <!-- ══════════ HEADER ══════════ -->
