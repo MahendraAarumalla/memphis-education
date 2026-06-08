@@ -2,8 +2,9 @@
 LinkedIn daily posting automation — From Memphis to 50 States challenge.
 
 Image strategy:
-  1. Canva API (brand template autofill) — if CANVA_API_TOKEN + CANVA_TEMPLATE_ID set
-  2. Playwright screenshot of the live dashboard — automatic fallback
+  1. Pre-built linkedin-post.png in dayN/ folder  ← primary (Figma exports)
+  2. Canva API (brand template autofill)           ← if CANVA_API_TOKEN set
+  3. Playwright screenshot of the live dashboard   ← final fallback
 
 Finds the next un-posted day from posts/dayN.json, posts it, marks it done,
 commits the updated JSON back to the repo.
@@ -37,7 +38,17 @@ def load_next_post():
     return None, None
 
 
-# ── 2a. Image via Canva brand-template autofill ───────────────────────────────
+# ── 2a. Pre-built Figma PNG in dayN/linkedin-post.png ────────────────────────
+def prebuilt_image(day):
+    repo_root = Path(__file__).parent.parent
+    path = repo_root / f"day{day}" / "linkedin-post.png"
+    if path.exists():
+        print(f"[image] using pre-built {path.relative_to(repo_root)}")
+        return path.read_bytes()
+    return None
+
+
+# ── 2b. Image via Canva brand-template autofill ───────────────────────────────
 def canva_image(post_data):
     """
     Fills a Canva brand template with day-specific text and exports as PNG.
@@ -274,13 +285,15 @@ def main():
     print(f"  Posting Day {day} of 10")
     print(f"{'='*50}\n")
 
-    # Generate image — Canva first, screenshot fallback
-    image_bytes = canva_image(post_data)
+    # Generate image — prebuilt PNG first, Canva second, screenshot fallback
+    image_bytes = prebuilt_image(day)
+    if not image_bytes:
+        image_bytes = canva_image(post_data)
     if not image_bytes:
         if CANVA_TOKEN and CANVA_TMPL_ID:
             print("[canva] failed — falling back to screenshot")
         else:
-            print("[image] using Playwright screenshot (set CANVA_API_TOKEN + CANVA_TEMPLATE_ID to use Canva)")
+            print("[image] using Playwright screenshot fallback")
         image_bytes = screenshot_image(post_data["dashboard_url"])
 
     # Upload, post, comment

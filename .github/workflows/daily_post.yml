@@ -2,8 +2,8 @@ name: Daily LinkedIn Post
 
 on:
   schedule:
-    # 9:00 AM CDT (Memphis) = 14:00 UTC  — runs Mon–Fri
-    - cron: '0 14 * * 1-5'
+    # 8:00 AM CST (Memphis) = 14:00 UTC  — runs every day
+    - cron: '0 14 * * *'
   workflow_dispatch:          # also allows manual "Run workflow" button in GitHub UI
 
 jobs:
@@ -27,15 +27,8 @@ jobs:
       - name: Install Python dependencies
         run: pip install -r scripts/requirements.txt
 
-      - name: Install Playwright + Chromium
-        run: |
-          playwright install chromium
-          playwright install-deps chromium
-
       - name: Run posting script
         env:
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
           LINKEDIN_PERSON_URN:   ${{ secrets.LINKEDIN_PERSON_URN }}
-          CANVA_API_TOKEN:       ${{ secrets.CANVA_API_TOKEN }}
-          CANVA_TEMPLATE_ID:     ${{ secrets.CANVA_TEMPLATE_ID }}
         run: python scripts/post.py
