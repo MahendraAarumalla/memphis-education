@@ -4,6 +4,7 @@ LinkedIn daily posting automation — From Memphis to 50 States challenge.
 Scheduling: matches today's date against scheduled_date in posts/dayN.json.
 Image: uses pre-built dayN/linkedin-post.png (Figma export).
 Logs every run to logs/post_log.txt with timestamp.
+Sends email notification to NOTIFY_EMAIL after each successful post.
 """
 import json
 import os
@@ -11,13 +12,18 @@ import sys
 import time
 import urllib.parse
 import subprocess
+import smtplib
+from email.mime.text import MIMEText
 from datetime import date
 from pathlib import Path
 
 import requests
 
-LI_TOKEN      = os.environ["LINKEDIN_ACCESS_TOKEN"]
-LI_PERSON_URN = os.environ["LINKEDIN_PERSON_URN"]
+LI_TOKEN          = os.environ["LINKEDIN_ACCESS_TOKEN"]
+LI_PERSON_URN     = os.environ["LINKEDIN_PERSON_URN"]
+GMAIL_USER        = os.environ.get("GMAIL_USER", "mahendragudipadu@gmail.com")
+GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "")
+NOTIFY_EMAIL      = "mahendragudipadu@gmail.com"
 
 REPO_ROOT = Path(__file__).parent.parent
 LOG_FILE  = REPO_ROOT / "logs" / "post_log.txt"
@@ -157,6 +163,46 @@ def mark_posted(fpath, post_data):
     log(f"Day {post_data['day']} marked posted and committed")
 
 
+# ── 7. Email notification ─────────────────────────────────────────────────────
+def notify(post_data, post_urn):
+    if not GMAIL_APP_PASSWORD:
+        log("No GMAIL_APP_PASSWORD set — skipping email notification")
+        return
+
+    day  = post_data["day"]
+    url  = post_data.get("dashboard_url", "")
+    stat = post_data.get("key_stat", "")
+
+    subject = f"✅ Day {day} posted to LinkedIn — From Memphis to 50 States"
+    body = (
+        f"Day {day} of 10 is live on LinkedIn.\n\n"
+        f"Headline: {post_data.get('headline', '')}\n"
+        f"Key stat: {stat}\n"
+        f"Dashboard: {url}\n"
+        f"LinkedIn post: https://www.linkedin.com/feed/update/{post_urn}/\n\n"
+        f"Next post: Day {day + 1} tomorrow at 8am CST.\n"
+        if day < 10 else
+        f"Day {day} of 10 is live on LinkedIn.\n\n"
+        f"Headline: {post_data.get('headline', '')}\n"
+        f"Dashboard: {url}\n"
+        f"LinkedIn post: https://www.linkedin.com/feed/update/{post_urn}/\n\n"
+        f"That's all 10 days. Challenge complete.\n"
+    )
+
+    msg = MIMEText(body)
+    msg["Subject"] = subject
+    msg["From"]    = GMAIL_USER
+    msg["To"]      = NOTIFY_EMAIL
+
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+            smtp.login(GMAIL_USER, GMAIL_APP_PASSWORD)
+            smtp.send_message(msg)
+        log(f"Email notification sent to {NOTIFY_EMAIL}")
+    except Exception as e:
+        log(f"Email notification failed (non-fatal): {e}")
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 def main():
     today = date.today().isoformat()
@@ -184,6 +230,7 @@ def main():
         add_comment(post_urn, post_data["first_comment"])
 
         mark_posted(fpath, post_data)
+        notify(post_data, post_urn)
         log(f"Day {day} complete. ✓\n")
 
     except Exception as e:
