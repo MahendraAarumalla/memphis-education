@@ -12,3 +12,10 @@
 [2026-06-09 16:35:08 UTC] Post published → urn:li:share:7470151509339652096
 [2026-06-09 16:35:08 UTC] Waiting 30 seconds before first comment...
 [2026-06-09 16:35:39 UTC] First comment posted
+[2026-06-10 14:50:22 UTC] === Daily post run — 2026-06-10 ===
+[2026-06-10 14:50:22 UTC] Posting Day 9: Memphis vs Cleveland vs Detroit — same start, different outcomes
+[2026-06-10 14:50:22 UTC] Image loaded: day9/linkedin-post.png (64KB)
+[2026-06-10 14:50:22 UTC] Image uploaded → urn:li:digitalmediaAsset:D5622AQH9lTOZQ9rAuQ
+[2026-06-10 14:50:23 UTC] Post published → urn:li:share:7470487534414897152
+[2026-06-10 14:50:23 UTC] Waiting 30 seconds before first comment...
+[2026-06-10 14:50:53 UTC] First comment posted
